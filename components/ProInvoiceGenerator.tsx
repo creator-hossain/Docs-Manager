@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Maximize2, MoveHorizontal, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem } from '../types';
@@ -31,7 +32,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
       vehiclePrice: initialData?.vehiclePrice || 0,
       payments: initialData?.payments || [{ id: '1', date: new Date().toISOString().split('T')[0], amount: 0, note: 'CASH' }],
       items: initialData?.items || [
-        { id: Math.random().toString(36).substr(2, 9), description: 'Tissu Box', quantity: 1, unitPrice: 20, imageSize: 'medium' }
+        { id: Math.random().toString(36).substr(2, 9), description: '', quantity: 1, unitPrice: 0, imageSize: 'medium' }
       ],
       logoUrl: initialData?.logoUrl || '',
       logoSize: initialData?.logoSize || 220,
