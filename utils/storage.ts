@@ -1,6 +1,6 @@
 
-import { BusinessDocument, Asset, DocumentType } from '../types';
-import { supabase } from './supabase';
+import { BusinessDocument, Asset, DocumentType } from '../types.ts';
+import { supabase } from './supabase.ts';
 
 export interface LogoSettings {
   logoUrl?: string;

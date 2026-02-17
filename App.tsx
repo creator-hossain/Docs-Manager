@@ -25,13 +25,13 @@ import {
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { BusinessDocument, DocumentType } from './types';
-import { DOC_TYPES_CONFIG } from './constants';
-import { addOrUpdateDocument, loadDocuments, deleteDocument } from './utils/storage';
-import DocumentForm from './components/DocumentForm';
-import DocumentPreview from './components/DocumentPreview';
-import ProInvoiceGenerator from './components/ProInvoiceGenerator';
-import AssetLibrary from './components/AssetLibrary';
+import { BusinessDocument, DocumentType } from './types.ts';
+import { DOC_TYPES_CONFIG } from './constants.tsx';
+import { addOrUpdateDocument, loadDocuments, deleteDocument } from './utils/storage.ts';
+import DocumentForm from './components/DocumentForm.tsx';
+import DocumentPreview from './components/DocumentPreview.tsx';
+import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
+import AssetLibrary from './components/AssetLibrary.tsx';
 
 const BANNERS = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -67,9 +67,14 @@ const App: React.FC = () => {
   useEffect(() => {
     const initData = async () => {
       setIsLoading(true);
-      const docs = await loadDocuments();
-      setDocuments(docs);
-      setIsLoading(false);
+      try {
+        const docs = await loadDocuments();
+        setDocuments(docs || []);
+      } catch (err) {
+        console.error("Initialization failed:", err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     initData();
