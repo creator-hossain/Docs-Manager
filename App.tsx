@@ -198,9 +198,9 @@ const App: React.FC = () => {
                   Automotive <br/><span className="text-red-700 uppercase">Business</span> Manager
                 </h1>
                 
-                <div className="h-10 overflow-hidden relative border-l-4 border-red-700 pl-4 bg-white/5 rounded-r-lg">
-                  <div className="transition-all duration-500 transform translate-y-0 flex flex-col">
-                    <p className="text-sm font-bold text-red-100/80 uppercase tracking-[0.2em] py-2">
+                <div className="min-h-[3.5rem] overflow-hidden relative border-l-4 border-red-700 pl-4 bg-white/5 rounded-r-lg flex items-center">
+                  <div className="transition-all duration-500 transform translate-y-0 flex flex-col w-full">
+                    <p className="text-[11px] font-bold text-red-100/80 uppercase tracking-[0.2em] py-2 leading-relaxed">
                       {RUNNING_TEXTS[currentTextIndex]}
                     </p>
                   </div>

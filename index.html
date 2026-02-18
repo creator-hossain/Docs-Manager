@@ -15,6 +15,22 @@
         margin: 0;
         overflow-x: hidden;
       }
+
+      /* Global 80% Zoom Simulation */
+      #root {
+        zoom: 0.8; /* Chromium/Safari simulation of browser zoom */
+        -moz-transform: scale(0.8); /* Firefox fallback */
+        -moz-transform-origin: top center;
+      }
+
+      /* Firefox specific adjustment to prevent layout gaps when scaling */
+      @-moz-document url-prefix() {
+        #root {
+          width: 125%; /* 100 / 0.8 */
+          margin-left: -12.5%; /* Centers the 125% width after 0.8 scale */
+        }
+      }
+
       /* A4 Preview Styles */
       .a4-page {
         width: 210mm;

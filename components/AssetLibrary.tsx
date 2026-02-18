@@ -31,7 +31,8 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
     const files = e.target.files;
     if (files) {
       setIsLoading(true);
-      const fileArray = Array.from(files);
+      // Fixed: Explicitly cast to File[] to avoid 'unknown' type errors during iteration
+      const fileArray = Array.from(files) as File[];
       
       for (const file of fileArray) {
         const reader = new FileReader();
