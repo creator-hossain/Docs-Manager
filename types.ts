@@ -38,6 +38,14 @@ export interface InvoiceItem {
   unitPrice: number;
 }
 
+export interface FooterSettings {
+  address: string;
+  email: string;
+  phone1: string;
+  phone2: string;
+  website: string;
+}
+
 export interface BusinessDocument {
   id: string;
   type: DocumentType;

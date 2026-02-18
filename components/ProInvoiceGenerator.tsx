@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Maximize2, MoveHorizontal, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
-import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem } from '../types';
+import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem, FooterSettings } from '../types';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import DocumentPreview from './DocumentPreview';
@@ -12,9 +12,10 @@ interface ProInvoiceGeneratorProps {
   initialData?: Partial<BusinessDocument>;
   onSave: (doc: BusinessDocument) => void;
   onCancel: () => void;
+  footerSettings?: FooterSettings;
 }
 
-const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, onSave, onCancel }) => {
+const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, onSave, onCancel, footerSettings }) => {
   const [assetPickerConfig, setAssetPickerConfig] = useState<{ open: boolean; target: 'logoUrl' | { type: 'itemImage'; index: number }; type: AssetType } | null>(null);
   
   // Initialize form data with initialData or defaults
@@ -410,7 +411,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
             <span className="text-[11px] font-black uppercase tracking-[0.4em]">Standard A4 Format</span>
           </div>
           <div className="hover:scale-[1.01] transition-transform duration-700 ease-out origin-top">
-            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={0.65} />
+            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={footerSettings} />
           </div>
         </div>
       </div>

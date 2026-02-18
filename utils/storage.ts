@@ -1,5 +1,5 @@
 
-import { BusinessDocument, Asset, DocumentType } from '../types.ts';
+import { BusinessDocument, Asset, DocumentType, FooterSettings } from '../types.ts';
 import { supabase } from './supabase.ts';
 
 export interface LogoSettings {
@@ -144,4 +144,43 @@ export const loadPreferences = async (): Promise<UserPreferences> => {
 export const getTypePreferences = async (type: DocumentType): Promise<LogoSettings | undefined> => {
   const prefs = await loadPreferences();
   return prefs.typeSettings?.[type];
+};
+
+// Global Footer Settings Utils
+export const loadFooterSettings = async (): Promise<FooterSettings> => {
+  try {
+    const { data, error } = await supabase
+      .from('preferences')
+      .select('data')
+      .eq('id', 'global_footer')
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    return data ? (data.data as FooterSettings) : {
+      address: 'A.Hamid Road, Pabna',
+      email: 'garirdokan2021@gmail.com',
+      phone1: '+880 1713 110 570',
+      phone2: '+880 1785 2555 86',
+      website: 'garirdokan.com'
+    };
+  } catch (e) {
+    return {
+      address: 'A.Hamid Road, Pabna',
+      email: 'garirdokan2021@gmail.com',
+      phone1: '+880 1713 110 570',
+      phone2: '+880 1785 2555 86',
+      website: 'garirdokan.com'
+    };
+  }
+};
+
+export const saveFooterSettings = async (settings: FooterSettings) => {
+  try {
+    await supabase
+      .from('preferences')
+      .upsert({ id: 'global_footer', data: settings });
+  } catch (e) {
+    console.error('Failed to save footer settings:', e);
+  }
 };

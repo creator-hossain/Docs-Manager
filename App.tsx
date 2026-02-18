@@ -25,9 +25,9 @@ import {
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { BusinessDocument, DocumentType } from './types.ts';
+import { BusinessDocument, DocumentType, FooterSettings } from './types.ts';
 import { DOC_TYPES_CONFIG } from './constants.tsx';
-import { addOrUpdateDocument, loadDocuments, deleteDocument } from './utils/storage.ts';
+import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings } from './utils/storage.ts';
 import DocumentForm from './components/DocumentForm.tsx';
 import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
@@ -61,8 +61,14 @@ const App: React.FC = () => {
   const [activeType, setActiveType] = useState<DocumentType | null>(null);
   const [showProGenerator, setShowProGenerator] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
+  const [globalFooter, setGlobalFooter] = useState<FooterSettings | undefined>(undefined);
 
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const fetchFooter = async () => {
+    const settings = await loadFooterSettings();
+    setGlobalFooter(settings);
+  };
 
   useEffect(() => {
     const initData = async () => {
@@ -70,6 +76,7 @@ const App: React.FC = () => {
       try {
         const docs = await loadDocuments();
         setDocuments(docs || []);
+        await fetchFooter();
       } catch (err) {
         console.error("Initialization failed:", err);
       } finally {
@@ -190,7 +197,7 @@ const App: React.FC = () => {
               />
             ))}
 
-            <div className="absolute left-20 top-1/2 -translate-y-1/2 z-10">
+            <div className="absolute left-[15%] top-1/2 -translate-y-1/2 z-10">
               <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-12 rounded-[3.5rem] w-[580px] shadow-2xl relative overflow-hidden group">
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-700/20 rounded-full blur-3xl group-hover:bg-red-700/40 transition-all"></div>
                 
@@ -360,7 +367,7 @@ const App: React.FC = () => {
 
                   {/* Main Hero Stats - Non-Italic Numbers */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.5)]">
                       <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 rotate-12">
                         <Database className="w-64 h-64 text-red-700" />
                       </div>
@@ -379,7 +386,7 @@ const App: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
+                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.8)]">
                       <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 -rotate-12">
                         <CircleDollarSign className="w-64 h-64 text-red-700" />
                       </div>
@@ -442,7 +449,7 @@ const App: React.FC = () => {
 
       {viewMode === 'assets' && (
         <div className="pt-32 px-10 min-h-screen pb-20">
-          <AssetLibrary />
+          <AssetLibrary onFooterUpdate={fetchFooter} />
         </div>
       )}
 
@@ -573,6 +580,7 @@ const App: React.FC = () => {
                   initialData={editingDoc}
                   onSave={handleSave} 
                   onCancel={() => setEditingDoc(null)} 
+                  footerSettings={globalFooter}
                 />
               ) : (
                 <DocumentForm 
@@ -590,7 +598,7 @@ const App: React.FC = () => {
                   <span className="text-[11px] font-bold">Standard A4 Format</span>
                 </div>
                 <div className="hover:scale-[1.02] transition-transform duration-700 ease-out">
-                  {draftDoc && <DocumentPreview document={draftDoc as BusinessDocument} containerRef={previewRef} scale={0.65} />}
+                  {draftDoc && <DocumentPreview document={draftDoc as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={globalFooter} />}
                 </div>
               </div>
             )}
@@ -602,6 +610,7 @@ const App: React.FC = () => {
         <ProInvoiceGenerator 
           onSave={handleSave} 
           onCancel={() => setShowProGenerator(false)} 
+          footerSettings={globalFooter}
         />
       )}
 
@@ -625,7 +634,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto py-20 px-4 w-full flex justify-center scrollbar-hide">
-            <DocumentPreview document={previewingDoc} containerRef={previewRef} />
+            <DocumentPreview document={previewingDoc} containerRef={previewRef} footerSettings={globalFooter} />
           </div>
         </div>
       )}

@@ -1,13 +1,15 @@
+
 import React from 'react';
-import { BusinessDocument, DocumentType, InvoiceItem } from '../types';
+import { BusinessDocument, DocumentType, FooterSettings } from '../types';
 
 interface DocumentPreviewProps {
   document: BusinessDocument;
   containerRef?: React.RefObject<HTMLDivElement>;
   scale?: number;
+  footerSettings?: FooterSettings;
 }
 
-const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRef, scale = 1 }) => {
+const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRef, scale = 1, footerSettings }) => {
   const { 
     type, docNumber, date, clientName, clientAddress, clientPhone,
     clientDesignation, clientOffice, acName, logoUrl, logoSize = 220, logoPosition = 0,
@@ -41,6 +43,49 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     backgroundColor: 'white',
     boxSizing: 'border-box'
   };
+
+  // Default fallback footer settings if none provided
+  const f = footerSettings || {
+    address: 'A.Hamid Road, Pabna',
+    email: 'garirdokan2021@gmail.com',
+    phone1: '+880 1713 110 570',
+    phone2: '+880 1785 2555 86',
+    website: 'garirdokan.com'
+  };
+
+  const renderWebsite = (url: string) => {
+    // Logic to space out the website URL like "w w w . g a r i r d o k a n . c o m"
+    // and highlight specific characters (g, d) in red if found
+    const chars = url.toLowerCase().split('');
+    const spaced = [];
+    
+    // Check if it's already spaced or has dots. Normalize to base domain.
+    const domain = url.replace(/\s+/g, '');
+    
+    return (
+      <div className="web-url text-[15px] mt-[5px] tracking-[4px] font-sans text-black lowercase text-center font-bold">
+        {domain.split('').map((char, i) => (
+          <React.Fragment key={i}>
+            <span className={char === 'g' || char === 'd' ? 'text-red-600' : 'text-black'}>{char}</span>
+            {i < domain.length - 1 ? ' ' : ''}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  };
+
+  const Footer = () => (
+    <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
+      <div className="h-px bg-red-600/30 w-full mb-3"></div>
+      <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
+        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📍</span> {f.address}</span>
+        <span className="flex items-center gap-1 text-black"><span className="text-red-600">✉️</span> {f.email}</span>
+        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {f.phone1}</span>
+        {f.phone2 && <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {f.phone2}</span>}
+      </div>
+      {renderWebsite(f.website)}
+    </div>
+  );
 
   // Render Product Invoice (Multi-row variant) - Precisely matched to OIL FILTER image
   if (isProInvoice) {
@@ -105,17 +150,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <table className="w-full border-collapse text-black table-fixed">
               <thead>
                 <tr className="bg-white border-y-[1.5px] border-black">
-                  {/* Narrow SL NO as per screenshot */}
                   <th className="p-2.5 text-center font-bold w-[8%] uppercase text-[12px] text-black whitespace-nowrap">SL NO</th>
-                  {/* Wide Description */}
                   <th className="p-2.5 text-left font-bold uppercase pl-4 text-[12px] text-black w-[38%]">DESCRIPTION</th>
-                  {/* Image Column */}
                   {showImageColumn && <th className="p-2.5 text-center font-bold w-[14%] uppercase text-[12px] text-black">IMAGE</th>}
-                  {/* narrow QTY */}
                   <th className="p-2.5 text-center font-bold w-[8%] uppercase text-[12px] text-black">QTY</th>
-                  {/* Unit price */}
                   <th className="p-2.5 text-right font-bold w-[16%] uppercase pr-4 text-[12px] text-black">UNIT PRICE</th>
-                  {/* Total */}
                   <th className="p-2.5 text-right font-bold w-[16%] uppercase pr-4 text-[12px] text-black">TOTAL</th>
                 </tr>
               </thead>
@@ -167,17 +206,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
 
-          <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
-            <div className="h-px bg-red-600/30 w-full mb-3"></div>
-            <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">📍</span> A.Hamid Road, Pabna</span>
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">✉️</span> garirdokan2021@gmail.com</span>
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> +880 1713 110 570</span>
-            </div>
-            <div className="web-url text-[15px] mt-[5px] tracking-[4px] font-sans text-black lowercase text-center font-bold">
-              w w w . <span className="text-red-600">g</span> a r i r <span className="text-red-600">d</span> o k a n . c o m
-            </div>
-          </div>
+          <Footer />
         </div>
       </div>
     );
@@ -194,7 +223,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
-          {/* Header Section */}
           <div className="flex justify-between items-start pt-[8mm] pl-[5mm] pr-[15mm] mb-[2mm] z-10 text-black">
             <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px` }}>
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
@@ -205,13 +233,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
 
-          {/* Importer Tagline Bar - Updated to match Quotation style as requested */}
           <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[20px] w-full text-left text-black z-10 box-border">
             Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
           </div>
 
           <div className="main-content px-[15mm] text-black flex-1 relative z-10 pb-[30mm]">
-            {/* Document Info Grid */}
             <div className="flex justify-between mb-8 text-[16px] leading-relaxed text-black">
               <div className="space-y-1 text-black">
                 <div><span className="text-gray-600">Invoice No:</span></div>
@@ -227,7 +253,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </div>
             </div>
 
-            {/* Table Section */}
             <table className="w-full border-collapse mb-8 border border-[#bcbec0] text-black">
               <thead>
                 <tr className="bg-[#f1f2f2] text-black">
@@ -261,7 +286,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </tbody>
             </table>
 
-            {/* Acknowledgment Section */}
             <div className="mt-10 text-black">
               <h3 className="font-bold text-[16px] mb-4 text-black">Customer Acknowledgment of Vehicle Condition:</h3>
               <p className="text-[14px] leading-relaxed text-justify mb-8 text-black">
@@ -269,7 +293,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </p>
             </div>
 
-            {/* Signature Area */}
             <div className="flex justify-between mt-20 pt-10 text-black">
               <div className="text-center w-[250px] border-t border-black pt-2 text-black">
                 <span className="text-[15px] font-bold text-black">Received By</span>
@@ -280,18 +303,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
 
-          {/* Footer Section */}
-          <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
-            <div className="h-px bg-red-600/30 w-full mb-3"></div>
-            <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">📍</span> A.Hamid Road, Pabna</span>
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">✉️</span> garirdokan2021@gmail.com</span>
-              <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> +880 1713 110 570</span>
-            </div>
-            <div className="web-url text-[15px] mt-[5px] tracking-[4px] font-sans text-black lowercase text-center font-bold">
-              w w w . <span className="text-red-600">g</span> a r i r <span className="text-red-600">d</span> o k a n . c o m
-            </div>
-          </div>
+          <Footer />
         </div>
       </div>
     );
@@ -382,12 +394,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               Yours Faithfully,
             </div>
           </div>
-          <div className="footer-container absolute bottom-[10mm] left-[20mm] right-[20mm] text-center border-t border-red-500 pt-[8px] text-[12px] text-black">
-            <div className="text-black">📍 A.Hamid Road, Pabna &nbsp; ✉️ garirdokan2021@gmail.com &nbsp; 📞 +880 1713 110 570</div>
-            <div className="web-url text-[15px] mt-[5px] tracking-[2px] font-sans text-black uppercase text-center font-bold">
-              w w w . <span className="text-red-600">g</span> a r i r <span className="text-red-600">d</span> o k a n . c o m
-            </div>
-          </div>
+          <Footer />
         </div>
       </div>
     );
@@ -462,12 +469,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             {notes && (<div className="accessories-box mt-[10px] mb-[15px] leading-[1.4] text-justify text-[14px] text-black"><span className="font-bold text-black">Fitting Accessories:</span> {notes}</div>)}
             <div className="mt-[10px] text-[15px] leading-[1.4] text-black"><p className="text-black">Price excluding REGISTRATION cost.<br /><span className="font-bold uppercase text-black">Yours Faithfully,</span></p></div>
           </div>
-          <div className="footer-container absolute bottom-[10mm] left-[20mm] right-[20mm] text-center border-t border-red-500 pt-[8px] text-[12px] text-black">
-            <div className="text-black">📍 A.Hamid Road, Pabna &nbsp; ✉️ garirdokan2021@gmail.com &nbsp; 📞 +880 1713 110 570</div>
-            <div className="web-url text-[15px] mt-[5px] tracking-[1.5px] font-sans text-black uppercase text-center font-bold">
-              w w w . <span className="text-red-600">g</span> a r i r <span className="text-red-600">d</span> o k a n . c o m
-            </div>
-          </div>
+          <Footer />
         </div>
       </div>
     );
@@ -579,16 +581,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </div>
             </div>
           </div>
-          <div className="absolute bottom-[10mm] left-[15mm] right-[15mm] border-t border-red-500 pt-2.5 text-center text-black">
-            <div className="flex justify-center items-center gap-4 text-[12px] mb-2 text-black">
-              <span className="text-black">📍 A.Hamid Road, Pabna</span>
-              <span className="text-black">✉️ garirdokan2021@gmail.com</span>
-              <span className="text-black">📞 +880 1713 110 570</span>
-            </div>
-            <div className="text-[15px] mt-[5px] tracking-[1.5px] font-sans text-black uppercase text-center font-bold">
-              w w w . <span className="text-red-700">g</span> a r i r <span className="text-red-700">d</span> o k a n . c o m
-            </div>
-          </div>
+          <Footer />
         </div>
       </div>
     </div>
