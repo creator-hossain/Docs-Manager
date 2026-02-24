@@ -49,6 +49,13 @@ export interface FooterSettings {
   phone2Icon?: string;
   website: string;
   websiteIcon?: string;
+  // Display Architecture
+  alignment?: 'left' | 'center' | 'right';
+  fontSize?: number;
+  iconSize?: number;
+  spacing?: number;
+  marginTop?: number;
+  paddingTop?: number;
 }
 
 export interface BusinessDocument {

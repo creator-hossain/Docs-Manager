@@ -28,7 +28,11 @@ import {
   Headset,
   Link,
   ExternalLink,
-  Monitor
+  Monitor,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Palette
 } from 'lucide-react';
 import { Asset, AssetType, FooterSettings } from '../types';
 import { loadAssets, saveAsset, deleteAsset, loadFooterSettings, saveFooterSettings } from '../utils/storage';
@@ -56,7 +60,13 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
     phone2: '',
     phone2Icon: 'Phone',
     website: '',
-    websiteIcon: 'Globe'
+    websiteIcon: 'Globe',
+    alignment: 'center',
+    fontSize: 11,
+    iconSize: 14,
+    spacing: 12,
+    marginTop: 10,
+    paddingTop: 10
   });
   const [isSavingFooter, setIsSavingFooter] = useState(false);
 
@@ -338,6 +348,96 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                     {isSavingFooter ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
                     Save Changes Globally
                   </button>
+               </div>
+
+               {/* Display Architecture Section */}
+               <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                      <Palette className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-widest">Display Architecture</h3>
+                      <p className="text-[10px] font-bold text-gray-600 uppercase">Layout & Visual Control</p>
+                    </div>
+                  </div>
+
+                  <div className="flex bg-black/40 p-2 rounded-2xl border border-white/5 gap-2">
+                    {(['left', 'center', 'right'] as const).map((align) => (
+                      <button
+                        key={align}
+                        onClick={() => setFooterSettings({ ...footerSettings, alignment: align })}
+                        className={`flex-1 py-4 rounded-xl flex flex-col items-center gap-2 transition-all ${footerSettings.alignment === align ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                      >
+                        {align === 'left' && <AlignLeft className="w-5 h-5" />}
+                        {align === 'center' && <AlignCenter className="w-5 h-5" />}
+                        {align === 'right' && <AlignRight className="w-5 h-5" />}
+                        <span className="text-[10px] font-black uppercase tracking-widest">{align}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <label className={labelClass}>Typography Size</label>
+                        <span className="text-[10px] font-black text-red-700">{footerSettings.fontSize}px</span>
+                      </div>
+                      <input 
+                        type="range" min="8" max="24" 
+                        value={footerSettings.fontSize} 
+                        onChange={(e) => setFooterSettings({ ...footerSettings, fontSize: parseInt(e.target.value) })} 
+                        className="w-full h-1.5 bg-white/5 rounded-lg appearance-none cursor-pointer accent-red-700" 
+                      />
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <label className={labelClass}>Icon Dimensions</label>
+                        <span className="text-[10px] font-black text-red-700">{footerSettings.iconSize}px</span>
+                      </div>
+                      <input 
+                        type="range" min="8" max="32" 
+                        value={footerSettings.iconSize} 
+                        onChange={(e) => setFooterSettings({ ...footerSettings, iconSize: parseInt(e.target.value) })} 
+                        className="w-full h-1.5 bg-white/5 rounded-lg appearance-none cursor-pointer accent-red-700" 
+                      />
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <label className={labelClass}>Terminal Spacing</label>
+                        <span className="text-[10px] font-black text-red-700">{footerSettings.spacing}px</span>
+                      </div>
+                      <input 
+                        type="range" min="0" max="40" 
+                        value={footerSettings.spacing} 
+                        onChange={(e) => setFooterSettings({ ...footerSettings, spacing: parseInt(e.target.value) })} 
+                        className="w-full h-1.5 bg-white/5 rounded-lg appearance-none cursor-pointer accent-red-700" 
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className={labelClass}>Top Margin</label>
+                        <input 
+                          type="number" 
+                          value={footerSettings.marginTop} 
+                          onChange={(e) => setFooterSettings({ ...footerSettings, marginTop: parseInt(e.target.value) || 0 })} 
+                          className={inputClass} 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className={labelClass}>Top Padding</label>
+                        <input 
+                          type="number" 
+                          value={footerSettings.paddingTop} 
+                          onChange={(e) => setFooterSettings({ ...footerSettings, paddingTop: parseInt(e.target.value) || 0 })} 
+                          className={inputClass} 
+                        />
+                      </div>
+                    </div>
+                  </div>
                </div>
 
                {/* Footer Specific Preview */}
