@@ -87,50 +87,33 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     Globe, Link, ExternalLink, Monitor
   };
 
-  const renderFooterIcon = (iconName: string | undefined, DefaultIcon: any, size: number = 12) => {
+  const renderFooterIcon = (iconName: string | undefined, DefaultIcon: any) => {
     const Icon = (iconName && iconMap[iconName]) || DefaultIcon;
-    return <Icon className="text-red-600" style={{ width: size, height: size }} />;
+    return <Icon className="w-3 h-3 text-red-600" />;
   };
 
-  const Footer = () => {
-    const alignmentClass = f.alignment === 'left' ? 'text-left' : f.alignment === 'right' ? 'text-right' : 'text-center';
-    const justifyClass = f.alignment === 'left' ? 'justify-start' : f.alignment === 'right' ? 'justify-end' : 'justify-center';
-    
-    return (
-      <div 
-        className={`footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] z-10 text-black ${alignmentClass}`}
-        style={{ 
-          marginTop: `${f.marginTop || 0}px`,
-          paddingTop: `${f.paddingTop || 0}px`
-        }}
-      >
-        <div className="h-px bg-red-600/30 w-full mb-3"></div>
-        <div 
-          className={`flex flex-wrap items-center font-bold text-black ${justifyClass}`}
-          style={{ 
-            gap: `${f.spacing || 16}px`,
-            fontSize: `${f.fontSize || 11}px`
-          }}
-        >
-          <span className="flex items-center gap-1 text-black whitespace-nowrap">
-            {renderFooterIcon(f.addressIcon, MapPin, f.iconSize)} {f.address}
+  const Footer = () => (
+    <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
+      <div className="h-px bg-red-600/30 w-full mb-3"></div>
+      <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.addressIcon, MapPin)} {f.address}
+        </span>
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.emailIcon, Mail)} {f.email}
+        </span>
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.phone1Icon, Phone)} {f.phone1}
+        </span>
+        {f.phone2 && (
+          <span className="flex items-center gap-1 text-black">
+            {renderFooterIcon(f.phone2Icon, Phone)} {f.phone2}
           </span>
-          <span className="flex items-center gap-1 text-black whitespace-nowrap">
-            {renderFooterIcon(f.emailIcon, Mail, f.iconSize)} {f.email}
-          </span>
-          <span className="flex items-center gap-1 text-black whitespace-nowrap">
-            {renderFooterIcon(f.phone1Icon, Phone, f.iconSize)} {f.phone1}
-          </span>
-          {f.phone2 && (
-            <span className="flex items-center gap-1 text-black whitespace-nowrap">
-              {renderFooterIcon(f.phone2Icon, Phone, f.iconSize)} {f.phone2}
-            </span>
-          )}
-        </div>
-        {renderWebsite(f.website)}
+        )}
       </div>
-    );
-  };
+      {renderWebsite(f.website)}
+    </div>
+  );
 
   // Render Product Invoice (Multi-row variant) - Precisely matched to OIL FILTER image
   if (isProInvoice) {

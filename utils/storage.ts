@@ -162,13 +162,7 @@ export const loadFooterSettings = async (): Promise<FooterSettings> => {
       email: 'garirdokan2021@gmail.com',
       phone1: '+880 1713 110 570',
       phone2: '+880 1785 2555 86',
-      website: 'garirdokan.com',
-      alignment: 'center',
-      fontSize: 11,
-      iconSize: 14,
-      spacing: 12,
-      marginTop: 10,
-      paddingTop: 10
+      website: 'garirdokan.com'
     };
   } catch (e) {
     return {
@@ -176,13 +170,7 @@ export const loadFooterSettings = async (): Promise<FooterSettings> => {
       email: 'garirdokan2021@gmail.com',
       phone1: '+880 1713 110 570',
       phone2: '+880 1785 2555 86',
-      website: 'garirdokan.com',
-      alignment: 'center',
-      fontSize: 11,
-      iconSize: 14,
-      spacing: 12,
-      marginTop: 10,
-      paddingTop: 10
+      website: 'garirdokan.com'
     };
   }
 };
