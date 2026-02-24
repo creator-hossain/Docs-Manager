@@ -40,10 +40,15 @@ export interface InvoiceItem {
 
 export interface FooterSettings {
   address: string;
+  addressIcon?: string;
   email: string;
+  emailIcon?: string;
   phone1: string;
+  phone1Icon?: string;
   phone2: string;
+  phone2Icon?: string;
   website: string;
+  websiteIcon?: string;
 }
 
 export interface BusinessDocument {

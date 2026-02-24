@@ -1,5 +1,11 @@
 
 import React from 'react';
+import { 
+  MapPin, Map, Navigation, Home, 
+  Mail, Send, Inbox, MessageSquare, 
+  Phone, Smartphone, PhoneCall, Headset, 
+  Globe, Link, ExternalLink, Monitor 
+} from 'lucide-react';
 import { BusinessDocument, DocumentType, FooterSettings } from '../types';
 
 interface DocumentPreviewProps {
@@ -74,14 +80,36 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     );
   };
 
+  const iconMap: Record<string, any> = {
+    MapPin, Map, Navigation, Home,
+    Mail, Send, Inbox, MessageSquare,
+    Phone, Smartphone, PhoneCall, Headset,
+    Globe, Link, ExternalLink, Monitor
+  };
+
+  const renderFooterIcon = (iconName: string | undefined, DefaultIcon: any) => {
+    const Icon = (iconName && iconMap[iconName]) || DefaultIcon;
+    return <Icon className="w-3 h-3 text-red-600" />;
+  };
+
   const Footer = () => (
     <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
       <div className="h-px bg-red-600/30 w-full mb-3"></div>
       <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
-        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📍</span> {f.address}</span>
-        <span className="flex items-center gap-1 text-black"><span className="text-red-600">✉️</span> {f.email}</span>
-        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {f.phone1}</span>
-        {f.phone2 && <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {f.phone2}</span>}
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.addressIcon, MapPin)} {f.address}
+        </span>
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.emailIcon, Mail)} {f.email}
+        </span>
+        <span className="flex items-center gap-1 text-black">
+          {renderFooterIcon(f.phone1Icon, Phone)} {f.phone1}
+        </span>
+        {f.phone2 && (
+          <span className="flex items-center gap-1 text-black">
+            {renderFooterIcon(f.phone2Icon, Phone)} {f.phone2}
+          </span>
+        )}
       </div>
       {renderWebsite(f.website)}
     </div>

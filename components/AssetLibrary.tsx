@@ -1,7 +1,35 @@
 
 import React, { useState, useEffect } from 'react';
 // Added Edit3 to the imports to resolve the "Cannot find name 'Edit3'" error
-import { Upload, Trash2, Image as ImageIcon, Plus, X, Type, Layers, CheckCircle2, Loader2, Save, MapPin, Mail, Phone, Globe, Edit3 } from 'lucide-react';
+import { 
+  Upload, 
+  Trash2, 
+  Image as ImageIcon, 
+  Plus, 
+  X, 
+  Type, 
+  Layers, 
+  CheckCircle2, 
+  Loader2, 
+  Save, 
+  MapPin, 
+  Mail, 
+  Phone, 
+  Globe, 
+  Edit3,
+  Map,
+  Navigation,
+  Home,
+  Send,
+  Inbox,
+  MessageSquare,
+  Smartphone,
+  PhoneCall,
+  Headset,
+  Link,
+  ExternalLink,
+  Monitor
+} from 'lucide-react';
 import { Asset, AssetType, FooterSettings } from '../types';
 import { loadAssets, saveAsset, deleteAsset, loadFooterSettings, saveFooterSettings } from '../utils/storage';
 
@@ -20,10 +48,15 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
   const [dragActive, setDragActive] = useState(false);
   const [footerSettings, setFooterSettings] = useState<FooterSettings>({
     address: '',
+    addressIcon: 'MapPin',
     email: '',
+    emailIcon: 'Mail',
     phone1: '',
+    phone1Icon: 'Phone',
     phone2: '',
-    website: ''
+    phone2Icon: 'Phone',
+    website: '',
+    websiteIcon: 'Globe'
   });
   const [isSavingFooter, setIsSavingFooter] = useState(false);
 
@@ -93,6 +126,54 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
 
   const inputClass = "w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm font-medium outline-none focus:border-red-700/50 focus:bg-white/[0.08] text-white placeholder:text-white/20 transition-all focus:ring-4 focus:ring-red-700/10";
   const labelClass = "block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 ml-1";
+
+  const ICON_OPTIONS = {
+    address: [
+      { name: 'MapPin', Icon: MapPin },
+      { name: 'Map', Icon: Map },
+      { name: 'Navigation', Icon: Navigation },
+      { name: 'Home', Icon: Home },
+    ],
+    email: [
+      { name: 'Mail', Icon: Mail },
+      { name: 'Send', Icon: Send },
+      { name: 'Inbox', Icon: Inbox },
+      { name: 'MessageSquare', Icon: MessageSquare },
+    ],
+    phone: [
+      { name: 'Phone', Icon: Phone },
+      { name: 'Smartphone', Icon: Smartphone },
+      { name: 'PhoneCall', Icon: PhoneCall },
+      { name: 'Headset', Icon: Headset },
+    ],
+    website: [
+      { name: 'Globe', Icon: Globe },
+      { name: 'Link', Icon: Link },
+      { name: 'ExternalLink', Icon: ExternalLink },
+      { name: 'Monitor', Icon: Monitor },
+    ]
+  };
+
+  const IconSelector = ({ current, options, onSelect }: { current?: string, options: { name: string, Icon: any }[], onSelect: (name: string) => void }) => (
+    <div className="flex gap-2 mt-2">
+      {options.map((opt) => (
+        <button
+          key={opt.name}
+          onClick={() => onSelect(opt.name)}
+          className={`p-2 rounded-lg border transition-all ${current === opt.name ? 'bg-red-700 border-red-700 text-white shadow-lg shadow-red-700/20' : 'bg-white/5 border-white/10 text-gray-500 hover:border-red-700/50 hover:text-red-700'}`}
+          title={opt.name}
+        >
+          <opt.Icon className="w-4 h-4" />
+        </button>
+      ))}
+    </div>
+  );
+
+  const getIconComponent = (name: string | undefined, defaultIcon: any) => {
+    const allOptions = [...ICON_OPTIONS.address, ...ICON_OPTIONS.email, ...ICON_OPTIONS.phone, ...ICON_OPTIONS.website];
+    const found = allOptions.find(o => o.name === name);
+    return found ? found.Icon : defaultIcon;
+  };
 
   const renderSpacedWebsite = (url: string) => {
     const domain = url.replace(/\s+/g, '').toLowerCase();
@@ -165,7 +246,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                     <div className="space-y-2">
                       <label className={labelClass}>Location (Address)</label>
                       <div className="relative">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" />
+                        {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
                           value={footerSettings.address} 
@@ -173,11 +254,16 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                           className={`${inputClass} !pl-12`} 
                         />
                       </div>
+                      <IconSelector 
+                        current={footerSettings.addressIcon} 
+                        options={ICON_OPTIONS.address} 
+                        onSelect={(name) => setFooterSettings({...footerSettings, addressIcon: name})} 
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className={labelClass}>Email Contact</label>
                       <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" />
+                        {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
                           value={footerSettings.email} 
@@ -185,11 +271,16 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                           className={`${inputClass} !pl-12`} 
                         />
                       </div>
+                      <IconSelector 
+                        current={footerSettings.emailIcon} 
+                        options={ICON_OPTIONS.email} 
+                        onSelect={(name) => setFooterSettings({...footerSettings, emailIcon: name})} 
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className={labelClass}>Phone Line 1</label>
                       <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" />
+                        {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
                           value={footerSettings.phone1} 
@@ -197,11 +288,16 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                           className={`${inputClass} !pl-12`} 
                         />
                       </div>
+                      <IconSelector 
+                        current={footerSettings.phone1Icon} 
+                        options={ICON_OPTIONS.phone} 
+                        onSelect={(name) => setFooterSettings({...footerSettings, phone1Icon: name})} 
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className={labelClass}>Phone Line 2 (Optional)</label>
                       <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" />
+                        {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
                           value={footerSettings.phone2} 
@@ -209,11 +305,16 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                           className={`${inputClass} !pl-12`} 
                         />
                       </div>
+                      <IconSelector 
+                        current={footerSettings.phone2Icon} 
+                        options={ICON_OPTIONS.phone} 
+                        onSelect={(name) => setFooterSettings({...footerSettings, phone2Icon: name})} 
+                      />
                     </div>
                     <div className="col-span-1 md:col-span-2 space-y-2">
                       <label className={labelClass}>Official Website URL</label>
                       <div className="relative">
-                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" />
+                        {React.createElement(getIconComponent(footerSettings.websiteIcon, Globe), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
                           value={footerSettings.website} 
@@ -221,6 +322,11 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                           className={`${inputClass} !pl-12`} 
                         />
                       </div>
+                      <IconSelector 
+                        current={footerSettings.websiteIcon} 
+                        options={ICON_OPTIONS.website} 
+                        onSelect={(name) => setFooterSettings({...footerSettings, websiteIcon: name})} 
+                      />
                     </div>
                   </div>
 
@@ -245,10 +351,32 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                     <div className="footer-render relative z-10">
                       <div className="h-px bg-red-600/30 w-full mb-3"></div>
                       <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold flex-wrap">
-                        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📍</span> {footerSettings.address || '---'}</span>
-                        <span className="flex items-center gap-1 text-black"><span className="text-red-600">✉️</span> {footerSettings.email || '---'}</span>
-                        <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {footerSettings.phone1 || '---'}</span>
-                        {footerSettings.phone2 && <span className="flex items-center gap-1 text-black"><span className="text-red-600">📞</span> {footerSettings.phone2}</span>}
+                        <span className="flex items-center gap-1 text-black">
+                          <span className="text-red-600">
+                            {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "w-3 h-3" })}
+                          </span> 
+                          {footerSettings.address || '---'}
+                        </span>
+                        <span className="flex items-center gap-1 text-black">
+                          <span className="text-red-600">
+                            {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "w-3 h-3" })}
+                          </span> 
+                          {footerSettings.email || '---'}
+                        </span>
+                        <span className="flex items-center gap-1 text-black">
+                          <span className="text-red-600">
+                            {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "w-3 h-3" })}
+                          </span> 
+                          {footerSettings.phone1 || '---'}
+                        </span>
+                        {footerSettings.phone2 && (
+                          <span className="flex items-center gap-1 text-black">
+                            <span className="text-red-600">
+                              {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "w-3 h-3" })}
+                            </span> 
+                            {footerSettings.phone2}
+                          </span>
+                        )}
                       </div>
                       {footerSettings.website && renderSpacedWebsite(footerSettings.website)}
                     </div>
