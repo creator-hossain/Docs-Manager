@@ -240,14 +240,14 @@ const App: React.FC = () => {
               {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => (
                 <div 
                   key={type}
-                  className="group relative bg-white rounded-[2.5rem] border border-gray-200/50 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_50px_100px_-20px_rgba(185,28,28,0.2)] hover:-translate-y-3 transition-all duration-700 overflow-hidden flex flex-col min-h-[420px]"
+                  className="group relative bg-white rounded-[2.5rem] border border-gray-200/50 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_50px_100px_-20px_rgba(185,28,28,0.2)] hover:-translate-y-3 transition-all duration-700 overflow-hidden flex flex-col min-h-[360px]"
                 >
                   <div 
                     onClick={() => {
                       setViewMode('list');
                       setActiveType(type as DocumentType);
                     }}
-                    className="p-10 pb-8 flex-1 transition-all duration-700 group-hover:bg-[#8b0000] cursor-pointer flex flex-col"
+                    className="p-8 pb-6 flex-1 transition-all duration-700 group-hover:bg-[#8b0000] cursor-pointer flex flex-col"
                   >
                     <div className="w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-10 transition-all duration-700 bg-red-50 text-red-700 border border-red-100 shadow-sm group-hover:bg-white group-hover:text-red-800 group-hover:rotate-6 group-hover:scale-110">
                       {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-7 h-7' })}
@@ -272,7 +272,7 @@ const App: React.FC = () => {
                         setEditingDoc({ type: type as DocumentType });
                       }
                     }}
-                    className="mt-auto border-t border-gray-50 p-10 flex justify-between items-center bg-[#9d1414] border-transparent transition-all duration-700 cursor-pointer hover:!bg-[#b91c1c] group/bottom"
+                    className="mt-auto border-t border-gray-50 p-8 flex justify-between items-center bg-[#9d1414] border-transparent transition-all duration-700 cursor-pointer hover:!bg-[#b91c1c] group/bottom"
                   >
                     <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white group-hover:translate-x-2 transition-all duration-700">NEW DOCUMENT</span>
                     <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#9d1414] shadow-sm transition-all duration-700 transform group-hover:rotate-[360deg] group-hover:scale-110">
@@ -442,7 +442,7 @@ const App: React.FC = () => {
             <p className="text-gray-600 text-[11px] font-black uppercase tracking-[0.5em] text-center max-w-2xl leading-loose">
               Advanced Document Infrastructure for Automotive Trading • Importers • Dealers
             </p>
-            <div className="mt-16 text-gray-800 text-[11px] font-black uppercase tracking-[0.2em]">© 2025 GARIR DOKAN PRO • ALL RIGHTS RESERVED</div>
+            <div className="mt-16 text-gray-800 text-[11px] font-black uppercase tracking-[0.2em]">© 2026 GARIR DOKAN PRO • ALL RIGHTS RESERVED</div>
           </footer>
         </div>
       )}
