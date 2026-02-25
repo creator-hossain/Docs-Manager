@@ -66,7 +66,8 @@ const App: React.FC = () => {
       "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
     ],
     transitionEffect: 'fade',
-    interval: 5000
+    interval: 5000,
+    backgroundPosition: 'center'
   });
   const [pdfSettings, setPdfSettings] = useState<{ orientation: 'portrait' | 'landscape', pageSize: 'a4' | 'letter' | 'legal' }>({
     orientation: 'portrait',
@@ -257,7 +258,7 @@ const App: React.FC = () => {
                   style={{
                     backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundPosition: heroSettings.backgroundPosition || 'center'
                   }}
                 />
               );

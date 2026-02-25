@@ -97,7 +97,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
   const [heroSettings, setHeroSettings] = useState<HeroSettings>({
     selectedImages: [],
     transitionEffect: 'fade',
-    interval: 5000
+    interval: 5000,
+    backgroundPosition: 'center'
   });
   const [isSavingHero, setIsSavingHero] = useState(false);
 
@@ -674,6 +675,22 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                           onChange={(e) => setHeroSettings({...heroSettings, interval: parseInt(e.target.value)})} 
                           className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
                         />
+                      </div>
+
+                      <div className="col-span-1 md:col-span-2 space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <label className={labelClass}>Image Position (Focus Area)</label>
+                        <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
+                          {(['top', 'center', 'bottom', 'left', 'right'] as const).map((pos) => (
+                            <button
+                              key={pos}
+                              type="button"
+                              onClick={() => setHeroSettings({ ...heroSettings, backgroundPosition: pos })}
+                              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${heroSettings.backgroundPosition === pos ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                            >
+                              {pos}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

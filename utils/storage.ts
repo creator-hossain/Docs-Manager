@@ -250,7 +250,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
         "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
       ],
       transitionEffect: 'fade',
-      interval: 5000
+      interval: 5000,
+      backgroundPosition: 'center'
     };
   } catch (e) {
     return {
@@ -260,7 +261,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
         "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
       ],
       transitionEffect: 'fade',
-      interval: 5000
+      interval: 5000,
+      backgroundPosition: 'center'
     };
   }
 };
