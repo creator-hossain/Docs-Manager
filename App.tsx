@@ -32,6 +32,7 @@ import DocumentForm from './components/DocumentForm.tsx';
 import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
 import AssetLibrary from './components/AssetLibrary.tsx';
+import GlobalSettings from './components/GlobalSettings.tsx';
 
 const BANNERS = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -58,6 +59,7 @@ const App: React.FC = () => {
   const [draftDoc, setDraftDoc] = useState<Partial<BusinessDocument> | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'landing' | 'list' | 'assets'>('landing');
+  const [showGlobalSettings, setShowGlobalSettings] = useState(false);
   const [activeType, setActiveType] = useState<DocumentType | null>(null);
   const [showProGenerator, setShowProGenerator] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
@@ -200,10 +202,24 @@ const App: React.FC = () => {
           <button onClick={() => {setViewMode('assets');}} className={`text-sm font-bold uppercase tracking-widest transition-colors ${viewMode === 'assets' ? 'text-red-600' : 'text-gray-400 hover:text-white'}`}>Asset Library</button>
           <button onClick={() => {setViewMode('list'); setActiveType(null);}} className={`text-sm font-bold uppercase tracking-widest transition-colors ${viewMode === 'list' ? 'text-red-600' : 'text-gray-400 hover:text-white'}`}>Records</button>
           <div className="h-4 w-px bg-white/10"></div>
-          <button className="p-2 text-gray-400 hover:text-white transition-colors"><Settings className="w-5 h-5" /></button>
+          <button 
+            onClick={() => setShowGlobalSettings(true)}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
           <button onClick={() => setViewMode('landing')} className="bg-red-700 px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-red-700/20 hover:bg-red-800 transition-all active:scale-95">Dashboard</button>
         </div>
       </nav>
+
+      {/* Global Settings Modal */}
+      {showGlobalSettings && (
+        <GlobalSettings 
+          onClose={() => setShowGlobalSettings(false)}
+          onFooterUpdate={fetchFooter}
+          onHeaderUpdate={fetchHeader}
+        />
+      )}
 
       {viewMode === 'landing' && (
         <div className="flex flex-col overflow-x-hidden">
@@ -473,7 +489,7 @@ const App: React.FC = () => {
 
       {viewMode === 'assets' && (
         <div className="pt-32 px-10 min-h-screen pb-20">
-          <AssetLibrary onFooterUpdate={fetchFooter} onHeaderUpdate={fetchHeader} />
+          <AssetLibrary />
         </div>
       )}
 
