@@ -1,5 +1,5 @@
 
-import { BusinessDocument, Asset, DocumentType, FooterSettings } from '../types.ts';
+import { BusinessDocument, Asset, DocumentType, FooterSettings, HeaderSettings } from '../types.ts';
 import { supabase } from './supabase.ts';
 
 export interface LogoSettings {
@@ -162,7 +162,11 @@ export const loadFooterSettings = async (): Promise<FooterSettings> => {
       email: 'garirdokan2021@gmail.com',
       phone1: '+880 1713 110 570',
       phone2: '+880 1785 2555 86',
-      website: 'garirdokan.com'
+      website: 'garirdokan.com',
+      bottomOffset: 10,
+      topPadding: 0,
+      horizontalPadding: 15,
+      lineSpacing: 3
     };
   } catch (e) {
     return {
@@ -170,7 +174,11 @@ export const loadFooterSettings = async (): Promise<FooterSettings> => {
       email: 'garirdokan2021@gmail.com',
       phone1: '+880 1713 110 570',
       phone2: '+880 1785 2555 86',
-      website: 'garirdokan.com'
+      website: 'garirdokan.com',
+      bottomOffset: 10,
+      topPadding: 0,
+      horizontalPadding: 15,
+      lineSpacing: 3
     };
   }
 };
@@ -182,5 +190,44 @@ export const saveFooterSettings = async (settings: FooterSettings) => {
       .upsert({ id: 'global_footer', data: settings });
   } catch (e) {
     console.error('Failed to save footer settings:', e);
+  }
+};
+
+// Global Header Settings Utils
+export const loadHeaderSettings = async (): Promise<HeaderSettings> => {
+  try {
+    const { data, error } = await supabase
+      .from('preferences')
+      .select('data')
+      .eq('id', 'global_header')
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    return data ? (data.data as HeaderSettings) : {
+      text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
+      fontSize: 14,
+      fontFamily: 'serif',
+      alignment: 'left',
+      isItalic: true
+    };
+  } catch (e) {
+    return {
+      text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
+      fontSize: 14,
+      fontFamily: 'serif',
+      alignment: 'left',
+      isItalic: true
+    };
+  }
+};
+
+export const saveHeaderSettings = async (settings: HeaderSettings) => {
+  try {
+    await supabase
+      .from('preferences')
+      .upsert({ id: 'global_header', data: settings });
+  } catch (e) {
+    console.error('Failed to save header settings:', e);
   }
 };

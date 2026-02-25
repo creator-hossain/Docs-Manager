@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Maximize2, MoveHorizontal, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
-import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem, FooterSettings } from '../types';
+import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem, FooterSettings, HeaderSettings } from '../types';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import DocumentPreview from './DocumentPreview';
@@ -13,9 +13,10 @@ interface ProInvoiceGeneratorProps {
   onSave: (doc: BusinessDocument) => void;
   onCancel: () => void;
   footerSettings?: FooterSettings;
+  headerSettings?: HeaderSettings;
 }
 
-const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, onSave, onCancel, footerSettings }) => {
+const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, onSave, onCancel, footerSettings, headerSettings }) => {
   const [assetPickerConfig, setAssetPickerConfig] = useState<{ open: boolean; target: 'logoUrl' | { type: 'itemImage'; index: number }; type: AssetType } | null>(null);
   
   // Initialize form data with initialData or defaults
@@ -258,24 +259,24 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <label className={labelClass}>Execution Date</label>
-                    <input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
+                    <input type="date" value={formData.date || ''} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Invoice Number</label>
-                    <input type="text" placeholder="PRO-XXXXX" value={formData.docNumber} onChange={(e) => setFormData({...formData, docNumber: e.target.value})} className={inputClass} />
+                    <input type="text" placeholder="PRO-XXXXX" value={formData.docNumber || ''} onChange={(e) => setFormData({...formData, docNumber: e.target.value})} className={inputClass} />
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Buyer's Identity</label>
-                  <input type="text" placeholder="Full Legal Name" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
+                  <input type="text" placeholder="Full Legal Name" value={formData.clientName || ''} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Contact Communication</label>
-                  <input type="text" placeholder="Mobile / Phone Number" value={formData.clientPhone} onChange={(e) => setFormData({...formData, clientPhone: e.target.value})} className={inputClass} />
+                  <input type="text" placeholder="Mobile / Phone Number" value={formData.clientPhone || ''} onChange={(e) => setFormData({...formData, clientPhone: e.target.value})} className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Registered Address</label>
-                  <textarea placeholder="Legal Physical Address" value={formData.clientAddress} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={`${inputClass} !py-3 min-h-[80px]`} rows={2} />
+                  <textarea placeholder="Legal Physical Address" value={formData.clientAddress || ''} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={`${inputClass} !py-3 min-h-[80px]`} rows={2} />
                 </div>
               </div>
             </div>
@@ -303,7 +304,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
                       <div className="flex-1 space-y-6">
                         <div>
                           <label className={labelClass}>Asset Description</label>
-                          <input type="text" placeholder="e.g. Premium Tissu Box" value={item.description} onChange={(e) => updateItem(idx, 'description', e.target.value)} className={inputClass} />
+                          <input type="text" placeholder="e.g. Premium Tissu Box" value={item.description || ''} onChange={(e) => updateItem(idx, 'description', e.target.value)} className={inputClass} />
                         </div>
                         
                         {!formData.hiddenFields?.includes('itemImageColumn') && (
@@ -331,7 +332,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
                         <div className="grid grid-cols-3 gap-6">
                           <div>
                             <label className={labelClass}>Units (Qty)</label>
-                            <input type="number" min="1" value={item.quantity} onChange={(e) => updateItem(idx, 'quantity', parseInt(e.target.value) || 1)} className={`${inputClass} !py-3.5 font-bold`} />
+                            <input type="number" min="1" value={item.quantity ?? 1} onChange={(e) => updateItem(idx, 'quantity', parseInt(e.target.value) || 1)} className={`${inputClass} !py-3.5 font-bold`} />
                           </div>
                           <div>
                             <label className={labelClass}>Unit Cost (TK)</label>
@@ -371,7 +372,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
                     <input 
                       type="number" 
                       placeholder="0.00" 
-                      value={formData.payments?.[0].amount || ''} 
+                      value={formData.payments?.[0].amount ?? ''} 
                       onChange={(e) => {
                         const newPayments = [...(formData.payments || [])];
                         newPayments[0] = { ...newPayments[0], amount: parseFloat(e.target.value) || 0 };
@@ -411,7 +412,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
             <span className="text-[11px] font-black uppercase tracking-[0.4em]">Standard A4 Format</span>
           </div>
           <div className="hover:scale-[1.01] transition-transform duration-700 ease-out origin-top">
-            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={footerSettings} />
+            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={footerSettings} headerSettings={headerSettings} />
           </div>
         </div>
       </div>

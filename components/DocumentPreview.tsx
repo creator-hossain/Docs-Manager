@@ -6,24 +6,42 @@ import {
   Phone, Smartphone, PhoneCall, Headset, 
   Globe, Link, ExternalLink, Monitor 
 } from 'lucide-react';
-import { BusinessDocument, DocumentType, FooterSettings } from '../types';
+import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings } from '../types';
 
 interface DocumentPreviewProps {
   document: BusinessDocument;
   containerRef?: React.RefObject<HTMLDivElement>;
   scale?: number;
   footerSettings?: FooterSettings;
+  headerSettings?: HeaderSettings;
 }
 
-const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRef, scale = 1, footerSettings }) => {
+const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRef, scale = 1, footerSettings, headerSettings }) => {
   const { 
     type, docNumber, date, clientName, clientAddress, clientPhone,
     clientDesignation, clientOffice, acName, logoUrl, logoSize = 220, logoPosition = 0,
     vehicleTitle, vehicleTitleSize = 16, vehicleTitleAlign = 'left', brand, model, yearModel, color, chassisNumber, engineNumber, auctionPoint, cc, fuel, transmission,
     vehiclePrice, priceInWords, payments, quantity, notes, hiddenFields = [],
     advancedPaidAmount = 0, bankPaymentAmount = 0, bankName = "",
-    productImageUrl, items = []
+    productImageUrl, items = [], pageSettings
   } = document;
+
+  const orientation = pageSettings?.orientation || 'portrait';
+  const pageSize = pageSettings?.pageSize || 'a4';
+
+  const getPageDimensions = () => {
+    const sizes = {
+      a4: { width: 210, height: 297 },
+      letter: { width: 215.9, height: 279.4 },
+      legal: { width: 215.9, height: 355.6 }
+    };
+    const base = sizes[pageSize as keyof typeof sizes] || sizes.a4;
+    return orientation === 'portrait' 
+      ? { width: `${base.width}mm`, height: `${base.height}mm` }
+      : { width: `${base.height}mm`, height: `${base.width}mm` };
+  };
+
+  const dimensions = getPageDimensions();
 
   const isHidden = (id: string) => hiddenFields.includes(id);
 
@@ -36,12 +54,12 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
   const commonA4Style: React.CSSProperties = {
     fontFamily: '"Times New Roman", Times, serif',
-    width: '210mm',
-    minHeight: '297mm',
+    width: dimensions.width,
+    minHeight: dimensions.height,
     padding: '0',
     transform: scale !== 1 ? `scale(${scale})` : 'none',
     transformOrigin: 'top center',
-    marginBottom: scale !== 1 ? `-${297 * (1 - scale)}mm` : '10px',
+    marginBottom: scale !== 1 ? `-${parseFloat(dimensions.height) * (1 - scale)}mm` : '10px',
     color: '#000000',
     position: 'relative',
     display: 'flex',
@@ -92,9 +110,44 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return <Icon className="w-3 h-3 text-red-600" />;
   };
 
+  const HeaderBar = () => {
+    const h = headerSettings || {
+      text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
+      fontSize: 14,
+      fontFamily: 'serif',
+      alignment: 'left',
+      isItalic: true
+    };
+
+    return (
+      <div className="w-full bg-[#e5e7eb] py-2 px-4 border-y border-gray-300 mb-6">
+        <div 
+          style={{ 
+            textAlign: h.alignment || 'left',
+            fontSize: `${h.fontSize || 14}px`,
+            fontFamily: h.fontFamily === 'serif' ? 'serif' : h.fontFamily === 'mono' ? 'monospace' : 'sans-serif',
+            fontStyle: h.isItalic ? 'italic' : 'normal',
+            color: '#4b5563',
+            fontWeight: '500'
+          }}
+        >
+          {h.text}
+        </div>
+      </div>
+    );
+  };
+
   const Footer = () => (
-    <div className="footer-container absolute bottom-[10mm] left-0 right-0 px-[15mm] text-center z-10 text-black">
-      <div className="h-px bg-red-600/30 w-full mb-3"></div>
+    <div 
+      className="footer-container absolute left-0 right-0 text-center z-10 text-black"
+      style={{ 
+        bottom: `${f.bottomOffset ?? 10}mm`, 
+        paddingLeft: `${f.horizontalPadding ?? 15}mm`, 
+        paddingRight: `${f.horizontalPadding ?? 15}mm`,
+        paddingTop: `${f.topPadding ?? 0}mm`
+      }}
+    >
+      <div className="h-px bg-red-600/30 w-full" style={{ marginBottom: `${f.lineSpacing ?? 3}mm` }}></div>
       <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold">
         <span className="flex items-center gap-1 text-black">
           {renderFooterIcon(f.addressIcon, MapPin)} {f.address}
@@ -135,9 +188,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
           </div>
-          <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[15px] w-full text-left text-black box-border">
-            Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
-          </div>
+          <HeaderBar />
           
           <div className="main-content px-[15mm] text-black flex-1 flex flex-col pb-[30mm]">
             <div className="flex justify-between items-baseline mb-6 border-b border-black pb-2 text-black">
@@ -261,9 +312,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
 
-          <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[20px] w-full text-left text-black z-10 box-border">
-            Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
-          </div>
+          <HeaderBar />
 
           <div className="main-content px-[15mm] text-black flex-1 relative z-10 pb-[30mm]">
             <div className="flex justify-between mb-8 text-[16px] leading-relaxed text-black">
@@ -347,9 +396,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
           </div>
-          <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[15px] w-full text-left text-black box-border">
-            Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
-          </div>
+          <HeaderBar />
           <div className="main-content px-[20mm] text-black flex-1 relative pb-[30mm]">
             <div className="text-center font-bold uppercase mt-[-10px] mb-[15px] text-[22px] text-black">BILL</div>
             <div className="mb-[25px] leading-[1.2] text-[17px] text-black">
@@ -438,9 +485,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
           </div>
-          <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[15px] w-full text-left text-black box-border">
-            Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
-          </div>
+          <HeaderBar />
           <div className="main-content px-[20mm] text-black">
             <div 
               className="quotation-heading font-bold uppercase mt-[10px] mb-[20px] text-black whitespace-pre-wrap leading-tight"
@@ -514,12 +559,12 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
         className="a4-page shadow-2xl relative bg-white !text-black" 
         style={{ 
           fontFamily: '"Segoe UI", Arial, sans-serif',
-          width: '210mm',
-          minHeight: '297mm',
+          width: dimensions.width,
+          minHeight: dimensions.height,
           padding: '0', 
           transform: scale !== 1 ? `scale(${scale})` : 'none',
           transformOrigin: 'top center',
-          marginBottom: scale !== 1 ? `-${297 * (1 - scale)}mm` : '10px',
+          marginBottom: scale !== 1 ? `-${parseFloat(dimensions.height) * (1 - scale)}mm` : '10px',
           color: '#000000',
           position: 'relative',
           backgroundColor: 'white'
@@ -531,9 +576,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
           </div>
-          <div className="grey-bar bg-[#d1d3d4] py-[4px] pl-[5mm] italic text-[14px] font-serif border-y border-gray-400 mb-[15px] w-full text-left text-black box-border">
-            Importer & All kinds of Brand new & Reconditioned Vehicles Supplier
-          </div>
+          <HeaderBar />
           <div className="px-[15mm] pt-[5mm] text-black">
             <div className="border-b border-black mb-4 flex justify-between items-baseline text-black">
               <h1 className="m-0 text-[32px] font-bold text-black">INVOICE</h1>

@@ -30,8 +30,16 @@ import {
   ExternalLink,
   Monitor
 } from 'lucide-react';
-import { Asset, AssetType, FooterSettings } from '../types';
-import { loadAssets, saveAsset, deleteAsset, loadFooterSettings, saveFooterSettings } from '../utils/storage';
+import { Asset, AssetType, FooterSettings, HeaderSettings } from '../types';
+import { 
+  loadAssets, 
+  saveAsset, 
+  deleteAsset, 
+  loadFooterSettings, 
+  saveFooterSettings,
+  loadHeaderSettings,
+  saveHeaderSettings
+} from '../utils/storage';
 
 interface AssetLibraryProps {
   onClose?: () => void;
@@ -39,9 +47,10 @@ interface AssetLibraryProps {
   selectionMode?: boolean;
   filterType?: AssetType;
   onFooterUpdate?: () => void;
+  onHeaderUpdate?: () => void;
 }
 
-const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectionMode = false, filterType, onFooterUpdate }) => {
+const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectionMode = false, filterType, onFooterUpdate, onHeaderUpdate }) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<AssetType | 'ALL' | 'FOOTER'>(filterType || 'ALL');
@@ -56,9 +65,21 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
     phone2: '',
     phone2Icon: 'Phone',
     website: '',
-    websiteIcon: 'Globe'
+    websiteIcon: 'Globe',
+    bottomOffset: 10,
+    topPadding: 0,
+    horizontalPadding: 15,
+    lineSpacing: 3
   });
   const [isSavingFooter, setIsSavingFooter] = useState(false);
+  const [headerSettings, setHeaderSettings] = useState<HeaderSettings>({
+    text: '',
+    fontSize: 14,
+    fontFamily: 'serif',
+    alignment: 'left',
+    isItalic: true
+  });
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -74,6 +95,12 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
       setFooterSettings(settings);
     };
     fetchFooter();
+
+    const fetchHeader = async () => {
+      const settings = await loadHeaderSettings();
+      setHeaderSettings(settings);
+    };
+    fetchHeader();
   }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +147,14 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
     setIsSavingFooter(false);
     if (onFooterUpdate) onFooterUpdate();
     alert('Global Footer settings secured successfully.');
+  };
+
+  const handleSaveHeader = async () => {
+    setIsSavingHeader(true);
+    await saveHeaderSettings(headerSettings);
+    setIsSavingHeader(false);
+    if (onHeaderUpdate) onHeaderUpdate();
+    alert('Global Header settings secured successfully.');
   };
 
   const filteredAssets = assets.filter(a => activeTab === 'ALL' || a.type === activeTab);
@@ -249,7 +284,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
-                          value={footerSettings.address} 
+                          value={footerSettings.address || ''} 
                           onChange={(e) => setFooterSettings({...footerSettings, address: e.target.value})} 
                           className={`${inputClass} !pl-12`} 
                         />
@@ -266,7 +301,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
-                          value={footerSettings.email} 
+                          value={footerSettings.email || ''} 
                           onChange={(e) => setFooterSettings({...footerSettings, email: e.target.value})} 
                           className={`${inputClass} !pl-12`} 
                         />
@@ -283,7 +318,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
-                          value={footerSettings.phone1} 
+                          value={footerSettings.phone1 || ''} 
                           onChange={(e) => setFooterSettings({...footerSettings, phone1: e.target.value})} 
                           className={`${inputClass} !pl-12`} 
                         />
@@ -300,7 +335,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
-                          value={footerSettings.phone2} 
+                          value={footerSettings.phone2 || ''} 
                           onChange={(e) => setFooterSettings({...footerSettings, phone2: e.target.value})} 
                           className={`${inputClass} !pl-12`} 
                         />
@@ -317,7 +352,7 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         {React.createElement(getIconComponent(footerSettings.websiteIcon, Globe), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
                         <input 
                           type="text" 
-                          value={footerSettings.website} 
+                          value={footerSettings.website || ''} 
                           onChange={(e) => setFooterSettings({...footerSettings, website: e.target.value})} 
                           className={`${inputClass} !pl-12`} 
                         />
@@ -327,6 +362,80 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                         options={ICON_OPTIONS.website} 
                         onSelect={(name) => setFooterSettings({...footerSettings, websiteIcon: name})} 
                       />
+                    </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-white/5 space-y-8">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                        <Layers className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black uppercase tracking-widest">Layout & Spacing</h3>
+                        <p className="text-[10px] font-bold text-gray-600 uppercase">Fine-tune footer positioning</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Bottom Offset (mm)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.bottomOffset}mm</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="50" 
+                          value={footerSettings.bottomOffset ?? 10} 
+                          onChange={(e) => setFooterSettings({...footerSettings, bottomOffset: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
+
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Top Padding (mm)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.topPadding}mm</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="30" 
+                          value={footerSettings.topPadding ?? 0} 
+                          onChange={(e) => setFooterSettings({...footerSettings, topPadding: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
+
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Horizontal Padding (mm)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.horizontalPadding}mm</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="50" 
+                          value={footerSettings.horizontalPadding ?? 15} 
+                          onChange={(e) => setFooterSettings({...footerSettings, horizontalPadding: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
+
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Line Spacing (mm)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.lineSpacing}mm</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="30" 
+                          value={footerSettings.lineSpacing ?? 3} 
+                          onChange={(e) => setFooterSettings({...footerSettings, lineSpacing: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -340,16 +449,140 @@ const AssetLibrary: React.FC<AssetLibraryProps> = ({ onClose, onSelect, selectio
                   </button>
                </div>
 
+               {/* Header Content Editor */}
+               <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                      <Type className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-widest">Header Content Editor</h3>
+                      <p className="text-[10px] font-bold text-gray-600 uppercase">Top Bar Customization</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className={labelClass}>Header Text Content</label>
+                      <input 
+                        type="text" 
+                        value={headerSettings.text || ''} 
+                        onChange={(e) => setHeaderSettings({...headerSettings, text: e.target.value})} 
+                        className={inputClass} 
+                        placeholder="e.g. Importer & All kinds of Brand new & Reconditioned Vehicles Supplier"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className={labelClass}>Font Family</label>
+                        <select 
+                          value={headerSettings.fontFamily || 'serif'} 
+                          onChange={(e) => setHeaderSettings({...headerSettings, fontFamily: e.target.value})}
+                          className={inputClass}
+                        >
+                          <option value="serif">Serif (Classic)</option>
+                          <option value="sans">Sans-Serif (Modern)</option>
+                          <option value="mono">Monospace (Technical)</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className={labelClass}>Text Alignment</label>
+                        <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
+                          {(['left', 'center', 'right'] as const).map((align) => (
+                            <button
+                              key={align}
+                              type="button"
+                              onClick={() => setHeaderSettings({ ...headerSettings, alignment: align })}
+                              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${headerSettings.alignment === align ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                            >
+                              {align}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Font Size (px)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{headerSettings.fontSize}px</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="8" 
+                          max="32" 
+                          value={headerSettings.fontSize ?? 14} 
+                          onChange={(e) => setHeaderSettings({...headerSettings, fontSize: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
+                      <div className="flex items-center justify-between bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <span className={labelClass}>Italic Style</span>
+                        <button 
+                          onClick={() => setHeaderSettings({...headerSettings, isItalic: !headerSettings.isItalic})}
+                          className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${headerSettings.isItalic ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'bg-white/5 text-gray-500 border border-white/10'}`}
+                        >
+                          {headerSettings.isItalic ? 'Enabled' : 'Disabled'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={handleSaveHeader}
+                    disabled={isSavingHeader}
+                    className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
+                  >
+                    {isSavingHeader ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                    Save Header Settings
+                  </button>
+               </div>
+
+               {/* Header Specific Preview */}
+               <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Header Preview</span>
+                    <div className="h-px flex-1 bg-white/5"></div>
+                  </div>
+                  <div className="bg-white rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group p-10 flex items-center justify-center min-h-[150px]">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-red-700/5 blur-3xl rounded-full"></div>
+                    <div className="w-full bg-[#e5e7eb] py-2 px-4 border-y border-gray-300">
+                      <div 
+                        style={{ 
+                          textAlign: headerSettings.alignment || 'left',
+                          fontSize: `${headerSettings.fontSize || 14}px`,
+                          fontFamily: headerSettings.fontFamily === 'serif' ? 'serif' : headerSettings.fontFamily === 'mono' ? 'monospace' : 'sans-serif',
+                          fontStyle: headerSettings.isItalic ? 'italic' : 'normal',
+                          color: '#4b5563',
+                          fontWeight: '500'
+                        }}
+                      >
+                        {headerSettings.text || 'Header Text Preview'}
+                      </div>
+                    </div>
+                  </div>
+               </div>
+
                {/* Footer Specific Preview */}
                <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Footer Preview</span>
                     <div className="h-px flex-1 bg-white/5"></div>
                   </div>
-                  <div className="bg-white p-12 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group min-h-[120px] flex flex-col justify-center">
+                  <div className="bg-white rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group h-[250px]">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-red-700/5 blur-3xl rounded-full"></div>
-                    <div className="footer-render relative z-10">
-                      <div className="h-px bg-red-600/30 w-full mb-3"></div>
+                    <div 
+                      className="footer-render absolute left-0 right-0 z-10" 
+                      style={{ 
+                        bottom: `${footerSettings.bottomOffset ?? 10}mm`,
+                        paddingLeft: `${footerSettings.horizontalPadding ?? 15}mm`,
+                        paddingRight: `${footerSettings.horizontalPadding ?? 15}mm`,
+                        paddingTop: `${footerSettings.topPadding ?? 0}mm`
+                      }}
+                    >
+                      <div className="h-px bg-red-600/30 w-full" style={{ marginBottom: `${footerSettings.lineSpacing ?? 3}mm` }}></div>
                       <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold flex-wrap">
                         <span className="flex items-center gap-1 text-black">
                           <span className="text-red-600">

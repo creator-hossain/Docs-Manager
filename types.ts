@@ -49,6 +49,23 @@ export interface FooterSettings {
   phone2Icon?: string;
   website: string;
   websiteIcon?: string;
+  bottomOffset?: number;
+  topPadding?: number;
+  horizontalPadding?: number;
+  lineSpacing?: number;
+}
+
+export interface HeaderSettings {
+  text: string;
+  fontSize: number;
+  fontFamily: string;
+  alignment: 'left' | 'center' | 'right';
+  isItalic: boolean;
+}
+
+export interface PageSettings {
+  orientation: 'portrait' | 'landscape';
+  pageSize: 'a4' | 'letter' | 'legal';
 }
 
 export interface BusinessDocument {
@@ -95,4 +112,5 @@ export interface BusinessDocument {
   hiddenFields?: string[];
   productImageUrl?: string;
   items?: InvoiceItem[];
+  pageSettings?: PageSettings;
 }

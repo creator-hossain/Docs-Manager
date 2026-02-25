@@ -25,9 +25,9 @@ import {
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { BusinessDocument, DocumentType, FooterSettings } from './types.ts';
+import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings } from './types.ts';
 import { DOC_TYPES_CONFIG } from './constants.tsx';
-import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings } from './utils/storage.ts';
+import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadHeaderSettings } from './utils/storage.ts';
 import DocumentForm from './components/DocumentForm.tsx';
 import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
@@ -62,12 +62,22 @@ const App: React.FC = () => {
   const [showProGenerator, setShowProGenerator] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [globalFooter, setGlobalFooter] = useState<FooterSettings | undefined>(undefined);
+  const [globalHeader, setGlobalHeader] = useState<HeaderSettings | undefined>(undefined);
+  const [pdfSettings, setPdfSettings] = useState<{ orientation: 'portrait' | 'landscape', pageSize: 'a4' | 'letter' | 'legal' }>({
+    orientation: 'portrait',
+    pageSize: 'a4'
+  });
 
   const previewRef = useRef<HTMLDivElement>(null);
 
   const fetchFooter = async () => {
     const settings = await loadFooterSettings();
     setGlobalFooter(settings);
+  };
+
+  const fetchHeader = async () => {
+    const settings = await loadHeaderSettings();
+    setGlobalHeader(settings);
   };
 
   useEffect(() => {
@@ -77,6 +87,7 @@ const App: React.FC = () => {
         const docs = await loadDocuments();
         setDocuments(docs || []);
         await fetchFooter();
+        await fetchHeader();
       } catch (err) {
         console.error("Initialization failed:", err);
       } finally {
@@ -128,8 +139,21 @@ const App: React.FC = () => {
     const element = previewRef.current;
     const canvas = await html2canvas(element, { scale: 3, useCORS: true });
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    
+    const orientation = pdfSettings.orientation === 'portrait' ? 'p' : 'l';
+    const pdf = new jsPDF(orientation, 'mm', pdfSettings.pageSize);
+    
+    // Get dimensions based on orientation and page size
+    const sizes = {
+      a4: { width: 210, height: 297 },
+      letter: { width: 215.9, height: 279.4 },
+      legal: { width: 215.9, height: 355.6 }
+    };
+    const base = sizes[pdfSettings.pageSize] || sizes.a4;
+    const width = pdfSettings.orientation === 'portrait' ? base.width : base.height;
+    const height = pdfSettings.orientation === 'portrait' ? base.height : base.width;
+
+    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
     pdf.save(`${targetDoc.docNumber}_${targetDoc.clientName}.pdf`);
   };
 
@@ -449,7 +473,7 @@ const App: React.FC = () => {
 
       {viewMode === 'assets' && (
         <div className="pt-32 px-10 min-h-screen pb-20">
-          <AssetLibrary onFooterUpdate={fetchFooter} />
+          <AssetLibrary onFooterUpdate={fetchFooter} onHeaderUpdate={fetchHeader} />
         </div>
       )}
 
@@ -581,6 +605,7 @@ const App: React.FC = () => {
                   onSave={handleSave} 
                   onCancel={() => setEditingDoc(null)} 
                   footerSettings={globalFooter}
+                  headerSettings={globalHeader}
                 />
               ) : (
                 <DocumentForm 
@@ -588,6 +613,7 @@ const App: React.FC = () => {
                   onSave={handleSave} 
                   onCancel={() => setEditingDoc(null)}
                   onChange={setDraftDoc}
+                  headerSettings={globalHeader}
                 />
               )}
             </div>
@@ -598,7 +624,7 @@ const App: React.FC = () => {
                   <span className="text-[11px] font-bold">Standard A4 Format</span>
                 </div>
                 <div className="hover:scale-[1.02] transition-transform duration-700 ease-out">
-                  {draftDoc && <DocumentPreview document={draftDoc as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={globalFooter} />}
+                  {draftDoc && <DocumentPreview document={draftDoc as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={globalFooter} headerSettings={globalHeader} />}
                 </div>
               </div>
             )}
@@ -611,6 +637,7 @@ const App: React.FC = () => {
           onSave={handleSave} 
           onCancel={() => setShowProGenerator(false)} 
           footerSettings={globalFooter}
+          headerSettings={globalHeader}
         />
       )}
 
@@ -624,7 +651,35 @@ const App: React.FC = () => {
                  <p className="text-[11px] font-black text-red-700 uppercase tracking-[0.2em]">{previewingDoc.clientName}</p>
                </div>
             </div>
-            <div className="flex gap-4">
+
+            <div className="flex items-center gap-8">
+              {/* PDF Settings Panel */}
+              <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10">
+                <div className="flex bg-black/40 rounded-xl p-1 gap-1">
+                  {(['portrait', 'landscape'] as const).map((o) => (
+                    <button
+                      key={o}
+                      onClick={() => setPdfSettings(prev => ({ ...prev, orientation: o }))}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.orientation === o ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
+                    >
+                      {o}
+                    </button>
+                  ))}
+                </div>
+                <div className="h-6 w-px bg-white/10"></div>
+                <div className="flex bg-black/40 rounded-xl p-1 gap-1">
+                  {(['a4', 'letter', 'legal'] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setPdfSettings(prev => ({ ...prev, pageSize: s }))}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.pageSize === s ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button 
                 onClick={() => handleDownloadPDF(previewingDoc)}
                 className="bg-red-700 text-white px-12 py-5 rounded-[2rem] font-black flex items-center gap-3 shadow-2xl shadow-red-700/20 hover:bg-red-800 transition-all active:scale-95 uppercase tracking-widest text-xs"
@@ -634,7 +689,12 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto py-20 px-4 w-full flex justify-center scrollbar-hide">
-            <DocumentPreview document={previewingDoc} containerRef={previewRef} footerSettings={globalFooter} />
+            <DocumentPreview 
+              document={{ ...previewingDoc, pageSettings: pdfSettings }} 
+              containerRef={previewRef} 
+              footerSettings={globalFooter} 
+              headerSettings={globalHeader}
+            />
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, X, Car, CreditCard, User, Upload, Type, MoveHorizontal, Maximize2, Landmark, FileText, Truck, Receipt, FileCheck, Layers, Gauge, Image as ImageIcon, Database, Edit3, Calendar, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
-import { BusinessDocument, DocumentType, PaymentEntry, Asset, AssetType } from '../types';
+import { BusinessDocument, DocumentType, PaymentEntry, Asset, AssetType, HeaderSettings } from '../types';
 import { DOC_TYPES_CONFIG } from '../constants';
 import AssetLibrary from './AssetLibrary';
 import { getTypePreferences, saveTypePreferences } from '../utils/storage';
@@ -11,9 +11,10 @@ interface DocumentFormProps {
   onSave: (doc: BusinessDocument) => void;
   onCancel: () => void;
   onChange?: (doc: Partial<BusinessDocument>) => void;
+  headerSettings?: HeaderSettings;
 }
 
-const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCancel, onChange }) => {
+const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCancel, onChange, headerSettings }) => {
   const [showAssetPicker, setShowAssetPicker] = useState<{ open: boolean; target: 'logoUrl' | 'productImageUrl'; type: AssetType } | null>(null);
   const [formData, setFormData] = useState<Partial<BusinessDocument>>(() => ({
     id: Math.random().toString(36).substr(2, 9),
@@ -271,21 +272,21 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
               <div className="space-y-6">
                 <div>
                   <label className={labelClass}>Recipient Full Name</label>
-                  <input type="text" placeholder="Authorized Recipient" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
+                  <input type="text" placeholder="Authorized Recipient" value={formData.clientName || ''} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className={labelClass}>Contact Mobile</label>
-                    <input type="text" placeholder="+880..." value={formData.clientPhone} onChange={(e) => setFormData({...formData, clientPhone: e.target.value})} className={inputClass} />
+                    <input type="text" placeholder="+880..." value={formData.clientPhone || ''} onChange={(e) => setFormData({...formData, clientPhone: e.target.value})} className={inputClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Dispatch Date</label>
-                    <input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
+                    <input type="date" value={formData.date || ''} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
                   </div>
                 </div>
                 <div>
                   <label className={labelClass}>Drop-off Location</label>
-                  <textarea placeholder="Physical Address" rows={2} value={formData.clientAddress} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
+                  <textarea placeholder="Physical Address" rows={2} value={formData.clientAddress || ''} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
                 </div>
               </div>
             </div>
@@ -331,7 +332,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                 <label className={labelClass}>Vehicle Description (Paragraph)</label>
                 <textarea 
                   placeholder="e.g. TOYOTA HIACE GL BUS..." 
-                  value={formData.vehicleTitle} 
+                  value={formData.vehicleTitle || ''} 
                   onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} 
                   className={`${inputClass} min-h-[120px] resize-y`}
                   style={{ textAlign: formData.vehicleTitleAlign }}
@@ -370,11 +371,11 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-white/5 mb-6">
                     <div>
                       <label className={labelClass}>DATE</label>
-                      <input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
+                      <input type="date" value={formData.date || ''} onChange={(e) => setFormData({...formData, date: e.target.value})} className={inputClass} />
                     </div>
                     <div>
                       <label className={labelClass}>Invoice no.</label>
-                      <input type="text" placeholder="INV-XXXXXX" value={formData.docNumber} onChange={(e) => setFormData({...formData, docNumber: e.target.value})} className={inputClass} />
+                      <input type="text" placeholder="INV-XXXXXX" value={formData.docNumber || ''} onChange={(e) => setFormData({...formData, docNumber: e.target.value})} className={inputClass} />
                     </div>
                   </div>
                 )}
@@ -385,7 +386,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       <label className={labelClass}>Quotation Date</label>
                       <div className="relative">
                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                        <input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className={`${inputClass} !pl-12`} />
+                        <input type="date" value={formData.date || ''} onChange={(e) => setFormData({...formData, date: e.target.value})} className={`${inputClass} !pl-12`} />
                       </div>
                     </div>
                     
@@ -401,7 +402,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                     </div>
                     <div>
                       <label className={labelClass}>Registered Address</label>
-                      <textarea placeholder="Legal Physical Address" rows={2} value={formData.clientAddress} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
+                      <textarea placeholder="Legal Physical Address" rows={2} value={formData.clientAddress || ''} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
                     </div>
                     <div>
                       <label className={labelClass}>Account / Bank Reference (A/C)</label>
@@ -429,7 +430,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className={labelClass}>Buyer's Identity</label>
-                      <input type="text" placeholder="Full Name" value={formData.clientName} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
+                      <input type="text" placeholder="Full Name" value={formData.clientName || ''} onChange={(e) => setFormData({...formData, clientName: e.target.value})} className={inputClass} />
                     </div>
                     <div>
                       <label className={labelClass}>Contact Communication</label>
@@ -498,7 +499,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       style={{ textAlign: formData.vehicleTitleAlign }}
                     />
                   ) : (
-                    <input type="text" placeholder="Full vehicle title" value={formData.vehicleTitle} onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} className={inputClass} />
+                    <input type="text" placeholder="Full vehicle title" value={formData.vehicleTitle || ''} onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} className={inputClass} />
                   )}
                 </div>
 
@@ -607,7 +608,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                         <div key={pay.id} className="flex gap-4 items-center p-5 bg-black/30 rounded-3xl border border-white/5 animate-in slide-in-from-right-4">
                           <div className="w-[160px]">
                             <label className={labelClass}>Execution Date</label>
-                            <input type="date" value={pay.date} onChange={(e) => updatePayment(pay.id, 'date', e.target.value)} className={`${inputClass} !py-3`} />
+                            <input type="date" value={pay.date || ''} onChange={(e) => updatePayment(pay.id, 'date', e.target.value)} className={`${inputClass} !py-3`} />
                           </div>
                           <div className="w-[140px]">
                             <label className={labelClass}>Amount (TK)</label>
@@ -615,7 +616,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                           </div>
                           <div className="flex-1">
                             <label className={labelClass}>Payment Instrument / Note</label>
-                            <input type="text" placeholder="CASH / BKASH / CHECK" value={pay.note} onChange={(e) => updatePayment(pay.id, 'note', e.target.value)} className={`${inputClass} !py-3 uppercase`} />
+                            <input type="text" placeholder="CASH / BKASH / CHECK" value={pay.note || ''} onChange={(e) => updatePayment(pay.id, 'note', e.target.value)} className={`${inputClass} !py-3 uppercase`} />
                           </div>
                           <button type="button" onClick={() => removePayment(pay.id)} className="w-12 h-12 bg-white/5 text-gray-500 rounded-2xl hover:text-white hover:bg-red-700 transition-all mt-6 border border-white/5 active:scale-90 flex items-center justify-center">
                             <Trash2 className="w-5 h-5" />
@@ -631,7 +632,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                          <label className={labelClass}>Advance Paid By Customer (TK)</label>
                          <input 
                            type="number" 
-                           value={formData.advancedPaidAmount} 
+                           value={formData.advancedPaidAmount ?? 0} 
                            onChange={(e) => {
                              const adv = parseFloat(e.target.value) || 0;
                              const net = formData.vehiclePrice || 0;
@@ -646,13 +647,13 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                        </div>
                        <div className="bg-black/20 p-5 rounded-2xl border border-white/5">
                          <label className={labelClass}>Paid by Bank (Amount)</label>
-                         <input type="number" value={formData.bankPaymentAmount} onChange={(e) => setFormData({...formData, bankPaymentAmount: parseFloat(e.target.value) || 0})} className={inputClass} />
+                         <input type="number" value={formData.bankPaymentAmount ?? 0} onChange={(e) => setFormData({...formData, bankPaymentAmount: parseFloat(e.target.value) || 0})} className={inputClass} />
                        </div>
                      </div>
                      <div className="space-y-6">
                        <div className="bg-black/20 p-5 rounded-2xl border border-white/5">
                          <label className={labelClass}>Bank Name</label>
-                         <input type="text" placeholder="e.g. City Bank PLC" value={formData.bankName} onChange={(e) => setFormData({...formData, bankName: e.target.value})} className={inputClass} />
+                         <input type="text" placeholder="e.g. City Bank PLC" value={formData.bankName || ''} onChange={(e) => setFormData({...formData, bankName: e.target.value})} className={inputClass} />
                        </div>
                        <div className="bg-black/20 p-5 rounded-2xl border border-white/5">
                          <label className={labelClass}>Unit</label>
