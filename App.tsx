@@ -25,20 +25,14 @@ import {
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings } from './types.ts';
+import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings, HeroSettings } from './types.ts';
 import { DOC_TYPES_CONFIG } from './constants.tsx';
-import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadHeaderSettings } from './utils/storage.ts';
+import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadHeaderSettings, loadHeroSettings } from './utils/storage.ts';
 import DocumentForm from './components/DocumentForm.tsx';
 import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
 import AssetLibrary from './components/AssetLibrary.tsx';
 import GlobalSettings from './components/GlobalSettings.tsx';
-
-const BANNERS = [
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
-];
 
 const RUNNING_TEXTS = [
   "Welcome to Garir Dokan Pro - Your Ultimate Automotive Solution",
@@ -65,6 +59,15 @@ const App: React.FC = () => {
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [globalFooter, setGlobalFooter] = useState<FooterSettings | undefined>(undefined);
   const [globalHeader, setGlobalHeader] = useState<HeaderSettings | undefined>(undefined);
+  const [heroSettings, setHeroSettings] = useState<HeroSettings>({
+    selectedImages: [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
+      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=2000",
+      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
+    ],
+    transitionEffect: 'fade',
+    interval: 5000
+  });
   const [pdfSettings, setPdfSettings] = useState<{ orientation: 'portrait' | 'landscape', pageSize: 'a4' | 'letter' | 'legal' }>({
     orientation: 'portrait',
     pageSize: 'a4'
@@ -82,6 +85,11 @@ const App: React.FC = () => {
     setGlobalHeader(settings);
   };
 
+  const fetchHero = async () => {
+    const settings = await loadHeroSettings();
+    setHeroSettings(settings);
+  };
+
   useEffect(() => {
     const initData = async () => {
       setIsLoading(true);
@@ -90,6 +98,7 @@ const App: React.FC = () => {
         setDocuments(docs || []);
         await fetchFooter();
         await fetchHeader();
+        await fetchHero();
       } catch (err) {
         console.error("Initialization failed:", err);
       } finally {
@@ -98,19 +107,22 @@ const App: React.FC = () => {
     };
     
     initData();
-    
-    const bannerInterval = setInterval(() => {
-      setCurrentBanner(prev => (prev + 1) % BANNERS.length);
-    }, 5000);
+  }, []);
 
+  useEffect(() => {
+    const bannerInterval = setInterval(() => {
+      setCurrentBanner(prev => (prev + 1) % heroSettings.selectedImages.length);
+    }, heroSettings.interval);
+
+    return () => clearInterval(bannerInterval);
+  }, [heroSettings.selectedImages.length, heroSettings.interval]);
+
+  useEffect(() => {
     const textInterval = setInterval(() => {
       setCurrentTextIndex(prev => (prev + 1) % RUNNING_TEXTS.length);
     }, 3000);
 
-    return () => {
-      clearInterval(bannerInterval);
-      clearInterval(textInterval);
-    };
+    return () => clearInterval(textInterval);
   }, []);
 
   const handleSave = async (doc: BusinessDocument) => {
@@ -218,6 +230,7 @@ const App: React.FC = () => {
           onClose={() => setShowGlobalSettings(false)}
           onFooterUpdate={fetchFooter}
           onHeaderUpdate={fetchHeader}
+          onHeroUpdate={fetchHero}
         />
       )}
 
@@ -225,17 +238,30 @@ const App: React.FC = () => {
         <div className="flex flex-col overflow-x-hidden">
           {/* Hero Banner Section */}
           <section className="relative h-[90vh] overflow-hidden">
-            {BANNERS.map((banner, idx) => (
-              <div 
-                key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentBanner ? 'opacity-100' : 'opacity-0'}`}
-                style={{
-                  backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
-              />
-            ))}
+            {heroSettings.selectedImages.map((banner, idx) => {
+              const isActive = idx === currentBanner;
+              let transitionClass = "";
+              
+              if (heroSettings.transitionEffect === 'fade') {
+                transitionClass = `transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0'}`;
+              } else if (heroSettings.transitionEffect === 'slide') {
+                transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`;
+              } else if (heroSettings.transitionEffect === 'zoom') {
+                transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`;
+              }
+
+              return (
+                <div 
+                  key={idx}
+                  className={`absolute inset-0 ${transitionClass}`}
+                  style={{
+                    backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                />
+              );
+            })}
 
             <div className="absolute left-[3%] top-[65%] -translate-y-1/2 z-10">
               <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-12 rounded-[3.5rem] w-[580px] shadow-2xl relative overflow-hidden group">

@@ -22,20 +22,42 @@ import {
   Headset,
   Link,
   ExternalLink,
-  Monitor
+  Monitor,
+  Zap,
+  Image as ImageIcon,
+  CheckCircle2
 } from 'lucide-react';
-import { FooterSettings, HeaderSettings } from '../types';
+import { FooterSettings, HeaderSettings, HeroSettings } from '../types';
 import { 
   loadFooterSettings, 
   saveFooterSettings,
-  loadHeaderSettings,
-  saveHeaderSettings
+  loadHeaderSettings, 
+  saveHeaderSettings,
+  loadHeroSettings,
+  saveHeroSettings
 } from '../utils/storage';
+
+const HERO_IMAGE_POOL = [
+  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1525609004556-c46c7d6cf048?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1493238555826-397b0d3f679a?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&q=80&w=2000",
+  "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=2000"
+];
 
 interface GlobalSettingsProps {
   onClose: () => void;
   onFooterUpdate?: () => void;
   onHeaderUpdate?: () => void;
+  onHeroUpdate?: () => void;
 }
 
 const ICON_OPTIONS = {
@@ -45,8 +67,8 @@ const ICON_OPTIONS = {
   website: ['Globe', 'Link', 'ExternalLink', 'Monitor']
 };
 
-const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate, onHeaderUpdate }) => {
-  const [activeTab, setActiveTab] = useState<'HEADER' | 'FOOTER'>('HEADER');
+const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate, onHeaderUpdate, onHeroUpdate }) => {
+  const [activeTab, setActiveTab] = useState<'HEADER' | 'FOOTER' | 'HERO'>('HEADER');
   const [footerSettings, setFooterSettings] = useState<FooterSettings>({
     address: '',
     addressIcon: 'MapPin',
@@ -72,6 +94,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     isItalic: true
   });
   const [isSavingHeader, setIsSavingHeader] = useState(false);
+  const [heroSettings, setHeroSettings] = useState<HeroSettings>({
+    selectedImages: [],
+    transitionEffect: 'fade',
+    interval: 5000
+  });
+  const [isSavingHero, setIsSavingHero] = useState(false);
 
   useEffect(() => {
     const fetchFooter = async () => {
@@ -85,6 +113,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
       setHeaderSettings(settings);
     };
     fetchHeader();
+
+    const fetchHero = async () => {
+      const settings = await loadHeroSettings();
+      setHeroSettings(settings);
+    };
+    fetchHero();
   }, []);
 
   const handleSaveFooter = async () => {
@@ -101,6 +135,18 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     setIsSavingHeader(false);
     if (onHeaderUpdate) onHeaderUpdate();
     alert('Global Header settings secured successfully.');
+  };
+
+  const handleSaveHero = async () => {
+    if (heroSettings.selectedImages.length === 0) {
+      alert('Please select at least one image for the hero banner.');
+      return;
+    }
+    setIsSavingHero(true);
+    await saveHeroSettings(heroSettings);
+    setIsSavingHero(false);
+    if (onHeroUpdate) onHeroUpdate();
+    alert('Hero Banner settings secured successfully.');
   };
 
   const getIconComponent = (name: string | undefined, fallback: any) => {
@@ -180,6 +226,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
               className={`w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'FOOTER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
             >
               GLOBAL FOOTER
+            </button>
+            <button
+              onClick={() => setActiveTab('HERO')}
+              className={`w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'HERO' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+            >
+              HERO BANNER
             </button>
           </div>
 
@@ -421,7 +473,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                     </div>
                  </div>
               </div>
-            ) : (
+            ) : activeTab === 'HEADER' ? (
               <div className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
                  {/* Header Content Editor */}
                  <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
@@ -538,6 +590,120 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                       </div>
                     </div>
                  </div>
+              </div>
+            ) : (
+              <div className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+                <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                      <ImageIcon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-widest">Hero Banner Settings</h3>
+                      <p className="text-[10px] font-bold text-gray-600 uppercase">Website Background Control</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className={labelClass}>Select Banner Images</label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        {HERO_IMAGE_POOL.map((url, idx) => {
+                          const isSelected = heroSettings.selectedImages.includes(url);
+                          return (
+                            <div 
+                              key={idx} 
+                              onClick={() => {
+                                if (isSelected) {
+                                  setHeroSettings({
+                                    ...heroSettings,
+                                    selectedImages: heroSettings.selectedImages.filter(img => img !== url)
+                                  });
+                                } else {
+                                  setHeroSettings({
+                                    ...heroSettings,
+                                    selectedImages: [...heroSettings.selectedImages, url]
+                                  });
+                                }
+                              }}
+                              className={`relative aspect-video rounded-2xl overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-red-700 scale-95 shadow-xl shadow-red-700/20' : 'border-transparent hover:border-white/20'}`}
+                            >
+                              <img src={url} alt={`Car ${idx}`} className="w-full h-full object-cover" />
+                              {isSelected && (
+                                <div className="absolute inset-0 bg-red-700/20 flex items-center justify-center">
+                                  <CheckCircle2 className="w-8 h-8 text-white" />
+                                </div>
+                              )}
+                              <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-[8px] font-black text-white uppercase">
+                                Image {idx + 1}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <label className={labelClass}>Transition Effect</label>
+                        <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
+                          {(['fade', 'slide', 'zoom'] as const).map((effect) => (
+                            <button
+                              key={effect}
+                              type="button"
+                              onClick={() => setHeroSettings({ ...heroSettings, transitionEffect: effect })}
+                              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${heroSettings.transitionEffect === effect ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                            >
+                              {effect}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center">
+                          <span className={labelClass}>Auto-change Interval (ms)</span>
+                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{heroSettings.interval}ms</span>
+                        </div>
+                        <input 
+                          type="range" 
+                          min="2000" 
+                          max="15000" 
+                          step="500"
+                          value={heroSettings.interval} 
+                          onChange={(e) => setHeroSettings({...heroSettings, interval: parseInt(e.target.value)})} 
+                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={handleSaveHero}
+                    disabled={isSavingHero}
+                    className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
+                  >
+                    {isSavingHero ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                    Save Hero Settings
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Selected Images Summary</span>
+                    <div className="h-px flex-1 bg-white/5"></div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {heroSettings.selectedImages.map((url, i) => (
+                      <div key={i} className="w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                        <img src={url} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {heroSettings.selectedImages.length === 0 && (
+                      <p className="text-[10px] font-bold text-gray-700 uppercase italic">No images selected</p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>

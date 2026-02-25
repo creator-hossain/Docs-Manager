@@ -1,5 +1,5 @@
 
-import { BusinessDocument, Asset, DocumentType, FooterSettings, HeaderSettings } from '../types.ts';
+import { BusinessDocument, Asset, DocumentType, FooterSettings, HeaderSettings, HeroSettings } from '../types.ts';
 import { supabase } from './supabase.ts';
 
 export interface LogoSettings {
@@ -229,5 +229,48 @@ export const saveHeaderSettings = async (settings: HeaderSettings) => {
       .upsert({ id: 'global_header', data: settings });
   } catch (e) {
     console.error('Failed to save header settings:', e);
+  }
+};
+
+// Hero Banner Settings Utils
+export const loadHeroSettings = async (): Promise<HeroSettings> => {
+  try {
+    const { data, error } = await supabase
+      .from('preferences')
+      .select('data')
+      .eq('id', 'hero_banner')
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    return data ? (data.data as HeroSettings) : {
+      selectedImages: [
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
+        "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=2000",
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
+      ],
+      transitionEffect: 'fade',
+      interval: 5000
+    };
+  } catch (e) {
+    return {
+      selectedImages: [
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
+        "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=2000",
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=2000"
+      ],
+      transitionEffect: 'fade',
+      interval: 5000
+    };
+  }
+};
+
+export const saveHeroSettings = async (settings: HeroSettings) => {
+  try {
+    await supabase
+      .from('preferences')
+      .upsert({ id: 'hero_banner', data: settings });
+  } catch (e) {
+    console.error('Failed to save hero settings:', e);
   }
 };

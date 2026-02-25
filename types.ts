@@ -63,6 +63,12 @@ export interface HeaderSettings {
   isItalic: boolean;
 }
 
+export interface HeroSettings {
+  selectedImages: string[];
+  transitionEffect: 'fade' | 'slide' | 'zoom';
+  interval: number;
+}
+
 export interface PageSettings {
   orientation: 'portrait' | 'landscape';
   pageSize: 'a4' | 'letter' | 'legal';
