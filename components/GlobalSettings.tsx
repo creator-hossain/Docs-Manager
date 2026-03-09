@@ -196,12 +196,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
   const inputClass = "w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-red-700/50 transition-all placeholder:text-gray-700 font-bold";
 
   return (
-    <div className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-10 animate-in fade-in duration-500">
-      <div className="bg-[#0a0a0b] w-full max-w-6xl h-full max-h-[90vh] rounded-[4rem] border border-white/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-700/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+    <div className="fixed inset-0 z-[150] bg-[#0a0a0b] animate-in fade-in duration-500">
+      <div className="w-full h-full flex flex-col overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-red-700/5 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
         
         {/* Header */}
-        <div className="px-12 py-10 border-b border-white/5 flex justify-between items-center relative z-10">
+        <div className="px-12 py-10 border-b border-white/5 flex justify-between items-center relative z-10 bg-black/20 backdrop-blur-md">
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tighter">Global <span className="text-red-700">Settings</span></h2>
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.4em] mt-2">Configure System-wide Document Assets</p>
