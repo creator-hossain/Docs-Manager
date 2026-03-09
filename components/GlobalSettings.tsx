@@ -650,20 +650,19 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                                    )}
                                 </div>
                                 <div className="flex-1 space-y-4">
-                                   <div className="flex flex-col sm:flex-row gap-3">
-                                      <label className="flex-1 bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center flex items-center justify-center gap-2">
-                                        <Upload className="w-4 h-4" /> Upload New Logo
+                                   <div className="flex flex-col gap-3">
+                                      <label className="w-full bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center flex items-center justify-center gap-2 whitespace-nowrap">
+                                        <Upload className="w-4 h-4 shrink-0" /> Upload New Logo
                                         <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                                       </label>
                                       <button 
                                         type="button" 
                                         onClick={() => setShowAssetPicker({ open: true, target: 'logoUrl', type: AssetType.LOGO })}
-                                        className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95"
+                                        className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 whitespace-nowrap"
                                       >
-                                        <Database className="w-4 h-4" /> Asset Library
+                                        <Database className="w-4 h-4 shrink-0" /> Asset Library
                                       </button>
                                    </div>
-                                   <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Recommended: Transparent PNG, 500x500px</p>
                                 </div>
                              </div>
 
@@ -742,7 +741,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                     </div>
 
                     {/* Header Specific Preview */}
-                    <div className="space-y-6 sticky top-0">
+                    <div className="space-y-6 sticky top-0 self-start z-20">
                        <div className="flex items-center gap-4">
                          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Header Preview ({DOC_TYPES_CONFIG[selectedHeaderType].label})</span>
                          <div className="h-px flex-1 bg-white/5"></div>
