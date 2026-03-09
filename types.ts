@@ -11,7 +11,8 @@ export enum AssetType {
   LOGO = 'LOGO',
   ICON = 'ICON',
   SIGNATURE = 'SIGNATURE',
-  PRODUCT = 'PRODUCT'
+  PRODUCT = 'PRODUCT',
+  BANNER = 'BANNER'
 }
 
 export interface Asset {

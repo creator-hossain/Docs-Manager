@@ -44,7 +44,8 @@ import {
   AlignCenter,
   AlignRight,
   Upload,
-  Database
+  Database,
+  Trash2
 } from 'lucide-react';
 import AssetLibrary from './AssetLibrary';
 
@@ -177,6 +178,23 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
       const reader = new FileReader();
       reader.onloadend = () => {
         updateCurrentHeader({ logoUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleHeroImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newUrl = reader.result as string;
+        if (!heroSettings.selectedImages.includes(newUrl)) {
+          setHeroSettings({
+            ...heroSettings,
+            selectedImages: [...heroSettings.selectedImages, newUrl]
+          });
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -793,13 +811,21 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
 
                   <div className="space-y-6">
                     <div>
-                      <label className={labelClass}>Select Banner Images</label>
+                      <div className="flex justify-between items-center mb-4">
+                        <label className={labelClass}>Select Banner Images</label>
+                        <label className="bg-red-700 text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 shadow-lg shadow-red-700/20 flex items-center gap-2">
+                          <Upload className="w-3 h-3" /> Add Custom Image
+                          <input type="file" accept="image/*" className="hidden" onChange={handleHeroImageUpload} />
+                        </label>
+                      </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        {HERO_IMAGE_POOL.map((url, idx) => {
+                        {Array.from(new Set([...HERO_IMAGE_POOL, ...heroSettings.selectedImages])).map((url, idx) => {
                           const isSelected = heroSettings.selectedImages.includes(url);
+                          const isCustom = !HERO_IMAGE_POOL.includes(url);
                           return (
                             <div 
                               key={idx} 
+                              className={`relative aspect-video rounded-2xl overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-red-700 scale-95 shadow-xl shadow-red-700/20' : 'border-transparent hover:border-white/20'}`}
                               onClick={() => {
                                 if (isSelected) {
                                   setHeroSettings({
@@ -813,16 +839,31 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                                   });
                                 }
                               }}
-                              className={`relative aspect-video rounded-2xl overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-red-700 scale-95 shadow-xl shadow-red-700/20' : 'border-transparent hover:border-white/20'}`}
                             >
-                              <img src={url} alt={`Car ${idx}`} className="w-full h-full object-cover" />
+                              <img src={url} alt={`Banner ${idx}`} className="w-full h-full object-cover" />
                               {isSelected && (
                                 <div className="absolute inset-0 bg-red-700/20 flex items-center justify-center">
                                   <CheckCircle2 className="w-8 h-8 text-white" />
                                 </div>
                               )}
-                              <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-[8px] font-black text-white uppercase">
-                                Image {idx + 1}
+                              
+                              {isCustom && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setHeroSettings({
+                                      ...heroSettings,
+                                      selectedImages: heroSettings.selectedImages.filter(img => img !== url)
+                                    });
+                                  }}
+                                  className="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors z-10"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+
+                              <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[8px] font-black text-white uppercase">
+                                {isCustom ? 'Custom' : `Preset ${idx + 1}`}
                               </div>
                             </div>
                           );
