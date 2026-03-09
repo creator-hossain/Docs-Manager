@@ -42,8 +42,11 @@ import {
   Italic,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Upload,
+  Database
 } from 'lucide-react';
+import AssetLibrary from './AssetLibrary';
 
 const HERO_IMAGE_POOL = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -113,6 +116,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     imagePositions: {}
   });
   const [isSavingHero, setIsSavingHero] = useState(false);
+  const [showAssetPicker, setShowAssetPicker] = useState<{ open: boolean; target: string; type: AssetType } | null>(null);
 
   useEffect(() => {
     const fetchFooter = async () => {
@@ -165,6 +169,24 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
       ...prev,
       [selectedHeaderType]: { ...prev[selectedHeaderType], ...updates }
     }));
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateCurrentHeader({ logoUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAssetSelect = (asset: Asset) => {
+    if (showAssetPicker) {
+      updateCurrentHeader({ logoUrl: asset.dataUrl });
+      setShowAssetPicker(null);
+    }
   };
 
   const handleSaveHero = async () => {
@@ -618,31 +640,57 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                             </div>
                           </div>
 
-                          <div className="space-y-6">
-                            <div>
-                              <label className={labelClass}>Select Document Logo</label>
-                              <div className="grid grid-cols-4 gap-3 mt-4">
-                                {assets.map((asset) => (
-                                  <div 
-                                    key={asset.id}
-                                    onClick={() => updateCurrentHeader({ logoUrl: asset.dataUrl })}
-                                    className={`relative aspect-square rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${currentHeader.logoUrl === asset.dataUrl ? 'border-red-700 bg-red-700/10' : 'border-white/5 bg-white/5 hover:border-white/20'}`}
-                                  >
-                                    <img src={asset.dataUrl} alt={asset.name} className="w-full h-full object-contain p-2" />
-                                    {currentHeader.logoUrl === asset.dataUrl && (
-                                      <div className="absolute top-2 right-2">
-                                        <CheckCircle2 className="w-4 h-4 text-red-700" />
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                                {assets.length === 0 && !isLoadingAssets && (
-                                  <div className="col-span-4 py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
-                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">No Logos in Asset Library</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                           <div className="space-y-6">
+                             <div className="bg-black/40 p-8 rounded-3xl border border-white/5 flex items-center gap-8">
+                                <div className="w-32 h-32 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
+                                   {currentHeader.logoUrl ? (
+                                     <img src={currentHeader.logoUrl} alt="Preview" className="w-full h-full object-contain p-2" />
+                                   ) : (
+                                     <ImageIcon className="w-10 h-10 text-white/10" />
+                                   )}
+                                </div>
+                                <div className="flex-1 space-y-4">
+                                   <div className="flex flex-col sm:flex-row gap-3">
+                                      <label className="flex-1 bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center flex items-center justify-center gap-2">
+                                        <Upload className="w-4 h-4" /> Upload New Logo
+                                        <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                                      </label>
+                                      <button 
+                                        type="button" 
+                                        onClick={() => setShowAssetPicker({ open: true, target: 'logoUrl', type: AssetType.LOGO })}
+                                        className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95"
+                                      >
+                                        <Database className="w-4 h-4" /> Asset Library
+                                      </button>
+                                   </div>
+                                   <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Recommended: Transparent PNG, 500x500px</p>
+                                </div>
+                             </div>
+
+                             <div>
+                                <label className={labelClass}>Quick Select from Library</label>
+                                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 mt-4">
+                                  {assets.map((asset) => (
+                                    <div 
+                                      key={asset.id}
+                                      onClick={() => updateCurrentHeader({ logoUrl: asset.dataUrl })}
+                                      className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${currentHeader.logoUrl === asset.dataUrl ? 'border-red-700 bg-red-700/10' : 'border-white/5 bg-white/5 hover:border-white/20'}`}
+                                    >
+                                      <img src={asset.dataUrl} alt={asset.name} className="w-full h-full object-contain p-2" />
+                                      {currentHeader.logoUrl === asset.dataUrl && (
+                                        <div className="absolute top-1 right-1">
+                                          <CheckCircle2 className="w-3 h-3 text-red-700" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                  {assets.length === 0 && !isLoadingAssets && (
+                                    <div className="col-span-full py-6 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+                                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">No Logos in Library</p>
+                                    </div>
+                                  )}
+                                </div>
+                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
@@ -941,6 +989,19 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
           </div>
         </div>
       </div>
+
+      {showAssetPicker && (
+        <div className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md flex items-center justify-center p-20 animate-in zoom-in duration-300">
+          <div className="w-full max-w-6xl h-full shadow-2xl relative">
+            <AssetLibrary 
+              selectionMode 
+              onSelect={handleAssetSelect} 
+              onClose={() => setShowAssetPicker(null)} 
+              filterType={showAssetPicker.type}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
