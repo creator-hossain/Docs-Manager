@@ -251,7 +251,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
       ],
       transitionEffect: 'fade',
       interval: 5000,
-      backgroundPosition: 'center'
+      backgroundPosition: '50% 50%',
+      imagePositions: {}
     };
   } catch (e) {
     return {
@@ -262,7 +263,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
       ],
       transitionEffect: 'fade',
       interval: 5000,
-      backgroundPosition: 'center'
+      backgroundPosition: '50% 50%',
+      imagePositions: {}
     };
   }
 };

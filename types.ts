@@ -67,7 +67,8 @@ export interface HeroSettings {
   selectedImages: string[];
   transitionEffect: 'fade' | 'slide' | 'zoom';
   interval: number;
-  backgroundPosition: 'center' | 'top' | 'bottom' | 'left' | 'right';
+  backgroundPosition: string;
+  imagePositions?: Record<string, { x: number; y: number }>;
 }
 
 export interface PageSettings {

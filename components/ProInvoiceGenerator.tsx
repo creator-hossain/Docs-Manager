@@ -232,21 +232,21 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
                 <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
                   <div className="flex justify-between items-center">
                     <span className={labelClass}>Scale Magnitude</span>
-                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoSize}px</span>
+                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoSize ?? 220}px</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <Maximize2 className="w-4 h-4 text-gray-600" />
-                    <input type="range" min="50" max="500" value={formData.logoSize} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoSize!-50)/450 * 100}%, #1f2937 0%)` }} />
+                    <input type="range" min="50" max="500" value={formData.logoSize ?? 220} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${((formData.logoSize ?? 220)-50)/450 * 100}%, #1f2937 0%)` }} />
                   </div>
                 </div>
                 <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
                   <div className="flex justify-between items-center">
                     <span className={labelClass}>Horizontal Offset</span>
-                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition}px</span>
+                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition ?? 0}px</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <MoveHorizontal className="w-4 h-4 text-gray-600" />
-                    <input type="range" min="0" max="500" value={formData.logoPosition} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition!)/500 * 100}%, #1f2937 0%)` }} />
+                    <input type="range" min="0" max="500" value={formData.logoPosition ?? 0} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition ?? 0)/500 * 100}%, #1f2937 0%)` }} />
                   </div>
                 </div>
               </div>

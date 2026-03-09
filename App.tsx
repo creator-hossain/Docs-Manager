@@ -67,7 +67,8 @@ const App: React.FC = () => {
     ],
     transitionEffect: 'fade',
     interval: 5000,
-    backgroundPosition: 'center'
+    backgroundPosition: '50% 50%',
+    imagePositions: {}
   });
   const [pdfSettings, setPdfSettings] = useState<{ orientation: 'portrait' | 'landscape', pageSize: 'a4' | 'letter' | 'legal' }>({
     orientation: 'portrait',
@@ -258,7 +259,9 @@ const App: React.FC = () => {
                   style={{
                     backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
                     backgroundSize: 'cover',
-                    backgroundPosition: heroSettings.backgroundPosition || 'center'
+                    backgroundPosition: heroSettings.imagePositions && heroSettings.imagePositions[banner] 
+                      ? `${heroSettings.imagePositions[banner].x}% ${heroSettings.imagePositions[banner].y}%`
+                      : heroSettings.backgroundPosition || '50% 50%'
                   }}
                 />
               );

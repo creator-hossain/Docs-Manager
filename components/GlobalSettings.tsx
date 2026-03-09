@@ -98,7 +98,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     selectedImages: [],
     transitionEffect: 'fade',
     interval: 5000,
-    backgroundPosition: 'center'
+    backgroundPosition: '50% 50%',
+    imagePositions: {}
   });
   const [isSavingHero, setIsSavingHero] = useState(false);
 
@@ -671,26 +672,10 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                           min="2000" 
                           max="15000" 
                           step="500"
-                          value={heroSettings.interval} 
+                          value={heroSettings.interval ?? 5000} 
                           onChange={(e) => setHeroSettings({...heroSettings, interval: parseInt(e.target.value)})} 
                           className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
                         />
-                      </div>
-
-                      <div className="col-span-1 md:col-span-2 space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                        <label className={labelClass}>Image Position (Focus Area)</label>
-                        <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
-                          {(['top', 'center', 'bottom', 'left', 'right'] as const).map((pos) => (
-                            <button
-                              key={pos}
-                              type="button"
-                              onClick={() => setHeroSettings({ ...heroSettings, backgroundPosition: pos })}
-                              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${heroSettings.backgroundPosition === pos ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
-                            >
-                              {pos}
-                            </button>
-                          ))}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -707,17 +692,109 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Selected Images Summary</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Selected Images & Precision Focus</span>
                     <div className="h-px flex-1 bg-white/5"></div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {heroSettings.selectedImages.map((url, i) => (
-                      <div key={i} className="w-12 h-12 rounded-lg overflow-hidden border border-white/10">
-                        <img src={url} className="w-full h-full object-cover" />
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-1 gap-6">
+                    {heroSettings.selectedImages.map((url, i) => {
+                      const pos = (heroSettings.imagePositions && heroSettings.imagePositions[url]) || { x: 50, y: 50 };
+                      
+                      const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                        const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+                        
+                        const newPositions = { ...(heroSettings.imagePositions || {}) };
+                        newPositions[url] = { x, y };
+                        setHeroSettings({ ...heroSettings, imagePositions: newPositions });
+                      };
+
+                      return (
+                        <div key={i} className="bg-white/5 p-6 rounded-[2.5rem] border border-white/10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Image {i + 1} Preview</span>
+                              <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-3 py-1 rounded-full">X: {pos.x}% | Y: {pos.y}%</span>
+                            </div>
+                            <div 
+                              className="relative aspect-video rounded-3xl overflow-hidden cursor-crosshair border border-white/10 group"
+                              onClick={handleImageClick}
+                            >
+                              <img src={url} className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                              
+                              {/* Focus Marker */}
+                              <div 
+                                className="absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center"
+                                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                              >
+                                <div className="absolute inset-0 bg-red-700 rounded-full blur-md opacity-50 animate-pulse"></div>
+                                <div className="relative w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
+                                  <div className="w-1 h-1 bg-white rounded-full"></div>
+                                </div>
+                                <div className="absolute h-8 w-px bg-white/50"></div>
+                                <div className="absolute w-8 h-px bg-white/50"></div>
+                              </div>
+                              
+                              <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity text-[9px] font-bold text-white text-center uppercase tracking-widest">
+                                Click anywhere on the image to set focus point
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col justify-center space-y-8">
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <label className={labelClass}>Horizontal Focus (X-Axis)</label>
+                                <span className="text-[10px] font-black text-red-700">{pos.x}%</span>
+                              </div>
+                              <input 
+                                type="range" 
+                                min="0" 
+                                max="100" 
+                                value={pos.x} 
+                                onChange={(e) => {
+                                  const newPositions = { ...(heroSettings.imagePositions || {}) };
+                                  newPositions[url] = { ...pos, x: parseInt(e.target.value) };
+                                  setHeroSettings({ ...heroSettings, imagePositions: newPositions });
+                                }} 
+                                className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                              />
+                            </div>
+
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <label className={labelClass}>Vertical Focus (Y-Axis)</label>
+                                <span className="text-[10px] font-black text-red-700">{pos.y}%</span>
+                              </div>
+                              <input 
+                                type="range" 
+                                min="0" 
+                                max="100" 
+                                value={pos.y} 
+                                onChange={(e) => {
+                                  const newPositions = { ...(heroSettings.imagePositions || {}) };
+                                  newPositions[url] = { ...pos, y: parseInt(e.target.value) };
+                                  setHeroSettings({ ...heroSettings, imagePositions: newPositions });
+                                }} 
+                                className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                              />
+                            </div>
+
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                              <p className="text-[9px] text-gray-500 font-bold leading-relaxed uppercase tracking-wider">
+                                Tip: The focus point ensures that this specific part of the image remains visible on all screen sizes.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                     {heroSettings.selectedImages.length === 0 && (
-                      <p className="text-[10px] font-bold text-gray-700 uppercase italic">No images selected</p>
+                      <div className="bg-white/5 p-12 rounded-[2.5rem] border border-white/5 border-dashed flex flex-col items-center justify-center text-center">
+                        <ImageIcon className="w-12 h-12 text-gray-700 mb-4" />
+                        <p className="text-[11px] font-black text-gray-600 uppercase tracking-widest">No images selected for the banner</p>
+                      </div>
                     )}
                   </div>
                 </div>

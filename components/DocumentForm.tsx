@@ -206,17 +206,17 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
           </div>
           <div className="flex items-center gap-4">
             <Maximize2 className="w-4 h-4 text-gray-600" />
-            <input type="range" min="50" max="500" value={formData.logoSize} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoSize!-50)/450 * 100}%, #1f2937 0%)` }} />
+            <input type="range" min="50" max="500" value={formData.logoSize ?? 220} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${((formData.logoSize ?? 220)-50)/450 * 100}%, #1f2937 0%)` }} />
           </div>
         </div>
         <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
           <div className="flex justify-between items-center">
             <span className={labelClass}>Horizontal Offset</span>
-            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition}px</span>
+            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition ?? 0}px</span>
           </div>
           <div className="flex items-center gap-4">
             <MoveHorizontal className="w-4 h-4 text-gray-600" />
-            <input type="range" min="0" max="500" value={formData.logoPosition} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition!)/500 * 100}%, #1f2937 0%)` }} />
+            <input type="range" min="0" max="500" value={formData.logoPosition ?? 0} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition ?? 0)/500 * 100}%, #1f2937 0%)` }} />
           </div>
         </div>
       </div>
@@ -301,11 +301,11 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                     type="range" 
                     min="10" 
                     max="40" 
-                    value={formData.vehicleTitleSize} 
+                    value={formData.vehicleTitleSize ?? 18} 
                     onChange={(e) => setFormData({...formData, vehicleTitleSize: parseInt(e.target.value)})} 
                     className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
                   />
-                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize}px</span>
+                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize ?? 18}px</span>
                 </div>
 
                 <div className="flex items-center gap-2 bg-black/40 p-4 rounded-3xl border border-white/5">
@@ -442,7 +442,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                 {formData.type !== DocumentType.QUOTATION && (
                   <div>
                     <label className={labelClass}>Registered Address</label>
-                    <textarea placeholder="Legal Physical Address" rows={2} value={formData.clientAddress} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
+                    <textarea placeholder="Legal Physical Address" rows={2} value={formData.clientAddress || ''} onChange={(e) => setFormData({...formData, clientAddress: e.target.value})} className={inputClass} />
                   </div>
                 )}
               </div>
@@ -459,11 +459,11 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       type="range" 
                       min="10" 
                       max="40" 
-                      value={formData.vehicleTitleSize} 
+                      value={formData.vehicleTitleSize ?? 18} 
                       onChange={(e) => setFormData({...formData, vehicleTitleSize: parseInt(e.target.value)})} 
                       className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
                     />
-                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize}px</span>
+                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize ?? 18}px</span>
                   </div>
 
                   <div className="flex items-center gap-2 bg-black/40 p-4 rounded-3xl border border-white/5">
@@ -493,7 +493,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                   {formData.type === DocumentType.QUOTATION ? (
                     <textarea 
                       placeholder="Full vehicle title or description paragraph..." 
-                      value={formData.vehicleTitle} 
+                      value={formData.vehicleTitle || ''} 
                       onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} 
                       className={`${inputClass} min-h-[120px] resize-y`}
                       style={{ textAlign: formData.vehicleTitleAlign }}
@@ -506,8 +506,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                 {formData.type !== DocumentType.QUOTATION && (
                   <div className="flex items-center gap-6 px-6 py-4 bg-black/40 rounded-3xl border border-white/5">
                      <span className="text-10px font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Header Typography</span>
-                     <input type="range" min="10" max="40" value={formData.vehicleTitleSize} onChange={(e) => setFormData({...formData, vehicleTitleSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" />
-                     <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize}px</span>
+                     <input type="range" min="10" max="40" value={formData.vehicleTitleSize ?? 18} onChange={(e) => setFormData({...formData, vehicleTitleSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" />
+                     <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize ?? 18}px</span>
                   </div>
                 )}
 
