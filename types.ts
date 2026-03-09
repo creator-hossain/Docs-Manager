@@ -61,6 +61,9 @@ export interface HeaderSettings {
   fontFamily: string;
   alignment: 'left' | 'center' | 'right';
   isItalic: boolean;
+  logoUrl?: string;
+  logoSize?: number;
+  logoPosition?: number;
 }
 
 export interface HeroSettings {

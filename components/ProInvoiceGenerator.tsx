@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Maximize2, MoveHorizontal, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
+import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem, FooterSettings, HeaderSettings } from '../types';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -36,35 +36,16 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
       items: initialData?.items || [
         { id: Math.random().toString(36).substr(2, 9), description: '', quantity: 1, unitPrice: 0, imageSize: 'medium' }
       ],
-      logoUrl: initialData?.logoUrl || '',
-      logoSize: initialData?.logoSize || 220,
-      logoPosition: initialData?.logoPosition || 0,
       notes: initialData?.notes || '',
       hiddenFields: initialData?.hiddenFields || [],
       createdAt: initialData?.createdAt || Date.now()
     };
   });
 
-  // Apply user preferences for the logo when creating a new document
-  // Fix: handle async getTypePreferences in a useEffect hook instead of inside the useState initializer
   useEffect(() => {
-    const applyPrefs = async () => {
-      const type = DocumentType.PRO_INVOICE;
-      const typePrefs = await getTypePreferences(type);
-      
-      if (typePrefs) {
-        setFormData(prev => ({
-          ...prev,
-          logoUrl: prev.logoUrl || typePrefs.logoUrl || '',
-          logoSize: prev.logoSize || typePrefs.logoSize || 220,
-          logoPosition: prev.logoPosition || typePrefs.logoPosition || 0,
-        }));
-      }
-    };
-    
     // Only apply preferences for brand new documents
     if (!initialData?.id) {
-      applyPrefs();
+      // No specific preferences for Pro Invoice currently besides logo which is now global
     }
   }, [initialData?.id]);
 
@@ -80,18 +61,14 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
     return subtotal - paid;
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'logoUrl' | { type: 'itemImage'; index: number }) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: { type: 'itemImage'; index: number }) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        if (typeof target === 'string') {
-          setFormData({ ...formData, [target]: reader.result as string });
-        } else {
-          const newItems = [...(formData.items || [])];
-          newItems[target.index] = { ...newItems[target.index], imageUrl: reader.result as string };
-          setFormData({ ...formData, items: newItems });
-        }
+        const newItems = [...(formData.items || [])];
+        newItems[target.index] = { ...newItems[target.index], imageUrl: reader.result as string };
+        setFormData({ ...formData, items: newItems });
       };
       reader.readAsDataURL(file);
     }
@@ -99,9 +76,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
 
   const handleAssetSelect = (asset: Asset) => {
     if (assetPickerConfig) {
-      if (assetPickerConfig.target === 'logoUrl') {
-        setFormData({ ...formData, logoUrl: asset.dataUrl });
-      } else {
+      if (typeof assetPickerConfig.target !== 'string') {
         const newItems = [...(formData.items || [])];
         newItems[assetPickerConfig.target.index] = { ...newItems[assetPickerConfig.target.index], imageUrl: asset.dataUrl };
         setFormData({ ...formData, items: newItems });
@@ -142,11 +117,6 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
   };
 
   const handleSave = () => {
-    saveTypePreferences(DocumentType.PRO_INVOICE, {
-      logoUrl: formData.logoUrl,
-      logoSize: formData.logoSize,
-      logoPosition: formData.logoPosition
-    });
     const finalDoc = { ...formData, vehiclePrice: calculateSubtotal() } as BusinessDocument;
     onSave(finalDoc);
   };
@@ -207,50 +177,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
           </div>
 
           <div className="flex-1 overflow-y-auto p-10 space-y-10 scrollbar-hide bg-[radial-gradient(circle_at_top_left,rgba(185,28,28,0.03),transparent_40%)]">
-            
-            {/* Brand Customization */}
-            <div className="bg-white/[0.03] p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl space-y-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-700/5 rounded-full blur-3xl group-hover:bg-red-700/10 transition-all"></div>
-              <SectionHeader icon={Layers} title="Brand Customization" subtitle="Visual Identity Assets" />
-              
-              <div className="flex items-center gap-8 p-6 bg-black/40 rounded-3xl border border-white/5">
-                <div className="w-24 h-24 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
-                  {formData.logoUrl ? <img src={formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-2" /> : <ImageIcon className="w-8 h-8 text-white/10" />}
-                </div>
-                <div className="flex-1 flex flex-col gap-3">
-                  <label className="bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all inline-block text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center">
-                    Upload Brand Logo
-                    <input type="file" onChange={(e) => handleFileUpload(e, 'logoUrl')} className="hidden" />
-                  </label>
-                  <button onClick={() => setAssetPickerConfig({ open: true, target: 'logoUrl', type: AssetType.LOGO })} className="flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95">
-                    <Database className="w-4 h-4" /> Choose from Library
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-center">
-                    <span className={labelClass}>Scale Magnitude</span>
-                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoSize ?? 220}px</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Maximize2 className="w-4 h-4 text-gray-600" />
-                    <input type="range" min="50" max="500" value={formData.logoSize ?? 220} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${((formData.logoSize ?? 220)-50)/450 * 100}%, #1f2937 0%)` }} />
-                  </div>
-                </div>
-                <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-center">
-                    <span className={labelClass}>Horizontal Offset</span>
-                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition ?? 0}px</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <MoveHorizontal className="w-4 h-4 text-gray-600" />
-                    <input type="range" min="0" max="500" value={formData.logoPosition ?? 0} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition ?? 0)/500 * 100}%, #1f2937 0%)` }} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Recipient Info */}
 
             {/* Recipient Info */}
             <div className="bg-white/[0.03] p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-xl space-y-6">

@@ -27,7 +27,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings, HeroSettings } from './types.ts';
 import { DOC_TYPES_CONFIG } from './constants.tsx';
-import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadHeaderSettings, loadHeroSettings } from './utils/storage.ts';
+import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadAllHeaderSettings, loadHeroSettings } from './utils/storage.ts';
 import DocumentForm from './components/DocumentForm.tsx';
 import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
@@ -58,7 +58,7 @@ const App: React.FC = () => {
   const [showProGenerator, setShowProGenerator] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [globalFooter, setGlobalFooter] = useState<FooterSettings | undefined>(undefined);
-  const [globalHeader, setGlobalHeader] = useState<HeaderSettings | undefined>(undefined);
+  const [globalHeaders, setGlobalHeaders] = useState<Record<DocumentType, HeaderSettings> | undefined>(undefined);
   const [heroSettings, setHeroSettings] = useState<HeroSettings>({
     selectedImages: [
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -83,8 +83,8 @@ const App: React.FC = () => {
   };
 
   const fetchHeader = async () => {
-    const settings = await loadHeaderSettings();
-    setGlobalHeader(settings);
+    const settings = await loadAllHeaderSettings();
+    setGlobalHeaders(settings);
   };
 
   const fetchHero = async () => {
@@ -651,7 +651,7 @@ const App: React.FC = () => {
                   onSave={handleSave} 
                   onCancel={() => setEditingDoc(null)} 
                   footerSettings={globalFooter}
-                  headerSettings={globalHeader}
+                  headerSettings={globalHeaders?.[editingDoc.type as DocumentType]}
                 />
               ) : (
                 <DocumentForm 
@@ -659,7 +659,7 @@ const App: React.FC = () => {
                   onSave={handleSave} 
                   onCancel={() => setEditingDoc(null)}
                   onChange={setDraftDoc}
-                  headerSettings={globalHeader}
+                  headerSettings={globalHeaders?.[editingDoc.type as DocumentType]}
                 />
               )}
             </div>
@@ -670,7 +670,15 @@ const App: React.FC = () => {
                   <span className="text-[11px] font-bold">Standard A4 Format</span>
                 </div>
                 <div className="hover:scale-[1.02] transition-transform duration-700 ease-out">
-                  {draftDoc && <DocumentPreview document={draftDoc as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={globalFooter} headerSettings={globalHeader} />}
+                  {draftDoc && (
+                    <DocumentPreview 
+                      document={draftDoc as BusinessDocument} 
+                      containerRef={previewRef} 
+                      scale={0.65} 
+                      footerSettings={globalFooter} 
+                      headerSettings={globalHeaders?.[draftDoc.type as DocumentType]} 
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -683,7 +691,7 @@ const App: React.FC = () => {
           onSave={handleSave} 
           onCancel={() => setShowProGenerator(false)} 
           footerSettings={globalFooter}
-          headerSettings={globalHeader}
+          headerSettings={globalHeaders?.[DocumentType.PRO_INVOICE]}
         />
       )}
 
@@ -739,7 +747,7 @@ const App: React.FC = () => {
               document={{ ...previewingDoc, pageSettings: pdfSettings }} 
               containerRef={previewRef} 
               footerSettings={globalFooter} 
-              headerSettings={globalHeader}
+              headerSettings={globalHeaders?.[previewingDoc.type as DocumentType]}
             />
           </div>
         </div>

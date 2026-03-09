@@ -194,42 +194,80 @@ export const saveFooterSettings = async (settings: FooterSettings) => {
 };
 
 // Global Header Settings Utils
-export const loadHeaderSettings = async (): Promise<HeaderSettings> => {
+export const loadAllHeaderSettings = async (): Promise<Record<DocumentType, HeaderSettings>> => {
   try {
     const { data, error } = await supabase
       .from('preferences')
       .select('data')
-      .eq('id', 'global_header')
+      .eq('id', 'global_headers_v2')
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
     
-    return data ? (data.data as HeaderSettings) : {
+    const defaultHeader: HeaderSettings = {
       text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
       fontSize: 14,
       fontFamily: 'serif',
       alignment: 'left',
-      isItalic: true
+      isItalic: true,
+      logoUrl: '',
+      logoSize: 220,
+      logoPosition: 0
     };
+
+    const initial: Record<DocumentType, HeaderSettings> = {
+      [DocumentType.INVOICE]: { ...defaultHeader },
+      [DocumentType.QUOTATION]: { ...defaultHeader },
+      [DocumentType.BILL]: { ...defaultHeader },
+      [DocumentType.CHALLAN]: { ...defaultHeader },
+      [DocumentType.PRO_INVOICE]: { ...defaultHeader }
+    };
+
+    if (!data) return initial;
+
+    // Merge with defaults in case new document types are added
+    return { ...initial, ...(data.data as Record<DocumentType, HeaderSettings>) };
   } catch (e) {
-    return {
+    console.error('Failed to load all header settings:', e);
+    const defaultHeader: HeaderSettings = {
       text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
       fontSize: 14,
       fontFamily: 'serif',
       alignment: 'left',
-      isItalic: true
+      isItalic: true,
+      logoUrl: '',
+      logoSize: 220,
+      logoPosition: 0
+    };
+    return {
+      [DocumentType.INVOICE]: { ...defaultHeader },
+      [DocumentType.QUOTATION]: { ...defaultHeader },
+      [DocumentType.BILL]: { ...defaultHeader },
+      [DocumentType.CHALLAN]: { ...defaultHeader },
+      [DocumentType.PRO_INVOICE]: { ...defaultHeader }
     };
   }
 };
 
-export const saveHeaderSettings = async (settings: HeaderSettings) => {
+export const saveAllHeaderSettings = async (settings: Record<DocumentType, HeaderSettings>) => {
   try {
     await supabase
       .from('preferences')
-      .upsert({ id: 'global_header', data: settings });
+      .upsert({ id: 'global_headers_v2', data: settings });
   } catch (e) {
-    console.error('Failed to save header settings:', e);
+    console.error('Failed to save all header settings:', e);
   }
+};
+
+export const loadHeaderSettings = async (): Promise<HeaderSettings> => {
+  const all = await loadAllHeaderSettings();
+  return all[DocumentType.INVOICE]; // Default to Invoice for legacy callers
+};
+
+export const saveHeaderSettings = async (settings: HeaderSettings) => {
+  const all = await loadAllHeaderSettings();
+  all[DocumentType.INVOICE] = settings;
+  await saveAllHeaderSettings(all);
 };
 
 // Hero Banner Settings Utils

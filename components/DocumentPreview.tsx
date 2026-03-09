@@ -19,12 +19,24 @@ interface DocumentPreviewProps {
 const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRef, scale = 1, footerSettings, headerSettings }) => {
   const { 
     type, docNumber, date, clientName, clientAddress, clientPhone,
-    clientDesignation, clientOffice, acName, logoUrl, logoSize = 220, logoPosition = 0,
+    clientDesignation, clientOffice, acName, logoUrl: docLogoUrl, logoSize: docLogoSize = 220, logoPosition: docLogoPosition = 0,
     vehicleTitle, vehicleTitleSize = 16, vehicleTitleAlign = 'left', brand, model, yearModel, color, chassisNumber, engineNumber, auctionPoint, cc, fuel, transmission,
     vehiclePrice, priceInWords, payments, quantity, notes, hiddenFields = [],
     advancedPaidAmount = 0, bankPaymentAmount = 0, bankName = "",
     productImageUrl, items = [], pageSettings
   } = document;
+
+  const h = headerSettings || {
+    text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
+    fontSize: 14,
+    fontFamily: 'serif',
+    alignment: 'left',
+    isItalic: true
+  };
+
+  const logoUrl = h.logoUrl || docLogoUrl;
+  const logoSize = h.logoSize || docLogoSize;
+  const logoPosition = h.logoPosition || docLogoPosition;
 
   const orientation = pageSettings?.orientation || 'portrait';
   const pageSize = pageSettings?.pageSize || 'a4';

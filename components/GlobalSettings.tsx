@@ -1,5 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
+import { FooterSettings, HeaderSettings, HeroSettings, DocumentType, AssetType, Asset } from '../types';
+import { 
+  loadFooterSettings, 
+  saveFooterSettings,
+  loadAllHeaderSettings, 
+  saveAllHeaderSettings,
+  loadHeroSettings,
+  saveHeroSettings,
+  loadAssets
+} from '../utils/storage';
+import { DOC_TYPES_CONFIG } from '../constants';
 import { 
   X, 
   Type, 
@@ -25,17 +36,14 @@ import {
   Monitor,
   Zap,
   Image as ImageIcon,
-  CheckCircle2
+  CheckCircle2,
+  Maximize2,
+  MoveHorizontal,
+  Italic,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react';
-import { FooterSettings, HeaderSettings, HeroSettings } from '../types';
-import { 
-  loadFooterSettings, 
-  saveFooterSettings,
-  loadHeaderSettings, 
-  saveHeaderSettings,
-  loadHeroSettings,
-  saveHeroSettings
-} from '../utils/storage';
 
 const HERO_IMAGE_POOL = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -86,14 +94,17 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     lineSpacing: 3
   });
   const [isSavingFooter, setIsSavingFooter] = useState(false);
-  const [headerSettings, setHeaderSettings] = useState<HeaderSettings>({
-    text: '',
-    fontSize: 14,
-    fontFamily: 'serif',
-    alignment: 'left',
-    isItalic: true
+  const [allHeaderSettings, setAllHeaderSettings] = useState<Record<DocumentType, HeaderSettings>>({
+    [DocumentType.INVOICE]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 },
+    [DocumentType.QUOTATION]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 },
+    [DocumentType.BILL]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 },
+    [DocumentType.CHALLAN]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 },
+    [DocumentType.PRO_INVOICE]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 }
   });
+  const [selectedHeaderType, setSelectedHeaderType] = useState<DocumentType>(DocumentType.INVOICE);
   const [isSavingHeader, setIsSavingHeader] = useState(false);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoadingAssets, setIsLoadingAssets] = useState(false);
   const [heroSettings, setHeroSettings] = useState<HeroSettings>({
     selectedImages: [],
     transitionEffect: 'fade',
@@ -111,10 +122,18 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     fetchFooter();
 
     const fetchHeader = async () => {
-      const settings = await loadHeaderSettings();
-      setHeaderSettings(settings);
+      const settings = await loadAllHeaderSettings();
+      setAllHeaderSettings(settings);
     };
     fetchHeader();
+
+    const fetchAssets = async () => {
+      setIsLoadingAssets(true);
+      const loadedAssets = await loadAssets();
+      setAssets(loadedAssets.filter(a => a.type === AssetType.LOGO));
+      setIsLoadingAssets(false);
+    };
+    fetchAssets();
 
     const fetchHero = async () => {
       const settings = await loadHeroSettings();
@@ -133,10 +152,19 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
 
   const handleSaveHeader = async () => {
     setIsSavingHeader(true);
-    await saveHeaderSettings(headerSettings);
+    await saveAllHeaderSettings(allHeaderSettings);
     setIsSavingHeader(false);
     if (onHeaderUpdate) onHeaderUpdate();
     alert('Global Header settings secured successfully.');
+  };
+
+  const currentHeader = allHeaderSettings[selectedHeaderType];
+
+  const updateCurrentHeader = (updates: Partial<HeaderSettings>) => {
+    setAllHeaderSettings(prev => ({
+      ...prev,
+      [selectedHeaderType]: { ...prev[selectedHeaderType], ...updates }
+    }));
   };
 
   const handleSaveHero = async () => {
@@ -476,120 +504,230 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                  </div>
               </div>
             ) : activeTab === 'HEADER' ? (
-              <div className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
-                 {/* Header Content Editor */}
-                 <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                      <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
-                        <Type className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-black uppercase tracking-widest">Header Content Editor</h3>
-                        <p className="text-[10px] font-bold text-gray-600 uppercase">Top Bar Customization</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div>
-                        <label className={labelClass}>Header Text Content</label>
-                        <input 
-                          type="text" 
-                          value={headerSettings.text || ''} 
-                          onChange={(e) => setHeaderSettings({...headerSettings, text: e.target.value})} 
-                          className={inputClass} 
-                          placeholder="e.g. Importer & All kinds of Brand new & Reconditioned Vehicles Supplier"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className={labelClass}>Font Family</label>
-                          <select 
-                            value={headerSettings.fontFamily || 'serif'} 
-                            onChange={(e) => setHeaderSettings({...headerSettings, fontFamily: e.target.value})}
-                            className={inputClass}
-                          >
-                            <option value="serif">Serif (Classic)</option>
-                            <option value="sans">Sans-Serif (Modern)</option>
-                            <option value="mono">Monospace (Technical)</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className={labelClass}>Text Alignment</label>
-                          <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
-                            {(['left', 'center', 'right'] as const).map((align) => (
-                              <button
-                                key={align}
-                                type="button"
-                                onClick={() => setHeaderSettings({ ...headerSettings, alignment: align })}
-                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${headerSettings.alignment === align ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
-                              >
-                                {align}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <div className="flex justify-between items-center">
-                            <span className={labelClass}>Font Size (px)</span>
-                            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{headerSettings.fontSize}px</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="8" 
-                            max="32" 
-                            value={headerSettings.fontSize ?? 14} 
-                            onChange={(e) => setHeaderSettings({...headerSettings, fontSize: parseInt(e.target.value)})} 
-                            className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
-                          />
-                        </div>
-                        <div className="flex items-center justify-between bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <span className={labelClass}>Italic Style</span>
-                          <button 
-                            onClick={() => setHeaderSettings({...headerSettings, isItalic: !headerSettings.isItalic})}
-                            className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${headerSettings.isItalic ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'bg-white/5 text-gray-500 border border-white/10'}`}
-                          >
-                            {headerSettings.isItalic ? 'Enabled' : 'Disabled'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={handleSaveHeader}
-                      disabled={isSavingHeader}
-                      className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
-                    >
-                      {isSavingHeader ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
-                      Save Header Settings
-                    </button>
+              <div className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+                 {/* Document Type Selector */}
+                 <div className="flex flex-wrap items-center gap-4 bg-white/5 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-xl">
+                    {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => {
+                      const isActive = selectedHeaderType === type;
+                      return (
+                        <button 
+                          key={type}
+                          onClick={() => setSelectedHeaderType(type as DocumentType)}
+                          className={`px-6 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest transition-all flex items-center gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                        >
+                          {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-4 h-4' })}
+                          {config.label}
+                        </button>
+                      );
+                    })}
                  </div>
 
-                 {/* Header Specific Preview */}
-                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Header Preview</span>
-                      <div className="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div className="bg-white rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group p-10 flex items-center justify-center min-h-[150px]">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-red-700/5 blur-3xl rounded-full"></div>
-                      <div className="w-full bg-[#e5e7eb] py-2 px-4 border-y border-gray-300">
-                        <div 
-                          style={{ 
-                            textAlign: headerSettings.alignment || 'left',
-                            fontSize: `${headerSettings.fontSize || 14}px`,
-                            fontFamily: headerSettings.fontFamily === 'serif' ? 'serif' : headerSettings.fontFamily === 'mono' ? 'monospace' : 'sans-serif',
-                            fontStyle: headerSettings.isItalic ? 'italic' : 'normal',
-                            color: '#4b5563',
-                            fontWeight: '500'
-                          }}
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div className="space-y-10">
+                       {/* Header Content Editor */}
+                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                          <div className="flex items-center gap-4 mb-2">
+                            <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                              <Type className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-black uppercase tracking-widest">Header Content Editor</h3>
+                              <p className="text-[10px] font-bold text-gray-600 uppercase">Top Bar Customization for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-6">
+                            <div>
+                              <label className={labelClass}>Header Text Content</label>
+                              <input 
+                                type="text" 
+                                value={currentHeader.text || ''} 
+                                onChange={(e) => updateCurrentHeader({ text: e.target.value })} 
+                                className={inputClass} 
+                                placeholder="e.g. Importer & All kinds of Brand new & Reconditioned Vehicles Supplier"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className={labelClass}>Font Family</label>
+                                <select 
+                                  value={currentHeader.fontFamily || 'serif'} 
+                                  onChange={(e) => updateCurrentHeader({ fontFamily: e.target.value })}
+                                  className={inputClass}
+                                >
+                                  <option value="serif">Serif (Classic)</option>
+                                  <option value="sans">Sans-Serif (Modern)</option>
+                                  <option value="mono">Monospace (Technical)</option>
+                                </select>
+                              </div>
+                              <div className="space-y-2">
+                                <label className={labelClass}>Text Alignment</label>
+                                <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
+                                  {(['left', 'center', 'right'] as const).map((align) => (
+                                    <button
+                                      key={align}
+                                      type="button"
+                                      onClick={() => updateCurrentHeader({ alignment: align })}
+                                      className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentHeader.alignment === align ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                                    >
+                                      {align}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Font Size (px)</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{currentHeader.fontSize}px</span>
+                                </div>
+                                <input 
+                                  type="range" 
+                                  min="8" 
+                                  max="32" 
+                                  value={currentHeader.fontSize ?? 14} 
+                                  onChange={(e) => updateCurrentHeader({ fontSize: parseInt(e.target.value) })} 
+                                  className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                />
+                              </div>
+                              <div className="flex items-center justify-between bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <span className={labelClass}>Italic Style</span>
+                                <button 
+                                  onClick={() => updateCurrentHeader({ isItalic: !currentHeader.isItalic })}
+                                  className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentHeader.isItalic ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'bg-white/5 text-gray-500 border border-white/10'}`}
+                                >
+                                  {currentHeader.isItalic ? 'Enabled' : 'Disabled'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                       </div>
+
+                       {/* Brand Customization (Moved from Document Forms) */}
+                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                          <div className="flex items-center gap-4 mb-2">
+                            <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                              <ImageIcon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-black uppercase tracking-widest">Brand Customization</h3>
+                              <p className="text-[10px] font-bold text-gray-600 uppercase">Logo & Positioning for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-6">
+                            <div>
+                              <label className={labelClass}>Select Document Logo</label>
+                              <div className="grid grid-cols-4 gap-3 mt-4">
+                                {assets.map((asset) => (
+                                  <div 
+                                    key={asset.id}
+                                    onClick={() => updateCurrentHeader({ logoUrl: asset.dataUrl })}
+                                    className={`relative aspect-square rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${currentHeader.logoUrl === asset.dataUrl ? 'border-red-700 bg-red-700/10' : 'border-white/5 bg-white/5 hover:border-white/20'}`}
+                                  >
+                                    <img src={asset.dataUrl} alt={asset.name} className="w-full h-full object-contain p-2" />
+                                    {currentHeader.logoUrl === asset.dataUrl && (
+                                      <div className="absolute top-2 right-2">
+                                        <CheckCircle2 className="w-4 h-4 text-red-700" />
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                                {assets.length === 0 && !isLoadingAssets && (
+                                  <div className="col-span-4 py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">No Logos in Asset Library</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Logo Scale</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{currentHeader.logoSize ?? 220}px</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <Maximize2 className="w-4 h-4 text-gray-600" />
+                                  <input 
+                                    type="range" 
+                                    min="50" 
+                                    max="500" 
+                                    value={currentHeader.logoSize ?? 220} 
+                                    onChange={(e) => updateCurrentHeader({ logoSize: parseInt(e.target.value) })} 
+                                    className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Horizontal Offset</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{currentHeader.logoPosition ?? 0}px</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <MoveHorizontal className="w-4 h-4 text-gray-600" />
+                                  <input 
+                                    type="range" 
+                                    min="-200" 
+                                    max="200" 
+                                    value={currentHeader.logoPosition ?? 0} 
+                                    onChange={(e) => updateCurrentHeader({ logoPosition: parseInt(e.target.value) })} 
+                                    className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                       </div>
+
+                       <button 
+                          onClick={handleSaveHeader}
+                          disabled={isSavingHeader}
+                          className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
                         >
-                          {headerSettings.text || 'Header Text Preview'}
-                        </div>
-                      </div>
+                          {isSavingHeader ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                          Save All Header Settings
+                        </button>
+                    </div>
+
+                    {/* Header Specific Preview */}
+                    <div className="space-y-6 sticky top-0">
+                       <div className="flex items-center gap-4">
+                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Header Preview ({DOC_TYPES_CONFIG[selectedHeaderType].label})</span>
+                         <div className="h-px flex-1 bg-white/5"></div>
+                       </div>
+                       <div className="bg-white rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group p-0 flex flex-col h-[280px]">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-red-700/5 blur-3xl rounded-full"></div>
+                          <div className="w-full p-0 flex flex-col">
+                             <div className="flex pt-[5mm] mb-[5px] w-full">
+                                <div className="logo-container" style={{ width: `${currentHeader.logoSize || 220}px`, marginLeft: `${currentHeader.logoPosition || 0}px` }}>
+                                   {currentHeader.logoUrl && <img src={currentHeader.logoUrl} alt="Logo" className="w-full block" />}
+                                </div>
+                             </div>
+                             <div className="w-full bg-[#e5e7eb] py-2 px-4 border-y border-gray-300 mb-6">
+                                <div 
+                                  style={{ 
+                                    textAlign: currentHeader.alignment || 'left',
+                                    fontSize: `${currentHeader.fontSize || 14}px`,
+                                    fontFamily: currentHeader.fontFamily === 'serif' ? 'serif' : currentHeader.fontFamily === 'mono' ? 'monospace' : 'sans-serif',
+                                    fontStyle: currentHeader.isItalic ? 'italic' : 'normal',
+                                    color: '#4b5563',
+                                    fontWeight: '500'
+                                  }}
+                                >
+                                  {currentHeader.text || 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier'}
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                       <div className="p-6 bg-red-700/5 rounded-[2rem] border border-red-700/10">
+                          <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest leading-relaxed text-center">
+                            This is a real-time preview of your header section. Changes are applied instantly.
+                          </p>
+                       </div>
                     </div>
                  </div>
               </div>

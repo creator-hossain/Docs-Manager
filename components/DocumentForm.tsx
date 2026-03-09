@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Save, X, Car, CreditCard, User, Upload, Type, MoveHorizontal, Maximize2, Landmark, FileText, Truck, Receipt, FileCheck, Layers, Gauge, Image as ImageIcon, Database, Edit3, Calendar, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
+import { Plus, Trash2, Save, X, Car, CreditCard, User, Upload, Type, Landmark, FileText, Truck, Receipt, FileCheck, Layers, Gauge, Image as ImageIcon, Database, Edit3, Calendar, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { BusinessDocument, DocumentType, PaymentEntry, Asset, AssetType, HeaderSettings } from '../types';
 import { DOC_TYPES_CONFIG } from '../constants';
 import AssetLibrary from './AssetLibrary';
@@ -27,9 +27,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
     vehicleTitle: '',
     vehicleTitleSize: 18,
     vehicleTitleAlign: 'left',
-    logoUrl: '',
-    logoSize: 220,
-    logoPosition: 0,
     brand: '',
     model: '',
     yearModel: '',
@@ -55,15 +52,11 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
   useEffect(() => {
     const applyPrefs = async () => {
       const type = formData.type || DocumentType.INVOICE;
-      const typePrefs = await getTypePreferences(type);
       
       setFormData(prev => ({
         ...prev,
         docNumber: prev.docNumber || `${DOC_TYPES_CONFIG[type].prefix}-${Date.now().toString().slice(-6)}`,
         vehicleTitleSize: prev.vehicleTitleSize || (type === DocumentType.BILL ? 20 : 18),
-        logoUrl: prev.logoUrl || typePrefs?.logoUrl || '',
-        logoSize: prev.logoSize || typePrefs?.logoSize || 220,
-        logoPosition: prev.logoPosition || typePrefs?.logoPosition || 0,
       }));
     };
     
@@ -88,17 +81,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
   };
 
   const isFieldVisible = (field: string) => !(formData.hiddenFields || []).includes(field);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, logoUrl: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleAssetSelect = (asset: Asset) => {
     if (showAssetPicker) {
@@ -135,14 +117,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
       return;
     }
     
-    if (formData.type) {
-      await saveTypePreferences(formData.type, {
-        logoUrl: formData.logoUrl,
-        logoSize: formData.logoSize,
-        logoPosition: formData.logoPosition
-      });
-    }
-
     onSave(formData as BusinessDocument);
   };
 
@@ -166,59 +140,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
       <div>
         <h3 className="text-sm font-black text-white uppercase tracking-widest">{title}</h3>
         {subtitle && <p className="text-[10px] font-bold text-gray-600 uppercase tracking-tighter mt-0.5">{subtitle}</p>}
-      </div>
-    </div>
-  );
-
-  const LogoSection = () => (
-    <div className="bg-white/[0.03] p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-3xl space-y-6 relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-red-700/5 rounded-full blur-3xl group-hover:bg-red-700/10 transition-all"></div>
-      <SectionHeader icon={Layers} title="Brand Customization" subtitle="Visual Identity Assets" />
-      
-      <div className="flex items-center gap-8 p-6 bg-black/40 rounded-3xl border border-white/5">
-        <div className="w-24 h-24 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
-           {formData.logoUrl ? (
-             <img src={formData.logoUrl} alt="Preview" className="w-full h-full object-contain p-2" />
-           ) : (
-             <ImageIcon className="w-8 h-8 text-white/10" />
-           )}
-        </div>
-        <div className="space-y-3 flex flex-col gap-3">
-          <label className="bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all inline-block text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center">
-            Upload Brand Logo
-            <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-          </label>
-          <button 
-            type="button" 
-            onClick={() => setShowAssetPicker({ open: true, target: 'logoUrl', type: AssetType.LOGO })}
-            className="flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95"
-          >
-            <Database className="w-4 h-4" /> Choose from Library
-          </button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-          <div className="flex justify-between items-center">
-            <span className={labelClass}>Scale Magnitude</span>
-            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoSize}px</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Maximize2 className="w-4 h-4 text-gray-600" />
-            <input type="range" min="50" max="500" value={formData.logoSize ?? 220} onChange={(e) => setFormData({...formData, logoSize: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${((formData.logoSize ?? 220)-50)/450 * 100}%, #1f2937 0%)` }} />
-          </div>
-        </div>
-        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-          <div className="flex justify-between items-center">
-            <span className={labelClass}>Horizontal Offset</span>
-            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.logoPosition ?? 0}px</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <MoveHorizontal className="w-4 h-4 text-gray-600" />
-            <input type="range" min="0" max="500" value={formData.logoPosition ?? 0} onChange={(e) => setFormData({...formData, logoPosition: parseInt(e.target.value)})} className="flex-1 accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" style={{ background: `linear-gradient(to right, #b91c1c ${(formData.logoPosition ?? 0)/500 * 100}%, #1f2937 0%)` }} />
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -262,8 +183,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
       </div>
       
       <form onSubmit={handleSubmit} className="p-10 space-y-10 overflow-y-auto flex-1 scrollbar-hide bg-[radial-gradient(circle_at_top_left,rgba(185,28,28,0.03),transparent_40%)]">
-        {LogoSection()}
-
         {/* Dynamic Form Sections Based on Type */}
         {formData.type === DocumentType.CHALLAN && (
           <>
