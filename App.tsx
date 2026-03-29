@@ -21,7 +21,9 @@ import {
   Layers,
   ShoppingBag,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Menu,
+  FileText
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -53,6 +55,7 @@ const App: React.FC = () => {
   const [draftDoc, setDraftDoc] = useState<Partial<BusinessDocument> | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'landing' | 'list' | 'assets'>('landing');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showGlobalSettings, setShowGlobalSettings] = useState(false);
   const [activeType, setActiveType] = useState<DocumentType | null>(null);
   const [showProGenerator, setShowProGenerator] = useState(false);
@@ -205,13 +208,14 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <nav className="fixed top-0 left-0 right-0 z-50 px-10 py-6 flex justify-between items-center backdrop-blur-md bg-black/20 border-b border-white/5">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => {setViewMode('landing'); setActiveType(null);}}>
-          <div className="w-10 h-10 bg-red-700 rounded-xl flex items-center justify-center font-black text-xl shadow-lg shadow-red-700/30">GD</div>
-          <span className="text-xl font-black tracking-tighter">Garir Dokan <span className="text-red-700 uppercase">Pro</span></span>
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-3 md:py-6 flex justify-between items-center backdrop-blur-md bg-black/20 border-b border-white/5">
+        <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => {setViewMode('landing'); setActiveType(null); setIsSidebarOpen(false);}}>
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-red-700 rounded-lg md:rounded-xl flex items-center justify-center font-black text-base md:text-xl shadow-lg shadow-red-700/30">GD</div>
+          <span className="text-base md:text-xl font-black tracking-tighter">Garir Dokan <span className="text-red-700 uppercase">Pro</span></span>
         </div>
         
-        <div className="flex items-center gap-8">
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center gap-8">
           <button onClick={() => {setViewMode('landing'); setActiveType(null);}} className={`text-sm font-bold uppercase tracking-widest transition-colors ${viewMode === 'landing' ? 'text-red-600' : 'text-gray-400 hover:text-white'}`}>Home</button>
           <button onClick={() => {setViewMode('assets');}} className={`text-sm font-bold uppercase tracking-widest transition-colors ${viewMode === 'assets' ? 'text-red-600' : 'text-gray-400 hover:text-white'}`}>Asset Library</button>
           <button onClick={() => {setViewMode('list'); setActiveType(null);}} className={`text-sm font-bold uppercase tracking-widest transition-colors ${viewMode === 'list' ? 'text-red-600' : 'text-gray-400 hover:text-white'}`}>Records</button>
@@ -224,7 +228,63 @@ const App: React.FC = () => {
           </button>
           <button onClick={() => setViewMode('landing')} className="bg-red-700 px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-red-700/20 hover:bg-red-800 transition-all active:scale-95">Dashboard</button>
         </div>
+
+        {/* Mobile Menu Toggle */}
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="lg:hidden p-2 text-gray-400 hover:text-white transition-colors"
+        >
+          {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </nav>
+
+      {/* Mobile Sidebar Navigation */}
+      <div className={`
+        fixed inset-y-0 right-0 z-[60] w-72 bg-[#0a0a0b] border-l border-white/5 transform transition-transform duration-300 ease-in-out lg:hidden
+        ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+      `}>
+        <div className="h-full flex flex-col p-8 pt-24 space-y-6">
+          <button 
+            onClick={() => {setViewMode('landing'); setActiveType(null); setIsSidebarOpen(false);}} 
+            className={`flex items-center gap-4 text-sm font-black uppercase tracking-widest transition-colors ${viewMode === 'landing' ? 'text-red-600' : 'text-gray-400'}`}
+          >
+            <LayoutDashboard className="w-5 h-5" /> Home
+          </button>
+          <button 
+            onClick={() => {setViewMode('assets'); setIsSidebarOpen(false);}} 
+            className={`flex items-center gap-4 text-sm font-black uppercase tracking-widest transition-colors ${viewMode === 'assets' ? 'text-red-600' : 'text-gray-400'}`}
+          >
+            <Database className="w-5 h-5" /> Asset Library
+          </button>
+          <button 
+            onClick={() => {setViewMode('list'); setActiveType(null); setIsSidebarOpen(false);}} 
+            className={`flex items-center gap-4 text-sm font-black uppercase tracking-widest transition-colors ${viewMode === 'list' ? 'text-red-600' : 'text-gray-400'}`}
+          >
+            <FileText className="w-5 h-5" /> Records
+          </button>
+          <div className="h-px bg-white/5 w-full"></div>
+          <button 
+            onClick={() => {setShowGlobalSettings(true); setIsSidebarOpen(false);}} 
+            className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
+          >
+            <Settings className="w-5 h-5" /> Global Settings
+          </button>
+          <button 
+            onClick={() => {setViewMode('landing'); setIsSidebarOpen(false);}} 
+            className="w-full bg-red-700 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-red-700/20"
+          >
+            Dashboard
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* Global Settings Modal */}
       {showGlobalSettings && (
@@ -267,27 +327,27 @@ const App: React.FC = () => {
               );
             })}
 
-            <div className="absolute left-[3%] top-[65%] -translate-y-1/2 z-10">
-              <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-12 rounded-[3.5rem] w-[580px] shadow-2xl relative overflow-hidden group">
+            <div className="absolute left-0 right-0 md:left-[3%] top-1/2 md:top-[60%] -translate-y-1/2 z-10 px-4 md:px-0">
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] w-full md:w-[580px] shadow-2xl relative overflow-hidden group">
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-700/20 rounded-full blur-3xl group-hover:bg-red-700/40 transition-all"></div>
                 
-                <h1 className="text-6xl font-black leading-[1.1] mb-6 tracking-tighter uppercase">
+                <h1 className="text-3xl md:text-6xl font-black leading-[1.1] mb-6 tracking-tighter uppercase">
                   Automotive <br/><span className="text-red-700 uppercase">Business</span> Manager
                 </h1>
                 
-                <div className="min-h-[3.5rem] overflow-hidden relative border-l-4 border-red-700 pl-4 bg-white/5 rounded-r-lg flex items-center">
+                <div className="min-h-[3rem] md:min-h-[3.5rem] overflow-hidden relative border-l-4 border-red-700 pl-4 bg-white/5 rounded-r-lg flex items-center">
                   <div className="transition-all duration-500 transform translate-y-0 flex flex-col w-full">
-                    <p className="text-[11px] font-bold text-red-100/80 uppercase tracking-[0.2em] py-2 leading-relaxed">
+                    <p className="text-[9px] md:text-[11px] font-bold text-red-100/80 uppercase tracking-[0.2em] py-2 leading-relaxed">
                       {RUNNING_TEXTS[currentTextIndex]}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-12 flex gap-4">
-                  <button onClick={() => setViewMode('list')} className="bg-red-700 text-white px-10 py-5 rounded-2xl font-black flex items-center gap-3 shadow-2xl shadow-red-700/40 hover:bg-red-800 transition-all group/btn uppercase tracking-widest text-xs">
+                <div className="mt-6 md:mt-12 flex flex-col sm:flex-row gap-4">
+                  <button onClick={() => setViewMode('list')} className="w-full sm:w-auto bg-red-700 text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl shadow-red-700/40 hover:bg-red-800 transition-all group/btn uppercase tracking-widest text-[10px] md:text-xs">
                     View Inventory <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform" />
                   </button>
-                  <button className="bg-white/10 text-white px-10 py-5 rounded-2xl font-black border border-white/10 hover:bg-white/20 transition-all uppercase tracking-widest text-xs">
+                  <button className="w-full sm:w-auto bg-white/10 text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black border border-white/10 hover:bg-white/20 transition-all uppercase tracking-widest text-[10px] md:text-xs">
                     User Guide
                   </button>
                 </div>
@@ -298,15 +358,15 @@ const App: React.FC = () => {
           </section>
 
           {/* Core Services Section */}
-          <section className="px-20 pt-32 pb-16 bg-[#0a0a0b] relative">
-            <div className="mb-24 flex flex-col items-center text-center">
-              <p className="text-red-600 font-black uppercase tracking-[0.5em] text-[10px] mb-4">Enterprise Edition</p>
-              <h2 className="text-6xl font-black mb-6 uppercase tracking-tighter">Premium <span className="text-red-700">Workspace</span></h2>
-              <div className="h-2 w-32 bg-red-700 rounded-full shadow-lg shadow-red-700/40"></div>
+          <section className="px-4 md:px-20 pt-20 md:pt-32 pb-16 bg-[#0a0a0b] relative">
+            <div className="mb-12 md:mb-24 flex flex-col items-center text-center">
+              <p className="text-red-600 font-black uppercase tracking-[0.5em] text-[9px] md:text-[10px] mb-4">Enterprise Edition</p>
+              <h2 className="text-3xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Premium <span className="text-red-700">Workspace</span></h2>
+              <div className="h-1.5 md:h-2 w-24 md:w-32 bg-red-700 rounded-full shadow-lg shadow-red-700/40"></div>
             </div>
 
             {/* Document Creation Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-10 max-w-[1800px] mx-auto mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-10 max-w-[1800px] mx-auto mb-16">
               {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => (
                 <div 
                   key={type}
@@ -354,13 +414,13 @@ const App: React.FC = () => {
             </div>
 
             {/* HIGH-TECH BRIDGE STRIP */}
-            <div className="max-w-[1800px] mx-auto px-10 mb-8 relative">
+            <div className="max-w-[1800px] mx-auto px-4 md:px-10 mb-8 relative">
                <div className="h-px w-full bg-gradient-to-r from-transparent via-red-900/50 to-transparent mb-12"></div>
-               <div className="flex flex-wrap items-center justify-between gap-10 px-10 py-8 bg-white/[0.03] border border-white/5 rounded-[2rem] backdrop-blur-md relative overflow-hidden group">
+               <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 px-6 md:px-10 py-8 bg-white/[0.03] border border-white/5 rounded-[2rem] backdrop-blur-md relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-r from-red-900/10 via-transparent to-red-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                   
-                  <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-12 h-12 rounded-xl bg-red-700/10 border border-red-700/20 flex items-center justify-center">
+                  <div className="flex items-center gap-6 relative z-10 w-full lg:w-auto">
+                    <div className="w-12 h-12 rounded-xl bg-red-700/10 border border-red-700/20 flex items-center justify-center shrink-0">
                       <Zap className="w-6 h-6 text-red-700 animate-pulse" />
                     </div>
                     <div>
@@ -369,7 +429,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-12 relative z-10">
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 md:gap-12 relative z-10">
                     <div className="flex items-center gap-4">
                       <div className="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.8)]"></div>
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Database Ready</span>
@@ -384,7 +444,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex items-center gap-4 relative z-10 w-full lg:w-auto justify-center lg:justify-end">
                     <div className="text-right">
                       <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Processor Load</p>
                       <p className="text-xs font-bold text-red-700">0.02ms latency</p>
@@ -398,7 +458,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Business Intelligence Section with Background Image & Glassmorphism */}
-            <div className="relative -mx-20 py-24 overflow-hidden">
+            <div className="relative -mx-6 md:-mx-20 py-24 overflow-hidden">
               {/* Parallax-style Background Image */}
               <div 
                 className="absolute inset-0 z-0 opacity-50 bg-fixed pointer-events-none"
@@ -411,70 +471,70 @@ const App: React.FC = () => {
               
               <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(to_bottom,transparent_50%,#fff_50%)] bg-[length:100%_4px] animate-[scanline_10s_linear_infinite]"></div>
 
-              <div className="max-w-[1800px] mx-auto px-20 relative z-10">
+              <div className="max-w-[1800px] mx-auto px-6 md:px-20 relative z-10">
                 <div className="flex flex-col gap-8">
                   
                   {/* CENTERED HEADER */}
                   <div className="flex flex-col items-center text-center mb-6 relative group">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[100px] bg-red-700/5 blur-[100px] pointer-events-none group-hover:bg-red-700/10 transition-all duration-1000"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[100px] bg-red-700/5 blur-[100px] pointer-events-none group-hover:bg-red-700/10 transition-all duration-1000"></div>
                     
-                    <div className="bg-white/[0.03] border border-white/10 px-16 py-6 rounded-[4rem] backdrop-blur-xl shadow-2xl relative z-10 overflow-hidden transition-all duration-700 group-hover:bg-white/[0.05] group-hover:border-red-700/20 group-hover:-translate-y-1">
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none"></div>
-                      
-                      <h3 className="text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                        Business <span className="text-red-700">Intelligence</span>
-                      </h3>
-                      <p className="text-gray-400 text-[12px] font-black uppercase tracking-[0.6em] mt-4 opacity-70 group-hover:opacity-100 group-hover:text-red-100 transition-all duration-700">
-                        Advanced Real-time Analytics Dashboard
-                      </p>
-                    </div>
+                  <div className="bg-white/[0.03] border border-white/10 px-6 md:px-16 py-4 md:py-6 rounded-[2rem] md:rounded-[4rem] backdrop-blur-xl shadow-2xl relative z-10 overflow-hidden transition-all duration-700 group-hover:bg-white/[0.05] group-hover:border-red-700/20 group-hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none"></div>
+                    
+                    <h3 className="text-2xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                      Business <span className="text-red-700">Intelligence</span>
+                    </h3>
+                    <p className="text-gray-400 text-[9px] md:text-[12px] font-black uppercase tracking-[0.3em] md:tracking-[0.6em] mt-3 md:mt-4 opacity-70 group-hover:opacity-100 group-hover:text-red-100 transition-all duration-700">
+                      Advanced Real-time Analytics Dashboard
+                    </p>
+                  </div>
 
-                    <div className="mt-6 flex items-center gap-4 bg-black/40 px-8 py-3 rounded-full border border-white/5 backdrop-blur-3xl shadow-lg group/status hover:border-red-700/30 transition-all">
-                       <Activity className="w-5 h-5 text-red-700 animate-pulse" />
-                       <span className="text-[10px] font-black text-red-600 uppercase tracking-widest group-hover/status:text-white transition-colors">System Engine Status: 100% Optimal</span>
+                  <div className="mt-6 flex items-center gap-4 bg-black/40 px-6 md:px-8 py-3 rounded-full border border-white/5 backdrop-blur-3xl shadow-lg group/status hover:border-red-700/30 transition-all">
+                     <Activity className="w-4 h-4 md:w-5 md:h-5 text-red-700 animate-pulse" />
+                     <span className="text-[9px] md:text-[10px] font-black text-red-600 uppercase tracking-widest group-hover/status:text-white transition-colors">System Engine Status: 100% Optimal</span>
+                  </div>
+                </div>
+
+                {/* Main Hero Stats - Non-Italic Numbers */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                  <div className="bg-black/60 border border-white/10 p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.5)]">
+                    <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 rotate-12">
+                      <Database className="w-48 md:w-64 h-48 md:h-64 text-red-700" />
+                    </div>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-4">
+                         <div className="h-2 w-2 rounded-full bg-red-700 animate-ping"></div>
+                         <p className="text-red-700 text-[10px] md:text-[11px] font-black uppercase tracking-[0.5em]">Inventory Audit</p>
+                      </div>
+                      <h4 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 group-hover:translate-x-2 transition-transform duration-700">
+                        {totalRecords.toString().padStart(2, '0')}<span className="text-2xl md:text-3xl text-gray-500 ml-3 md:ml-5 font-bold tracking-normal opacity-50">Total Files</span>
+                      </h4>
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden mb-4">
+                        <div className="h-full bg-gradient-to-r from-red-900 to-red-600 animate-pulse" style={{width: '75%'}}></div>
+                      </div>
+                      <p className="text-gray-600 text-[9px] md:text-[10px] font-bold uppercase tracking-widest leading-relaxed">Verified documents in active repository</p>
                     </div>
                   </div>
 
-                  {/* Main Hero Stats - Non-Italic Numbers */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.5)]">
-                      <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 rotate-12">
-                        <Database className="w-64 h-64 text-red-700" />
-                      </div>
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-4">
-                           <div className="h-2 w-2 rounded-full bg-red-700 animate-ping"></div>
-                           <p className="text-red-700 text-[11px] font-black uppercase tracking-[0.5em]">Inventory Audit</p>
-                        </div>
-                        <h4 className="text-8xl font-black tracking-tighter mb-6 group-hover:translate-x-2 transition-transform duration-700">
-                          {totalRecords.toString().padStart(2, '0')}<span className="text-3xl text-gray-500 ml-5 font-bold tracking-normal opacity-50">Total Files</span>
-                        </h4>
-                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden mb-4">
-                          <div className="h-full bg-gradient-to-r from-red-900 to-red-600 animate-pulse" style={{width: '75%'}}></div>
-                        </div>
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed">Verified documents in active repository</p>
-                      </div>
+                  <div className="bg-black/60 border border-white/10 p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.8)]">
+                    <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 -rotate-12">
+                      <CircleDollarSign className="w-48 md:w-64 h-48 md:h-64 text-red-700" />
                     </div>
-
-                    <div className="bg-black/60 border border-white/10 p-12 rounded-[4rem] backdrop-blur-[50px] relative overflow-hidden group hover:bg-black/80 hover:border-red-700/40 transition-all duration-700 shadow-[0_50px_100px_-20_rgba(0,0,0,0.8)]">
-                      <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-20 transition-all duration-700 scale-150 -rotate-12">
-                        <CircleDollarSign className="w-64 h-64 text-red-700" />
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-4">
+                         <div className="h-2 w-2 rounded-full bg-red-700 animate-ping"></div>
+                         <p className="text-red-700 text-[10px] md:text-[11px] font-black uppercase tracking-[0.5em]">Liquidity Value</p>
                       </div>
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-4">
-                           <div className="h-2 w-2 rounded-full bg-red-700 animate-ping"></div>
-                           <p className="text-red-700 text-[11px] font-black uppercase tracking-[0.5em]">Liquidity Value</p>
-                        </div>
-                        <div className="text-8xl font-black tracking-tighter mb-6 group-hover:translate-x-2 transition-transform duration-700 flex items-baseline gap-4">
-                          <span className="text-5xl text-red-700">৳</span>{totalAssetValue.toLocaleString()}
-                        </div>
-                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden mb-4">
-                          <div className="h-full bg-gradient-to-r from-red-900 to-red-600 animate-pulse" style={{width: '90%'}}></div>
-                        </div>
-                        <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed">Gross financial tracking of registered assets</p>
+                      <div className="text-5xl md:text-8xl font-black tracking-tighter mb-6 group-hover:translate-x-2 transition-transform duration-700 flex items-baseline gap-2 md:gap-4">
+                        <span className="text-3xl md:text-5xl text-red-700">৳</span>{totalAssetValue.toLocaleString()}
                       </div>
+                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden mb-4">
+                        <div className="h-full bg-gradient-to-r from-red-900 to-red-600 animate-pulse" style={{width: '90%'}}></div>
+                      </div>
+                      <p className="text-gray-600 text-[9px] md:text-[10px] font-bold uppercase tracking-widest leading-relaxed">Gross financial tracking of registered assets</p>
                     </div>
                   </div>
+                </div>
 
                   {/* Categorical Breakdown Grid - Non-Italic Numbers */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4">
@@ -504,28 +564,28 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          <footer className="px-20 py-24 border-t border-white/5 bg-[#080809] flex flex-col items-center">
-            <div className="flex items-center gap-4 mb-10">
+          <footer className="px-6 md:px-20 py-16 md:py-24 border-t border-white/5 bg-[#080809] flex flex-col items-center">
+            <div className="flex flex-col md:flex-row items-center gap-4 mb-10">
               <div className="w-12 h-12 bg-red-700 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-red-700/20">GD</div>
-              <span className="text-2xl font-black tracking-tighter">Garir Dokan <span className="text-red-700 uppercase">Pro</span></span>
+              <span className="text-2xl font-black tracking-tighter text-center md:text-left">Garir Dokan <span className="text-red-700 uppercase">Pro</span></span>
             </div>
-            <p className="text-gray-600 text-[11px] font-black uppercase tracking-[0.5em] text-center max-w-2xl leading-loose">
+            <p className="text-gray-600 text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em] text-center max-w-2xl leading-loose">
               Advanced Document Infrastructure for Automotive Trading • Importers • Dealers
             </p>
-            <div className="mt-16 text-gray-800 text-[11px] font-black uppercase tracking-[0.2em]">© 2026 GARIR DOKAN PRO • ALL RIGHTS RESERVED</div>
+            <div className="mt-16 text-gray-800 text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] text-center">© 2026 GARIR DOKAN PRO • ALL RIGHTS RESERVED</div>
           </footer>
         </div>
       )}
 
       {viewMode === 'assets' && (
-        <div className="pt-32 px-10 min-h-screen pb-20">
+        <div className="pt-24 md:pt-32 px-4 md:px-10 min-h-screen pb-20">
           <AssetLibrary />
         </div>
       )}
 
       {viewMode === 'list' && (
-        <div className="pt-32 px-10 min-h-screen flex flex-col pb-20">
-          <header className="flex justify-between items-center mb-10">
+        <div className="pt-24 md:pt-32 px-4 md:px-10 min-h-screen flex flex-col pb-20">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 md:mb-10">
             <div className="animate-in fade-in duration-500">
               <div className="flex items-center gap-3 mb-2">
                  <button onClick={() => {setViewMode('landing'); setActiveType(null);}} className="text-gray-600 hover:text-red-600 transition-colors uppercase text-[10px] font-black tracking-widest">Dashboard</button>
@@ -534,8 +594,8 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
-               <div className="relative w-96 group">
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+               <div className="relative w-full md:w-96 group">
                  <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-red-700 transition-colors" />
                  <input 
                    type="text" 
@@ -553,7 +613,7 @@ const App: React.FC = () => {
                      setEditingDoc({ type: activeType || DocumentType.INVOICE });
                    }
                  }}
-                 className="bg-red-700 text-white px-10 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/20 uppercase tracking-widest text-xs"
+                 className="w-full sm:w-auto bg-red-700 text-white px-10 py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/20 uppercase tracking-widest text-xs"
                >
                  <Plus className="w-6 h-6" /> Create New
                </button>
@@ -561,17 +621,18 @@ const App: React.FC = () => {
           </header>
 
           {/* Records Navigation Tabs */}
-          <div className="mb-10 flex flex-wrap items-center gap-4 bg-white/5 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-xl animate-in slide-in-from-top-4 duration-500">
+          <div className="mb-10 flex flex-wrap items-center gap-2 md:gap-4 bg-white/5 p-2 md:p-3 rounded-2xl md:rounded-[2.5rem] border border-white/5 backdrop-blur-xl animate-in slide-in-from-top-4 duration-500">
              <button 
                onClick={() => setActiveType(null)}
-               className={`px-8 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest transition-all flex items-center gap-3 ${activeType === null ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+               className={`px-4 md:px-8 py-2 md:py-3.5 rounded-full font-black text-[9px] md:text-[11px] uppercase tracking-widest transition-all flex items-center gap-2 md:gap-3 ${activeType === null ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
              >
                <LayoutDashboard className="w-4 h-4" />
-               All Records
+               <span className="hidden sm:inline">All Records</span>
+               <span className="sm:hidden">All</span>
                <span className={`px-2 py-0.5 rounded-md text-[9px] ${activeType === null ? 'bg-white/20' : 'bg-white/10'}`}>{documents.length}</span>
              </button>
              
-             <div className="h-6 w-px bg-white/10 mx-2"></div>
+             <div className="hidden md:block h-6 w-px bg-white/10 mx-2"></div>
 
              {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => {
                const count = getCountByType(type as DocumentType);
@@ -580,70 +641,72 @@ const App: React.FC = () => {
                  <button 
                    key={type}
                    onClick={() => setActiveType(type as DocumentType)}
-                   className={`px-6 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest transition-all flex items-center gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                   className={`px-4 md:px-6 py-2 md:py-3.5 rounded-full font-black text-[9px] md:text-[11px] uppercase tracking-widest transition-all flex items-center gap-2 md:gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
                  >
                    {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-4 h-4' })}
-                   {config.label}
+                   <span className="hidden lg:inline">{config.label}</span>
                    <span className={`px-2 py-0.5 rounded-md text-[9px] ${isActive ? 'bg-white/20' : 'bg-white/10'}`}>{count}</span>
                  </button>
                );
              })}
           </div>
 
-          <div className="flex-1 bg-white/5 border border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-xl animate-in slide-in-from-bottom-10 duration-700">
-            <table className="w-full text-left">
-              <thead className="bg-white/5 border-b border-white/5">
-                <tr className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">
-                  <th className="px-12 py-8">Category</th>
-                  <th className="px-12 py-8">Document / ID</th>
-                  <th className="px-12 py-8">Recipient</th>
-                  <th className="px-12 py-8">Valuation</th>
-                  <th className="px-12 py-8 text-right">Operations</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {filteredDocs.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-white/5 transition-all group/row">
-                    <td className="px-12 py-7">
-                      <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-2xl transition-all group-hover/row:scale-110 ${DOC_TYPES_CONFIG[doc.type].bgColor} ${DOC_TYPES_CONFIG[doc.type].color}`}>
-                          {DOC_TYPES_CONFIG[doc.type].icon}
+          <div className="flex-1 bg-white/5 border border-white/5 rounded-2xl md:rounded-[3.5rem] overflow-hidden backdrop-blur-xl animate-in slide-in-from-bottom-10 duration-700">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px] lg:min-w-0">
+                <thead className="bg-white/5 border-b border-white/5">
+                  <tr className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">
+                    <th className="px-6 md:px-12 py-6 md:py-8">Category</th>
+                    <th className="px-6 md:px-12 py-6 md:py-8">Document / ID</th>
+                    <th className="px-6 md:px-12 py-6 md:py-8">Recipient</th>
+                    <th className="px-6 md:px-12 py-6 md:py-8">Valuation</th>
+                    <th className="px-6 md:px-12 py-6 md:py-8 text-right">Operations</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filteredDocs.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-white/5 transition-all group/row">
+                      <td className="px-6 md:px-12 py-5 md:py-7">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-2xl transition-all group-hover/row:scale-110 ${DOC_TYPES_CONFIG[doc.type].bgColor} ${DOC_TYPES_CONFIG[doc.type].color}`}>
+                            {DOC_TYPES_CONFIG[doc.type].icon}
+                          </div>
+                          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest hidden sm:block">{DOC_TYPES_CONFIG[doc.type].label}</p>
                         </div>
-                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{DOC_TYPES_CONFIG[doc.type].label}</p>
-                      </div>
-                    </td>
-                    <td className="px-12 py-7">
-                      <p className="text-base font-black text-white group-hover/row:text-red-700 transition-colors">{doc.docNumber}</p>
-                      <p className="text-[10px] font-bold text-gray-600 uppercase mt-1">Ref No: {doc.id.slice(0,6)}</p>
-                    </td>
-                    <td className="px-12 py-7">
-                      <p className="text-sm font-bold text-gray-200 uppercase tracking-tight">{doc.clientName}</p>
-                      <p className="text-[10px] text-gray-600 font-bold mt-1 max-w-[200px] truncate uppercase">{doc.vehicleTitle}</p>
-                    </td>
-                    <td className="px-12 py-7">
-                      <p className="text-base font-black text-white">৳{doc.vehiclePrice.toLocaleString()}</p>
-                    </td>
-                    <td className="px-12 py-7 text-right flex justify-end gap-3">
-                      <button onClick={() => setPreviewingDoc(doc)} className="p-4 text-red-600 bg-red-700/10 rounded-2xl hover:bg-red-700 hover:text-white transition-all shadow-sm"><Eye className="w-5 h-5" /></button>
-                      <button onClick={() => setEditingDoc(doc)} className="p-4 text-blue-500 bg-blue-500/10 rounded-2xl hover:bg-blue-500 hover:text-white transition-all shadow-sm"><Edit className="w-5 h-5" /></button>
-                      <button onClick={() => handleDelete(doc.id)} className="p-4 text-gray-500 bg-white/5 rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm"><Trash2 className="w-5 h-5" /></button>
-                    </td>
-                  </tr>
-                ))}
-                {filteredDocs.length === 0 && !isLoading && (
-                  <tr>
-                    <td colSpan={5} className="px-8 py-32 text-center text-gray-700 font-black text-lg uppercase tracking-[0.5em] opacity-30 italic">No records found in database</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                      </td>
+                      <td className="px-6 md:px-12 py-5 md:py-7">
+                        <p className="text-sm md:text-base font-black text-white group-hover/row:text-red-700 transition-colors">{doc.docNumber}</p>
+                        <p className="text-[10px] font-bold text-gray-600 uppercase mt-1">Ref No: {doc.id.slice(0,6)}</p>
+                      </td>
+                      <td className="px-6 md:px-12 py-5 md:py-7">
+                        <p className="text-xs md:text-sm font-bold text-gray-200 uppercase tracking-tight">{doc.clientName}</p>
+                        <p className="text-[10px] text-gray-600 font-bold mt-1 max-w-[200px] truncate uppercase">{doc.vehicleTitle}</p>
+                      </td>
+                      <td className="px-6 md:px-12 py-5 md:py-7">
+                        <p className="text-sm md:text-base font-black text-white">৳{doc.vehiclePrice.toLocaleString()}</p>
+                      </td>
+                      <td className="px-6 md:px-12 py-5 md:py-7 text-right flex justify-end gap-2 md:gap-3">
+                        <button onClick={() => setPreviewingDoc(doc)} className="p-3 md:p-4 text-red-600 bg-red-700/10 rounded-xl md:rounded-2xl hover:bg-red-700 hover:text-white transition-all shadow-sm"><Eye className="w-4 h-4 md:w-5 md:h-5" /></button>
+                        <button onClick={() => setEditingDoc(doc)} className="p-3 md:p-4 text-blue-500 bg-blue-500/10 rounded-xl md:rounded-2xl hover:bg-blue-500 hover:text-white transition-all shadow-sm"><Edit className="w-4 h-4 md:w-5 md:h-5" /></button>
+                        <button onClick={() => handleDelete(doc.id)} className="p-3 md:p-4 text-gray-500 bg-white/5 rounded-xl md:rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm"><Trash2 className="w-4 h-4 md:w-5 md:h-5" /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredDocs.length === 0 && !isLoading && (
+                    <tr>
+                      <td colSpan={5} className="px-8 py-32 text-center text-gray-700 font-black text-lg uppercase tracking-[0.5em] opacity-30 italic">No records found in database</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {editingDoc && (
         <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-3xl flex items-center justify-center p-0">
-          <div className="bg-[#0a0a0b] w-full h-full border-white/10 shadow-2xl overflow-hidden flex animate-in zoom-in duration-500">
+          <div className="bg-[#0a0a0b] w-full h-full border-white/10 shadow-2xl overflow-hidden flex flex-col lg:flex-row animate-in zoom-in duration-500">
             <div className="flex-1 overflow-hidden">
               {editingDoc.type === DocumentType.PRO_INVOICE ? (
                 <ProInvoiceGenerator 
@@ -664,7 +727,7 @@ const App: React.FC = () => {
               )}
             </div>
             {editingDoc.type !== DocumentType.PRO_INVOICE && (
-              <div className="w-[45%] bg-black/50 p-12 overflow-y-auto flex flex-col items-center scrollbar-hide border-l border-white/10">
+              <div className="hidden lg:flex w-[45%] bg-black/50 p-12 overflow-y-auto flex-col items-center scrollbar-hide border-l border-white/10">
                 <div className="mb-8 w-full flex justify-between items-center text-white/40">
                   <span className="text-[11px] font-black uppercase tracking-[0.3em]">Live Rendering Engine</span>
                   <span className="text-[11px] font-bold">Standard A4 Format</span>
@@ -696,37 +759,37 @@ const App: React.FC = () => {
       )}
 
       {previewingDoc && (
-        <div className="fixed inset-0 z-[60] bg-black/98 backdrop-blur-3xl flex flex-col items-center animate-in fade-in duration-500">
-          <div className="w-full bg-black/60 p-8 flex justify-between items-center shadow-2xl px-16 border-b border-white/5 backdrop-blur-md">
-            <div className="flex items-center gap-6">
-               <button onClick={() => setPreviewingDoc(null)} className="p-4 hover:bg-white/10 rounded-[2rem] transition-all group"><X className="w-8 h-8 text-gray-500 group-hover:text-white" /></button>
-               <div>
-                 <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-1 leading-none">{previewingDoc.docNumber}</h2>
-                 <p className="text-[11px] font-black text-red-700 uppercase tracking-[0.2em]">{previewingDoc.clientName}</p>
+        <div className="fixed inset-0 z-[60] bg-black/98 backdrop-blur-3xl flex flex-col items-center animate-in fade-in duration-500 overflow-hidden">
+          <div className="w-full bg-black/60 p-4 md:p-8 flex flex-col lg:flex-row justify-between items-center gap-6 shadow-2xl px-6 md:px-16 border-b border-white/5 backdrop-blur-md shrink-0">
+            <div className="flex items-center gap-4 md:gap-6 w-full lg:w-auto">
+               <button onClick={() => setPreviewingDoc(null)} className="p-3 md:p-4 hover:bg-white/10 rounded-full md:rounded-[2rem] transition-all group shrink-0"><X className="w-6 h-6 md:w-8 md:h-8 text-gray-500 group-hover:text-white" /></button>
+               <div className="truncate flex-1">
+                 <h2 className="text-lg md:text-2xl font-black text-white uppercase tracking-tighter mb-1 leading-none truncate">{previewingDoc.docNumber}</h2>
+                 <p className="text-[9px] md:text-[11px] font-black text-red-700 uppercase tracking-[0.2em] truncate">{previewingDoc.clientName}</p>
                </div>
             </div>
 
-            <div className="flex items-center gap-8">
+            <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full lg:w-auto">
               {/* PDF Settings Panel */}
-              <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10">
-                <div className="flex bg-black/40 rounded-xl p-1 gap-1">
+              <div className="flex items-center gap-3 md:gap-4 bg-white/5 p-1.5 md:p-2 rounded-xl md:rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
+                <div className="flex bg-black/40 rounded-lg p-1 gap-0.5 md:gap-1">
                   {(['portrait', 'landscape'] as const).map((o) => (
                     <button
                       key={o}
                       onClick={() => setPdfSettings(prev => ({ ...prev, orientation: o }))}
-                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.orientation === o ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
+                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.orientation === o ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
                     >
                       {o}
                     </button>
                   ))}
                 </div>
-                <div className="h-6 w-px bg-white/10"></div>
-                <div className="flex bg-black/40 rounded-xl p-1 gap-1">
+                <div className="h-5 md:h-6 w-px bg-white/10"></div>
+                <div className="flex bg-black/40 rounded-lg p-1 gap-0.5 md:gap-1">
                   {(['a4', 'letter', 'legal'] as const).map((s) => (
                     <button
                       key={s}
                       onClick={() => setPdfSettings(prev => ({ ...prev, pageSize: s }))}
-                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.pageSize === s ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
+                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.pageSize === s ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
                     >
                       {s}
                     </button>
@@ -736,19 +799,22 @@ const App: React.FC = () => {
 
               <button 
                 onClick={() => handleDownloadPDF(previewingDoc)}
-                className="bg-red-700 text-white px-12 py-5 rounded-[2rem] font-black flex items-center gap-3 shadow-2xl shadow-red-700/20 hover:bg-red-800 transition-all active:scale-95 uppercase tracking-widest text-xs"
+                className="w-full sm:w-auto bg-red-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-red-600/50"
               >
-                <Download className="w-6 h-6" /> Export Document
+                <Download className="w-5 h-5 md:w-6 md:h-6" /> Export PDF
               </button>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto py-20 px-4 w-full flex justify-center scrollbar-hide">
-            <DocumentPreview 
-              document={{ ...previewingDoc, pageSettings: pdfSettings }} 
-              containerRef={previewRef} 
-              footerSettings={globalFooter} 
-              headerSettings={globalHeaders?.[previewingDoc.type as DocumentType]}
-            />
+
+          <div className="flex-1 w-full overflow-auto p-4 md:p-12 flex justify-center bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.05),transparent_70%)] scrollbar-hide">
+            <div className="origin-top transition-transform duration-500 ease-out scale-[0.4] sm:scale-[0.6] md:scale-[0.75] lg:scale-[0.85] xl:scale-100">
+              <DocumentPreview 
+                document={previewingDoc} 
+                containerRef={previewRef} 
+                footerSettings={globalFooter} 
+                headerSettings={globalHeaders?.[previewingDoc.type as DocumentType]} 
+              />
+            </div>
           </div>
         </div>
       )}

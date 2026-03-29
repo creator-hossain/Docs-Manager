@@ -274,56 +274,56 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-red-700/5 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
         
         {/* Header */}
-        <div className="px-12 py-10 border-b border-white/5 flex justify-between items-center relative z-10 bg-black/20 backdrop-blur-md">
+        <div className="px-6 md:px-12 py-6 md:py-10 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 relative z-10 bg-black/20 backdrop-blur-md">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter">Global <span className="text-red-700">Settings</span></h2>
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.4em] mt-2">Configure System-wide Document Assets</p>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">Global <span className="text-red-700">Settings</span></h2>
+            <p className="text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] md:tracking-[0.4em] mt-1 md:mt-2">Configure System-wide Document Assets</p>
           </div>
           <button 
             onClick={onClose}
-            className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-red-700 hover:text-white transition-all group active:scale-90"
+            className="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-red-700 hover:text-white transition-all group active:scale-90 self-end sm:self-auto"
           >
-            <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500" />
+            <X className="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-90 transition-transform duration-500" />
           </button>
         </div>
 
-        <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar Tabs */}
-          <div className="w-64 border-r border-white/5 p-6 space-y-2 bg-black/10">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Sidebar Tabs - Responsive */}
+          <div className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-white/5 p-4 md:p-6 flex lg:flex-col gap-2 bg-black/10 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('HEADER')}
-              className={`w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'HEADER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+              className={`whitespace-nowrap lg:w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'HEADER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
             >
               GLOBAL HEADER
             </button>
             <button
               onClick={() => setActiveTab('FOOTER')}
-              className={`w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'FOOTER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+              className={`whitespace-nowrap lg:w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'FOOTER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
             >
               GLOBAL FOOTER
             </button>
             <button
               onClick={() => setActiveTab('HERO')}
-              className={`w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'HERO' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+              className={`whitespace-nowrap lg:w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'HERO' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
             >
               HERO BANNER
             </button>
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-10 scrollbar-hide relative">
+          <div className="flex-1 overflow-y-auto p-6 md:p-10 scrollbar-hide relative">
             {activeTab === 'FOOTER' ? (
-              <div key="FOOTER" className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
-                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <div className="space-y-10">
-                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+              <div key="FOOTER" className="max-w-6xl mx-auto space-y-8 md:space-y-10 animate-in slide-in-from-right-10 duration-500">
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
+                    <div className="space-y-8 md:space-y-10">
+                       <div className="bg-white/[0.03] p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 space-y-6 md:space-y-8">
                           <div className="flex items-center gap-4 mb-2">
                             <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
                               <Edit3 className="w-5 h-5" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-black uppercase tracking-widest">Footer Content Editor</h3>
-                              <p className="text-[10px] font-bold text-gray-600 uppercase">Synchronize across all documents</p>
+                              <h3 className="text-base md:text-lg font-black uppercase tracking-widest">Footer Content Editor</h3>
+                              <p className="text-[9px] md:text-[10px] font-bold text-gray-600 uppercase">Synchronize across all documents</p>
                             </div>
                           </div>
 
@@ -501,7 +501,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                     </div>
 
                     {/* Footer Specific Preview */}
-                    <div className="space-y-6 sticky top-0 self-start z-20">
+                    <div className="space-y-6 lg:sticky lg:top-0 self-start z-20">
                        <div className="flex items-center gap-4">
                          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Footer Preview</span>
                          <div className="h-px flex-1 bg-white/5"></div>
@@ -558,35 +558,35 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                  </div>
               </div>
             ) : activeTab === 'HEADER' ? (
-              <div key="HEADER" className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+              <div key="HEADER" className="max-w-6xl mx-auto space-y-8 md:space-y-10 animate-in slide-in-from-right-10 duration-500">
                  {/* Document Type Selector */}
-                 <div className="flex flex-wrap items-center gap-4 bg-white/5 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-xl">
+                 <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white/5 p-2 md:p-3 rounded-2xl md:rounded-[2.5rem] border border-white/5 backdrop-blur-xl overflow-x-auto scrollbar-hide">
                     {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => {
                       const isActive = selectedHeaderType === type;
                       return (
                         <button 
                           key={type}
                           onClick={() => setSelectedHeaderType(type as DocumentType)}
-                          className={`px-6 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest transition-all flex items-center gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                          className={`whitespace-nowrap px-4 md:px-6 py-2.5 md:py-3.5 rounded-full font-black text-[9px] md:text-[11px] uppercase tracking-widest transition-all flex items-center gap-2 md:gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
                         >
-                          {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-4 h-4' })}
+                          {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-3.5 h-3.5 md:w-4 md:h-4' })}
                           {config.label}
                         </button>
                       );
                     })}
                  </div>
 
-                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <div className="space-y-10">
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
+                    <div className="space-y-8 md:space-y-10">
                        {/* Header Content Editor */}
-                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                       <div className="bg-white/[0.03] p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 space-y-6 md:space-y-8">
                           <div className="flex items-center gap-4 mb-2">
                             <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
                               <Type className="w-5 h-5" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-black uppercase tracking-widest">Header Content Editor</h3>
-                              <p className="text-[10px] font-bold text-gray-600 uppercase">Top Bar Customization for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
+                              <h3 className="text-base md:text-lg font-black uppercase tracking-widest">Header Content Editor</h3>
+                              <p className="text-[9px] md:text-[10px] font-bold text-gray-600 uppercase">Top Bar Customization for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
                             </div>
                           </div>
 
@@ -661,36 +661,36 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                        </div>
 
                        {/* Brand Customization (Moved from Document Forms) */}
-                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                       <div className="bg-white/[0.03] p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 space-y-6 md:space-y-8">
                           <div className="flex items-center gap-4 mb-2">
                             <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
                               <ImageIcon className="w-5 h-5" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-black uppercase tracking-widest">Brand Customization</h3>
-                              <p className="text-[10px] font-bold text-gray-600 uppercase">Logo & Positioning for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
+                              <h3 className="text-base md:text-lg font-black uppercase tracking-widest">Brand Customization</h3>
+                              <p className="text-[9px] md:text-[10px] font-bold text-gray-600 uppercase">Logo & Positioning for {DOC_TYPES_CONFIG[selectedHeaderType].label}</p>
                             </div>
                           </div>
 
                            <div className="space-y-6">
-                             <div className="bg-black/40 p-8 rounded-3xl border border-white/5 flex items-center gap-8">
-                                <div className="w-32 h-32 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
+                             <div className="bg-black/40 p-6 md:p-8 rounded-2xl md:rounded-3xl border border-white/5 flex flex-col sm:flex-row items-center gap-6 md:gap-8">
+                                <div className="w-24 h-24 md:w-32 md:h-32 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
                                    {currentHeader.logoUrl ? (
                                      <img src={currentHeader.logoUrl} alt="Preview" className="w-full h-full object-contain p-2" />
                                    ) : (
-                                     <ImageIcon className="w-10 h-10 text-white/10" />
+                                     <ImageIcon className="w-8 h-8 md:w-10 md:h-10 text-white/10" />
                                    )}
                                 </div>
-                                <div className="flex-1 space-y-4">
+                                <div className="flex-1 space-y-4 w-full">
                                    <div className="flex flex-col gap-3">
-                                      <label className="w-full bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center flex items-center justify-center gap-2 whitespace-nowrap">
+                                      <label className="w-full bg-red-700 text-white px-6 py-3 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[10px] md:text-[11px] font-black uppercase tracking-widest active:scale-95 shadow-xl shadow-red-700/20 border border-red-600/50 text-center flex items-center justify-center gap-2 whitespace-nowrap">
                                         <Upload className="w-4 h-4 shrink-0" /> Upload New Logo
                                         <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                                       </label>
                                       <button 
                                         type="button" 
                                         onClick={() => setShowAssetPicker({ open: true, target: 'logoUrl', type: AssetType.LOGO })}
-                                        className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 whitespace-nowrap"
+                                        className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 whitespace-nowrap"
                                       >
                                         <Database className="w-4 h-4 shrink-0" /> Asset Library
                                       </button>
@@ -773,7 +773,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                     </div>
 
                     {/* Header Specific Preview */}
-                    <div className="space-y-6 sticky top-0 self-start z-20">
+                    <div className="space-y-6 lg:sticky lg:top-0 self-start z-20">
                        <div className="flex items-center gap-4">
                          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Header Preview ({DOC_TYPES_CONFIG[selectedHeaderType].label})</span>
                          <div className="h-px flex-1 bg-white/5"></div>
@@ -811,28 +811,29 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                  </div>
               </div>
             ) : (
-              <div key="HERO" className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
-                <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+              <div key="HERO" className="max-w-6xl mx-auto space-y-6 md:space-y-10 animate-in slide-in-from-right-10 duration-500">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+                  <div className="bg-white/[0.03] p-5 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-white/5 space-y-6 md:space-y-8">
                   <div className="flex items-center gap-4 mb-2">
                     <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
                       <ImageIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black uppercase tracking-widest">Hero Banner Settings</h3>
-                      <p className="text-[10px] font-bold text-gray-600 uppercase">Website Background Control</p>
+                      <h3 className="text-base md:text-lg font-black uppercase tracking-widest">Hero Banner Settings</h3>
+                      <p className="text-[9px] md:text-[10px] font-bold text-gray-600 uppercase">Website Background Control</p>
                     </div>
                   </div>
 
                   <div className="space-y-6">
                     <div>
-                      <div className="flex justify-between items-center mb-4">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                         <label className={labelClass}>Select Banner Images</label>
-                        <label className="bg-red-700 text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 shadow-lg shadow-red-700/20 flex items-center gap-2">
+                        <label className="w-full sm:w-auto bg-red-700 text-white px-4 py-2.5 rounded-xl cursor-pointer hover:bg-red-800 transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 shadow-lg shadow-red-700/20 flex items-center justify-center gap-2">
                           <Upload className="w-3 h-3" /> Add Custom Image
                           <input type="file" accept="image/*" className="hidden" onChange={handleHeroImageUpload} />
                         </label>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 mt-4">
                         {Array.from(new Set([...HERO_IMAGE_POOL, ...heroSettings.selectedImages]))
                           .filter(url => !heroSettings.removedImages?.includes(url))
                           .map((url, idx) => {
@@ -841,7 +842,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                           return (
                             <div 
                               key={idx} 
-                              className={`relative aspect-video rounded-2xl overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-red-700 scale-95 shadow-xl shadow-red-700/20' : 'border-transparent hover:border-white/20'}`}
+                              className={`relative aspect-video rounded-xl md:rounded-2xl overflow-hidden cursor-pointer border-2 md:border-4 transition-all ${isSelected ? 'border-red-700 scale-95 shadow-xl shadow-red-700/20' : 'border-transparent hover:border-white/20'}`}
                               onClick={() => {
                                 if (isSelected) {
                                   setHeroSettings({
@@ -859,7 +860,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                               <img src={url} alt={`Banner ${idx}`} className="w-full h-full object-cover" />
                               {isSelected && (
                                 <div className="absolute inset-0 bg-red-700/20 flex items-center justify-center">
-                                  <CheckCircle2 className="w-8 h-8 text-white" />
+                                  <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 text-white" />
                                 </div>
                               )}
                               
@@ -879,12 +880,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                                     });
                                   }
                                 }}
-                                className="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors z-10"
+                                className="absolute top-1.5 right-1.5 w-7 h-7 md:w-8 md:h-8 bg-black/60 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors z-10"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                               </button>
 
-                              <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[8px] font-black text-white uppercase">
+                              <div className="absolute bottom-1.5 left-1.5 bg-black/60 px-1.5 py-0.5 rounded text-[7px] md:text-[8px] font-black text-white uppercase">
                                 {isCustom ? 'Custom' : `Preset ${idx + 1}`}
                               </div>
                             </div>
@@ -893,8 +894,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                      <div className="space-y-4 bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
                         <label className={labelClass}>Transition Effect</label>
                         <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
                           {(['fade', 'slide', 'zoom'] as const).map((effect) => (
@@ -902,7 +903,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                               key={effect}
                               type="button"
                               onClick={() => setHeroSettings({ ...heroSettings, transitionEffect: effect })}
-                              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${heroSettings.transitionEffect === effect ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                              className={`flex-1 py-2.5 md:py-3 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${heroSettings.transitionEffect === effect ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
                             >
                               {effect}
                             </button>
@@ -910,10 +911,10 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                         </div>
                       </div>
 
-                      <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                      <div className="space-y-4 bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
                         <div className="flex justify-between items-center">
                           <span className={labelClass}>Auto-change Interval (ms)</span>
-                          <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{heroSettings.interval}ms</span>
+                          <span className="text-[9px] md:text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{heroSettings.interval}ms</span>
                         </div>
                         <input 
                           type="range" 
@@ -931,19 +932,48 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                   <button 
                     onClick={handleSaveHero}
                     disabled={isSavingHero}
-                    className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
+                    className="w-full py-4 md:py-5 bg-red-700 text-white rounded-[1.2rem] md:rounded-[1.5rem] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
                   >
-                    {isSavingHero ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                    {isSavingHero ? <Loader2 className="animate-spin" /> : <Save className="w-4 h-4 md:w-5 md:h-5" />}
                     Save Hero Settings
                   </button>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6 lg:sticky lg:top-0 self-start z-20">
                   <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Selected Images & Precision Focus</span>
+                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-gray-500">Real-time Hero Preview</span>
                     <div className="h-px flex-1 bg-white/5"></div>
                   </div>
-                  <div className="grid grid-cols-1 gap-6">
+                  <div className="bg-white rounded-2xl md:rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden group p-0 h-[200px] md:h-[280px]">
+                     <div className="absolute inset-0 bg-black/10"></div>
+                     {heroSettings.selectedImages.length > 0 ? (
+                       <img 
+                         src={heroSettings.selectedImages[0]} 
+                         className="w-full h-full object-cover" 
+                         style={{ 
+                           objectPosition: `${heroSettings.imagePositions?.[heroSettings.selectedImages[0]]?.x ?? 50}% ${heroSettings.imagePositions?.[heroSettings.selectedImages[0]]?.y ?? 50}%` 
+                         }}
+                       />
+                     ) : (
+                       <div className="w-full h-full flex items-center justify-center bg-black/5">
+                         <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-gray-300" />
+                       </div>
+                     )}
+                  </div>
+                  <div className="p-5 md:p-6 bg-red-700/5 rounded-2xl md:rounded-[2rem] border border-red-700/10">
+                    <p className="text-[9px] md:text-[10px] font-bold text-red-700 uppercase tracking-widest leading-relaxed text-center">
+                      This is a preview of your hero banner. The first image is shown as a sample.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="max-w-6xl mx-auto space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-gray-500">Selected Images & Precision Focus</span>
+                    <div className="h-px flex-1 bg-white/5"></div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 md:gap-6">
                     {heroSettings.selectedImages.map((url, i) => {
                       const pos = (heroSettings.imagePositions && heroSettings.imagePositions[url]) || { x: 50, y: 50 };
                       
@@ -958,14 +988,14 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                       };
 
                       return (
-                        <div key={i} className="bg-white/5 p-6 rounded-[2.5rem] border border-white/10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div key={i} className="bg-white/5 p-4 md:p-6 rounded-2xl md:rounded-[2.5rem] border border-white/10 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                           <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Image {i + 1} Preview</span>
-                              <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-3 py-1 rounded-full">X: {pos.x}% | Y: {pos.y}%</span>
+                              <span className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest">Image {i + 1} Preview</span>
+                              <span className="text-[9px] md:text-[10px] font-black text-red-700 bg-red-700/10 px-2 md:px-3 py-1 rounded-full">X: {pos.x}% | Y: {pos.y}%</span>
                             </div>
                             <div 
-                              className="relative aspect-video rounded-3xl overflow-hidden cursor-crosshair border border-white/10 group"
+                              className="relative aspect-video rounded-2xl md:rounded-3xl overflow-hidden cursor-crosshair border border-white/10 group"
                               onClick={handleImageClick}
                             >
                               <img src={url} className="w-full h-full object-cover" />
@@ -973,28 +1003,28 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                               
                               {/* Focus Marker */}
                               <div 
-                                className="absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center"
+                                className="absolute w-6 h-6 md:w-8 md:h-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center"
                                 style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
                               >
                                 <div className="absolute inset-0 bg-red-700 rounded-full blur-md opacity-50 animate-pulse"></div>
-                                <div className="relative w-4 h-4 border-2 border-white rounded-full flex items-center justify-center">
-                                  <div className="w-1 h-1 bg-white rounded-full"></div>
+                                <div className="relative w-3 h-3 md:w-4 md:h-4 border-2 border-white rounded-full flex items-center justify-center">
+                                  <div className="w-0.5 h-0.5 md:w-1 md:h-1 bg-white rounded-full"></div>
                                 </div>
-                                <div className="absolute h-8 w-px bg-white/50"></div>
-                                <div className="absolute w-8 h-px bg-white/50"></div>
+                                <div className="absolute h-6 md:h-8 w-px bg-white/50"></div>
+                                <div className="absolute w-6 md:w-8 h-px bg-white/50"></div>
                               </div>
                               
-                              <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity text-[9px] font-bold text-white text-center uppercase tracking-widest">
+                              <div className="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md p-2 md:p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity text-[8px] md:text-[9px] font-bold text-white text-center uppercase tracking-widest">
                                 Click anywhere on the image to set focus point
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex flex-col justify-center space-y-8">
+                          <div className="flex flex-col justify-center space-y-6 md:space-y-8">
                             <div className="space-y-4">
                               <div className="flex justify-between items-center">
                                 <label className={labelClass}>Horizontal Focus (X-Axis)</label>
-                                <span className="text-[10px] font-black text-red-700">{pos.x}%</span>
+                                <span className="text-[9px] md:text-[10px] font-black text-red-700">{pos.x}%</span>
                               </div>
                               <input 
                                 type="range" 
@@ -1013,7 +1043,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                             <div className="space-y-4">
                               <div className="flex justify-between items-center">
                                 <label className={labelClass}>Vertical Focus (Y-Axis)</label>
-                                <span className="text-[10px] font-black text-red-700">{pos.y}%</span>
+                                <span className="text-[9px] md:text-[10px] font-black text-red-700">{pos.y}%</span>
                               </div>
                               <input 
                                 type="range" 
@@ -1029,8 +1059,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                               />
                             </div>
 
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                              <p className="text-[9px] text-gray-500 font-bold leading-relaxed uppercase tracking-wider">
+                            <div className="p-4 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
+                              <p className="text-[8px] md:text-[9px] text-gray-500 font-bold leading-relaxed uppercase tracking-wider">
                                 Tip: The focus point ensures that this specific part of the image remains visible on all screen sizes.
                               </p>
                             </div>
@@ -1039,9 +1069,9 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                       );
                     })}
                     {heroSettings.selectedImages.length === 0 && (
-                      <div className="bg-white/5 p-12 rounded-[2.5rem] border border-white/5 border-dashed flex flex-col items-center justify-center text-center">
-                        <ImageIcon className="w-12 h-12 text-gray-700 mb-4" />
-                        <p className="text-[11px] font-black text-gray-600 uppercase tracking-widest">No images selected for the banner</p>
+                      <div className="bg-white/5 p-8 md:p-12 rounded-2xl md:rounded-[2.5rem] border border-white/5 border-dashed flex flex-col items-center justify-center text-center">
+                        <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-gray-700 mb-4" />
+                        <p className="text-[10px] md:text-[11px] font-black text-gray-600 uppercase tracking-widest">No images selected for the banner</p>
                       </div>
                     )}
                   </div>
