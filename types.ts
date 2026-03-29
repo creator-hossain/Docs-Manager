@@ -73,6 +73,7 @@ export interface HeroSettings {
   interval: number;
   backgroundPosition: string;
   imagePositions?: Record<string, { x: number; y: number }>;
+  removedImages?: string[];
 }
 
 export interface PageSettings {

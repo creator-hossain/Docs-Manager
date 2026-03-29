@@ -114,7 +114,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     transitionEffect: 'fade',
     interval: 5000,
     backgroundPosition: '50% 50%',
-    imagePositions: {}
+    imagePositions: {},
+    removedImages: []
   });
   const [isSavingHero, setIsSavingHero] = useState(false);
   const [showAssetPicker, setShowAssetPicker] = useState<{ open: boolean; target: string; type: AssetType } | null>(null);
@@ -142,7 +143,10 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
 
     const fetchHero = async () => {
       const settings = await loadHeroSettings();
-      setHeroSettings(settings);
+      setHeroSettings({
+        ...settings,
+        removedImages: settings.removedImages || []
+      });
     };
     fetchHero();
   }, []);
@@ -192,7 +196,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
         if (!heroSettings.selectedImages.includes(newUrl)) {
           setHeroSettings({
             ...heroSettings,
-            selectedImages: [...heroSettings.selectedImages, newUrl]
+            selectedImages: [...heroSettings.selectedImages, newUrl],
+            removedImages: heroSettings.removedImages?.filter(img => img !== newUrl) || []
           });
         }
       };
@@ -308,243 +313,252 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto p-10 scrollbar-hide relative">
             {activeTab === 'FOOTER' ? (
-              <div className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
-                 <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
-                    <div className="flex items-center gap-4 mb-2">
-                      <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
-                        <Edit3 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-black uppercase tracking-widest">Footer Content Editor</h3>
-                        <p className="text-[10px] font-bold text-gray-600 uppercase">Synchronize across all documents</p>
-                      </div>
+              <div key="FOOTER" className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div className="space-y-10">
+                       <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
+                          <div className="flex items-center gap-4 mb-2">
+                            <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                              <Edit3 className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-black uppercase tracking-widest">Footer Content Editor</h3>
+                              <p className="text-[10px] font-bold text-gray-600 uppercase">Synchronize across all documents</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className={labelClass}>Location (Address)</label>
+                              <div className="relative">
+                                {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
+                                <input 
+                                  type="text" 
+                                  value={footerSettings.address || ''} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, address: e.target.value})} 
+                                  className={`${inputClass} !pl-12`} 
+                                />
+                              </div>
+                              <IconSelector 
+                                current={footerSettings.addressIcon} 
+                                options={ICON_OPTIONS.address} 
+                                onSelect={(name) => setFooterSettings({...footerSettings, addressIcon: name})} 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className={labelClass}>Email Contact</label>
+                              <div className="relative">
+                                {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
+                                <input 
+                                  type="text" 
+                                  value={footerSettings.email || ''} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, email: e.target.value})} 
+                                  className={`${inputClass} !pl-12`} 
+                                />
+                              </div>
+                              <IconSelector 
+                                current={footerSettings.emailIcon} 
+                                options={ICON_OPTIONS.email} 
+                                onSelect={(name) => setFooterSettings({...footerSettings, emailIcon: name})} 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className={labelClass}>Phone Line 1</label>
+                              <div className="relative">
+                                {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
+                                <input 
+                                  type="text" 
+                                  value={footerSettings.phone1 || ''} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, phone1: e.target.value})} 
+                                  className={`${inputClass} !pl-12`} 
+                                />
+                              </div>
+                              <IconSelector 
+                                current={footerSettings.phone1Icon} 
+                                options={ICON_OPTIONS.phone} 
+                                onSelect={(name) => setFooterSettings({...footerSettings, phone1Icon: name})} 
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className={labelClass}>Phone Line 2 (Optional)</label>
+                              <div className="relative">
+                                {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
+                                <input 
+                                  type="text" 
+                                  value={footerSettings.phone2 || ''} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, phone2: e.target.value})} 
+                                  className={`${inputClass} !pl-12`} 
+                                />
+                              </div>
+                              <IconSelector 
+                                current={footerSettings.phone2Icon} 
+                                options={ICON_OPTIONS.phone} 
+                                onSelect={(name) => setFooterSettings({...footerSettings, phone2Icon: name})} 
+                              />
+                            </div>
+                            <div className="col-span-1 md:col-span-2 space-y-2">
+                              <label className={labelClass}>Official Website URL</label>
+                              <div className="relative">
+                                {React.createElement(getIconComponent(footerSettings.websiteIcon, Globe), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
+                                <input 
+                                  type="text" 
+                                  value={footerSettings.website || ''} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, website: e.target.value})} 
+                                  className={`${inputClass} !pl-12`} 
+                                />
+                              </div>
+                              <IconSelector 
+                                current={footerSettings.websiteIcon} 
+                                options={ICON_OPTIONS.website} 
+                                onSelect={(name) => setFooterSettings({...footerSettings, websiteIcon: name})} 
+                              />
+                            </div>
+                          </div>
+
+                          <div className="pt-8 border-t border-white/5 space-y-8">
+                            <div className="flex items-center gap-4 mb-2">
+                              <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                                <Layers className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-black uppercase tracking-widest">Layout & Spacing</h3>
+                                <p className="text-[10px] font-bold text-gray-600 uppercase">Fine-tune footer positioning</p>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Bottom Offset (mm)</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.bottomOffset}mm</span>
+                                </div>
+                                <input 
+                                  type="range" 
+                                  min="0" 
+                                  max="50" 
+                                  value={footerSettings.bottomOffset ?? 10} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, bottomOffset: parseInt(e.target.value)})} 
+                                  className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                />
+                              </div>
+
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Top Padding (mm)</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.topPadding}mm</span>
+                                </div>
+                                <input 
+                                  type="range" 
+                                  min="0" 
+                                  max="30" 
+                                  value={footerSettings.topPadding ?? 0} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, topPadding: parseInt(e.target.value)})} 
+                                  className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                />
+                              </div>
+
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Horizontal Padding (mm)</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.horizontalPadding}mm</span>
+                                </div>
+                                <input 
+                                  type="range" 
+                                  min="0" 
+                                  max="50" 
+                                  value={footerSettings.horizontalPadding ?? 15} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, horizontalPadding: parseInt(e.target.value)})} 
+                                  className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                />
+                              </div>
+
+                              <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
+                                <div className="flex justify-between items-center">
+                                  <span className={labelClass}>Line Spacing (mm)</span>
+                                  <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.lineSpacing}mm</span>
+                                </div>
+                                <input 
+                                  type="range" 
+                                  min="0" 
+                                  max="30" 
+                                  value={footerSettings.lineSpacing ?? 3} 
+                                  onChange={(e) => setFooterSettings({...footerSettings, lineSpacing: parseInt(e.target.value)})} 
+                                  className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <button 
+                            onClick={handleSaveFooter}
+                            disabled={isSavingFooter}
+                            className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
+                          >
+                            {isSavingFooter ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                            Save Changes Globally
+                          </button>
+                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className={labelClass}>Location (Address)</label>
-                        <div className="relative">
-                          {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
-                          <input 
-                            type="text" 
-                            value={footerSettings.address || ''} 
-                            onChange={(e) => setFooterSettings({...footerSettings, address: e.target.value})} 
-                            className={`${inputClass} !pl-12`} 
-                          />
-                        </div>
-                        <IconSelector 
-                          current={footerSettings.addressIcon} 
-                          options={ICON_OPTIONS.address} 
-                          onSelect={(name) => setFooterSettings({...footerSettings, addressIcon: name})} 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className={labelClass}>Email Contact</label>
-                        <div className="relative">
-                          {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
-                          <input 
-                            type="text" 
-                            value={footerSettings.email || ''} 
-                            onChange={(e) => setFooterSettings({...footerSettings, email: e.target.value})} 
-                            className={`${inputClass} !pl-12`} 
-                          />
-                        </div>
-                        <IconSelector 
-                          current={footerSettings.emailIcon} 
-                          options={ICON_OPTIONS.email} 
-                          onSelect={(name) => setFooterSettings({...footerSettings, emailIcon: name})} 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className={labelClass}>Phone Line 1</label>
-                        <div className="relative">
-                          {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
-                          <input 
-                            type="text" 
-                            value={footerSettings.phone1 || ''} 
-                            onChange={(e) => setFooterSettings({...footerSettings, phone1: e.target.value})} 
-                            className={`${inputClass} !pl-12`} 
-                          />
-                        </div>
-                        <IconSelector 
-                          current={footerSettings.phone1Icon} 
-                          options={ICON_OPTIONS.phone} 
-                          onSelect={(name) => setFooterSettings({...footerSettings, phone1Icon: name})} 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className={labelClass}>Phone Line 2 (Optional)</label>
-                        <div className="relative">
-                          {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
-                          <input 
-                            type="text" 
-                            value={footerSettings.phone2 || ''} 
-                            onChange={(e) => setFooterSettings({...footerSettings, phone2: e.target.value})} 
-                            className={`${inputClass} !pl-12`} 
-                          />
-                        </div>
-                        <IconSelector 
-                          current={footerSettings.phone2Icon} 
-                          options={ICON_OPTIONS.phone} 
-                          onSelect={(name) => setFooterSettings({...footerSettings, phone2Icon: name})} 
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-2 space-y-2">
-                        <label className={labelClass}>Official Website URL</label>
-                        <div className="relative">
-                          {React.createElement(getIconComponent(footerSettings.websiteIcon, Globe), { className: "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-red-700" })}
-                          <input 
-                            type="text" 
-                            value={footerSettings.website || ''} 
-                            onChange={(e) => setFooterSettings({...footerSettings, website: e.target.value})} 
-                            className={`${inputClass} !pl-12`} 
-                          />
-                        </div>
-                        <IconSelector 
-                          current={footerSettings.websiteIcon} 
-                          options={ICON_OPTIONS.website} 
-                          onSelect={(name) => setFooterSettings({...footerSettings, websiteIcon: name})} 
-                        />
-                      </div>
-                    </div>
-
-                    <div className="pt-8 border-t border-white/5 space-y-8">
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
-                          <Layers className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-black uppercase tracking-widest">Layout & Spacing</h3>
-                          <p className="text-[10px] font-bold text-gray-600 uppercase">Fine-tune footer positioning</p>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <div className="flex justify-between items-center">
-                            <span className={labelClass}>Bottom Offset (mm)</span>
-                            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.bottomOffset}mm</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="0" 
-                            max="50" 
-                            value={footerSettings.bottomOffset ?? 10} 
-                            onChange={(e) => setFooterSettings({...footerSettings, bottomOffset: parseInt(e.target.value)})} 
-                            className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
-                          />
-                        </div>
-
-                        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <div className="flex justify-between items-center">
-                            <span className={labelClass}>Top Padding (mm)</span>
-                            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.topPadding}mm</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="0" 
-                            max="30" 
-                            value={footerSettings.topPadding ?? 0} 
-                            onChange={(e) => setFooterSettings({...footerSettings, topPadding: parseInt(e.target.value)})} 
-                            className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
-                          />
-                        </div>
-
-                        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <div className="flex justify-between items-center">
-                            <span className={labelClass}>Horizontal Padding (mm)</span>
-                            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.horizontalPadding}mm</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="0" 
-                            max="50" 
-                            value={footerSettings.horizontalPadding ?? 15} 
-                            onChange={(e) => setFooterSettings({...footerSettings, horizontalPadding: parseInt(e.target.value)})} 
-                            className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
-                          />
-                        </div>
-
-                        <div className="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/5">
-                          <div className="flex justify-between items-center">
-                            <span className={labelClass}>Line Spacing (mm)</span>
-                            <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{footerSettings.lineSpacing}mm</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="0" 
-                            max="30" 
-                            value={footerSettings.lineSpacing ?? 3} 
-                            onChange={(e) => setFooterSettings({...footerSettings, lineSpacing: parseInt(e.target.value)})} 
-                            className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={handleSaveFooter}
-                      disabled={isSavingFooter}
-                      className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
-                    >
-                      {isSavingFooter ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
-                      Save Changes Globally
-                    </button>
-                 </div>
-
-                 {/* Footer Specific Preview */}
-                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Footer Preview</span>
-                      <div className="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div className="bg-white rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group h-[250px]">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-red-700/5 blur-3xl rounded-full"></div>
-                      <div 
-                        className="footer-render absolute left-0 right-0 z-10" 
-                        style={{ 
-                          bottom: `${footerSettings.bottomOffset ?? 10}mm`,
-                          paddingLeft: `${footerSettings.horizontalPadding ?? 15}mm`,
-                          paddingRight: `${footerSettings.horizontalPadding ?? 15}mm`,
-                          paddingTop: `${footerSettings.topPadding ?? 0}mm`
-                        }}
-                      >
-                        <div className="h-px bg-red-600/30 w-full" style={{ marginBottom: `${footerSettings.lineSpacing ?? 3}mm` }}></div>
-                        <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold flex-wrap">
-                          <span className="flex items-center gap-1 text-black">
-                            <span className="text-red-600">
-                              {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "w-3 h-3" })}
-                            </span> 
-                            {footerSettings.address || '---'}
-                          </span>
-                          <span className="flex items-center gap-1 text-black">
-                            <span className="text-red-600">
-                              {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "w-3 h-3" })}
-                            </span> 
-                            {footerSettings.email || '---'}
-                          </span>
-                          <span className="flex items-center gap-1 text-black">
-                            <span className="text-red-600">
-                              {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "w-3 h-3" })}
-                            </span> 
-                            {footerSettings.phone1 || '---'}
-                          </span>
-                          {footerSettings.phone2 && (
-                            <span className="flex items-center gap-1 text-black">
-                              <span className="text-red-600">
-                                {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "w-3 h-3" })}
-                              </span> 
-                              {footerSettings.phone2}
-                            </span>
-                          )}
-                        </div>
-                        {footerSettings.website && renderSpacedWebsite(footerSettings.website)}
-                      </div>
+                    {/* Footer Specific Preview */}
+                    <div className="space-y-6 sticky top-0 self-start z-20">
+                       <div className="flex items-center gap-4">
+                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Footer Preview</span>
+                         <div className="h-px flex-1 bg-white/5"></div>
+                       </div>
+                       <div className="bg-white rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group h-[250px]">
+                         <div className="absolute top-0 right-0 w-24 h-24 bg-red-700/5 blur-3xl rounded-full"></div>
+                         <div 
+                           className="footer-render absolute left-0 right-0 z-10" 
+                           style={{ 
+                             bottom: `${footerSettings.bottomOffset ?? 10}mm`,
+                             paddingLeft: `${footerSettings.horizontalPadding ?? 15}mm`,
+                             paddingRight: `${footerSettings.horizontalPadding ?? 15}mm`,
+                             paddingTop: `${footerSettings.topPadding ?? 0}mm`
+                           }}
+                         >
+                           <div className="h-px bg-red-600/30 w-full" style={{ marginBottom: `${footerSettings.lineSpacing ?? 3}mm` }}></div>
+                           <div className="flex justify-center items-center gap-4 text-[11px] text-black font-bold flex-wrap">
+                             <span className="flex items-center gap-1 text-black">
+                               <span className="text-red-600">
+                                 {React.createElement(getIconComponent(footerSettings.addressIcon, MapPin), { className: "w-3 h-3" })}
+                               </span> 
+                               {footerSettings.address || '---'}
+                             </span>
+                             <span className="flex items-center gap-1 text-black">
+                               <span className="text-red-600">
+                                 {React.createElement(getIconComponent(footerSettings.emailIcon, Mail), { className: "w-3 h-3" })}
+                               </span> 
+                               {footerSettings.email || '---'}
+                             </span>
+                             <span className="flex items-center gap-1 text-black">
+                               <span className="text-red-600">
+                                 {React.createElement(getIconComponent(footerSettings.phone1Icon, Phone), { className: "w-3 h-3" })}
+                               </span> 
+                               {footerSettings.phone1 || '---'}
+                             </span>
+                             {footerSettings.phone2 && (
+                               <span className="flex items-center gap-1 text-black">
+                                 <span className="text-red-600">
+                                   {React.createElement(getIconComponent(footerSettings.phone2Icon, Phone), { className: "w-3 h-3" })}
+                                 </span> 
+                                 {footerSettings.phone2}
+                               </span>
+                             )}
+                           </div>
+                           {footerSettings.website && renderSpacedWebsite(footerSettings.website)}
+                         </div>
+                       </div>
+                       <div className="p-6 bg-red-700/5 rounded-[2rem] border border-red-700/10">
+                          <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest leading-relaxed text-center">
+                            This is a real-time preview of your footer section. Changes are applied instantly.
+                          </p>
+                       </div>
                     </div>
                  </div>
               </div>
             ) : activeTab === 'HEADER' ? (
-              <div className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+              <div key="HEADER" className="max-w-6xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
                  {/* Document Type Selector */}
                  <div className="flex flex-wrap items-center gap-4 bg-white/5 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-xl">
                     {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => {
@@ -797,7 +811,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                  </div>
               </div>
             ) : (
-              <div className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
+              <div key="HERO" className="max-w-4xl mx-auto space-y-10 animate-in slide-in-from-right-10 duration-500">
                 <div className="bg-white/[0.03] p-10 rounded-[2.5rem] border border-white/5 space-y-8">
                   <div className="flex items-center gap-4 mb-2">
                     <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
@@ -819,7 +833,9 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                         </label>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        {Array.from(new Set([...HERO_IMAGE_POOL, ...heroSettings.selectedImages])).map((url, idx) => {
+                        {Array.from(new Set([...HERO_IMAGE_POOL, ...heroSettings.selectedImages]))
+                          .filter(url => !heroSettings.removedImages?.includes(url))
+                          .map((url, idx) => {
                           const isSelected = heroSettings.selectedImages.includes(url);
                           const isCustom = !HERO_IMAGE_POOL.includes(url);
                           return (
@@ -847,20 +863,26 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                                 </div>
                               )}
                               
-                              {isCustom && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (isCustom) {
                                     setHeroSettings({
                                       ...heroSettings,
                                       selectedImages: heroSettings.selectedImages.filter(img => img !== url)
                                     });
-                                  }}
-                                  className="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors z-10"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              )}
+                                  } else {
+                                    setHeroSettings({
+                                      ...heroSettings,
+                                      selectedImages: heroSettings.selectedImages.filter(img => img !== url),
+                                      removedImages: [...(heroSettings.removedImages || []), url]
+                                    });
+                                  }
+                                }}
+                                className="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors z-10"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
 
                               <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-[8px] font-black text-white uppercase">
                                 {isCustom ? 'Custom' : `Preset ${idx + 1}`}

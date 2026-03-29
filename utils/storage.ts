@@ -290,7 +290,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
       transitionEffect: 'fade',
       interval: 5000,
       backgroundPosition: '50% 50%',
-      imagePositions: {}
+      imagePositions: {},
+      removedImages: []
     };
   } catch (e) {
     return {
@@ -302,7 +303,8 @@ export const loadHeroSettings = async (): Promise<HeroSettings> => {
       transitionEffect: 'fade',
       interval: 5000,
       backgroundPosition: '50% 50%',
-      imagePositions: {}
+      imagePositions: {},
+      removedImages: []
     };
   }
 };
