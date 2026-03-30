@@ -299,36 +299,39 @@ const App: React.FC = () => {
       {viewMode === 'landing' && (
         <div className="flex flex-col overflow-x-hidden">
           {/* Hero Banner Section */}
-          <section className="relative h-[90vh] overflow-hidden">
-            {heroSettings.selectedImages.map((banner, idx) => {
-              const isActive = idx === currentBanner;
-              let transitionClass = "";
-              
-              if (heroSettings.transitionEffect === 'fade') {
-                transitionClass = `transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0'}`;
-              } else if (heroSettings.transitionEffect === 'slide') {
-                transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`;
-              } else if (heroSettings.transitionEffect === 'zoom') {
-                transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`;
-              }
+          <section className="relative h-[90vh]">
+            <div className="absolute inset-0 overflow-hidden">
+              {heroSettings.selectedImages.map((banner, idx) => {
+                const isActive = idx === currentBanner;
+                let transitionClass = "";
+                
+                if (heroSettings.transitionEffect === 'fade') {
+                  transitionClass = `transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0'}`;
+                } else if (heroSettings.transitionEffect === 'slide') {
+                  transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`;
+                } else if (heroSettings.transitionEffect === 'zoom') {
+                  transitionClass = `transition-all duration-1000 ease-in-out ${isActive ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`;
+                }
 
-              return (
-                <div 
-                  key={idx}
-                  className={`absolute inset-0 ${transitionClass}`}
-                  style={{
-                    backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: heroSettings.imagePositions && heroSettings.imagePositions[banner] 
-                      ? `${heroSettings.imagePositions[banner].x}% ${heroSettings.imagePositions[banner].y}%`
-                      : heroSettings.backgroundPosition || '50% 50%'
-                  }}
-                />
-              );
-            })}
+                return (
+                  <div 
+                    key={idx}
+                    className={`absolute inset-0 ${transitionClass}`}
+                    style={{
+                      backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), url(${banner})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: heroSettings.imagePositions && heroSettings.imagePositions[banner] 
+                        ? `${heroSettings.imagePositions[banner].x}% ${heroSettings.imagePositions[banner].y}%`
+                        : heroSettings.backgroundPosition || '50% 50%'
+                    }}
+                  />
+                );
+              })}
+              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0b] to-transparent"></div>
+            </div>
 
-            <div className="absolute left-0 right-0 md:left-[3%] top-[72%] lg:top-[60%] -translate-y-1/2 z-10 px-4 md:px-0">
-              <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] w-full md:w-[580px] shadow-2xl relative overflow-hidden group">
+            <div className="absolute left-0 right-0 md:left-[3%] top-[98%] lg:top-[60%] -translate-y-1/2 z-10 px-4 md:px-0">
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] w-full md:w-[580px] shadow-2xl relative overflow-hidden group scale-[0.85] lg:scale-100 origin-center md:origin-left transition-transform duration-500">
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-700/20 rounded-full blur-3xl group-hover:bg-red-700/40 transition-all"></div>
                 
                 <h1 className="text-3xl md:text-6xl font-black leading-[1.1] mb-6 tracking-tighter uppercase">
@@ -354,7 +357,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0b] to-transparent"></div>
           </section>
 
           {/* Core Services Section */}
