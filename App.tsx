@@ -360,7 +360,7 @@ const App: React.FC = () => {
           </section>
 
           {/* Core Services Section */}
-          <section className="px-4 md:px-20 pt-20 md:pt-32 pb-16 bg-[#0a0a0b] relative">
+          <section className="px-4 md:px-20 pt-64 md:pt-80 lg:pt-32 pb-16 bg-[#0a0a0b] relative">
             <div className="mb-12 md:mb-24 flex flex-col items-center text-center">
               <p className="text-red-600 font-black uppercase tracking-[0.5em] text-[9px] md:text-[10px] mb-4">Enterprise Edition</p>
               <h2 className="text-3xl md:text-6xl font-black mb-6 uppercase tracking-tighter">Premium <span className="text-red-700">Workspace</span></h2>
