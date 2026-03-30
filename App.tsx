@@ -327,7 +327,7 @@ const App: React.FC = () => {
               );
             })}
 
-            <div className="absolute left-0 right-0 md:left-[3%] top-1/2 md:top-[60%] -translate-y-1/2 z-10 px-4 md:px-0">
+            <div className="absolute left-0 right-0 md:left-[3%] top-[72%] lg:top-[60%] -translate-y-1/2 z-10 px-4 md:px-0">
               <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] w-full md:w-[580px] shadow-2xl relative overflow-hidden group">
                 <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-700/20 rounded-full blur-3xl group-hover:bg-red-700/40 transition-all"></div>
                 
