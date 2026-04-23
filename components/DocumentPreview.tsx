@@ -217,14 +217,15 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative bg-white !text-black" style={proInvoiceStyle}>
-          <div className="flex pt-[5mm] mb-[5px] w-full" style={{ width: '100%' }}>
-            <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, flexShrink: 0 }}>
+          <div className="pt-[5mm] mb-[5px] w-full" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+            <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, float: 'left' }}>
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
+            <div style={{ clear: 'both' }}></div>
           </div>
           <HeaderBar />
           
-          <div className="main-content px-[15mm] text-black flex-1 flex flex-col pb-[30mm]" style={{ width: '100%' }}>
+          <div className="main-content px-[15mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
             <div className="mb-6 border-b-[1.5px] border-black text-black pb-1" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
               <div style={{ float: 'left' }}>
                 <h1 className="m-0 text-[32px] font-bold text-black uppercase whitespace-nowrap" style={{ lineHeight: '1', letterSpacing: '0' }}>INVOICE</h1>
@@ -237,28 +238,28 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
             <div className="mb-8 text-[14px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
               <div className="text-black" style={{ width: '65%', float: 'left' }}>
-                <div className="flex text-black items-start" style={{ width: '100%', marginBottom: '4px' }}>
-                  <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Buyer's Name</span>
-                  <span className="mr-2 text-black">:</span> 
-                  <span className="font-bold uppercase flex-1 text-black">{clientName || '---'}</span>
+                <div style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
+                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Buyer's Name</div>
+                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                  <div className="font-bold uppercase text-black" style={{ float: 'left', width: '300px' }}>{clientName || '---'}</div>
                 </div>
-                <div className="flex text-black items-start" style={{ width: '100%', marginBottom: '4px' }}>
-                  <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Phone</span>
-                  <span className="mr-2 text-black">:</span> 
-                  <span className="flex-1 text-black">{clientPhone || '---'}</span>
+                <div style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
+                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Phone</div>
+                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                  <div className="text-black" style={{ float: 'left', width: '300px' }}>{clientPhone || '---'}</div>
                 </div>
-                <div className="flex text-black items-start" style={{ width: '100%' }}>
-                  <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Address</span>
-                  <span className="mr-2 text-black">:</span> 
-                  <span className="capitalize flex-1 leading-snug text-black">{clientAddress || '---'}</span>
+                <div style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Address</div>
+                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                  <div className="capitalize text-black leading-snug" style={{ float: 'left', width: '300px' }}>{clientAddress || '---'}</div>
                 </div>
               </div>
               <div className="text-black" style={{ width: '35%', float: 'right', textAlign: 'right' }}>
-                <div className="text-black" style={{ marginBottom: '4px' }}>
+                <div className="text-black" style={{ marginBottom: '4px', display: 'block' }}>
                   <span className="font-bold mr-2 text-black">DATE:</span> 
                   <span className="font-bold text-black whitespace-nowrap">{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
                 </div>
-                <div className="text-black">
+                <div className="text-black" style={{ display: 'block' }}>
                   <span className="font-bold mr-2 text-black">Invoice no.:</span> 
                   <span className="font-bold text-black whitespace-nowrap">{docNumber}</span>
                 </div>
@@ -281,7 +282,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 {items.length > 0 ? items.map((item, index) => (
                   <tr key={item.id} className="text-black border-b border-gray-100 last:border-black last:border-b-[1.5px]">
                     <td className="p-3 text-center align-middle font-bold text-[13px] text-black whitespace-nowrap">{(index + 1).toString().padStart(2, '0')}</td>
-                    <td className="p-3 align-middle font-bold pl-4 text-[14px] text-black uppercase overflow-hidden truncate">
+                    <td className="p-3 align-middle font-bold pl-4 text-[14px] text-black uppercase overflow-hidden">
                       {item.description}
                     </td>
                     {showImageColumn && (
@@ -474,20 +475,20 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
           <HeaderBar />
-          <div className="main-content px-[20mm] text-black flex-1 relative pb-[30mm]">
-            <div className="text-center font-bold uppercase mt-[-10px] mb-[15px] text-[22px] text-black">BILL</div>
-            <div className="mb-[25px] leading-[1.2] text-[17px] text-black">
+          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
+            <div className="text-center font-bold uppercase mb-[15px] text-[22px] text-black" style={{ marginTop: '-10px' }}>BILL</div>
+            <div className="mb-[25px] leading-[1.2] text-[17px] text-black" style={{ width: '100%', display: 'block' }}>
               To,<br />
-              <div className="flex flex-col text-black">
-                <span className="text-black font-bold">{acName ? `A/C: ${acName}` : clientName}</span>
-                {clientDesignation && <span className="text-black font-bold">{clientDesignation},</span>}
-                {clientOffice && <span className="text-black font-bold">{clientOffice}</span>}
-                <div className="whitespace-pre-wrap text-black capitalize">{clientAddress}</div>
+              <div className="text-black" style={{ width: '100%', display: 'block' }}>
+                <div className="text-black font-bold" style={{ display: 'block' }}>{acName ? `A/C: ${acName}` : clientName}</div>
+                {clientDesignation && <div className="text-black font-bold" style={{ display: 'block' }}>{clientDesignation},</div>}
+                {clientOffice && <div className="text-black font-bold" style={{ display: 'block' }}>{clientOffice}</div>}
+                <div className="whitespace-pre-wrap text-black capitalize" style={{ display: 'block' }}>{clientAddress}</div>
               </div>
             </div>
-            <div className="font-bold mb-[30px] text-black" style={{ fontSize: `${vehicleTitleSize}px` }}>Sub: Bill for {vehicleTitle}</div>
-            <div className="relative text-black">
-              <table className="w-full border-collapse mb-[25px] border border-black relative z-[1] text-black">
+            <div className="font-bold mb-[30px] text-black" style={{ fontSize: `${vehicleTitleSize}px`, display: 'block' }}>Sub: Bill for {vehicleTitle}</div>
+            <div className="relative text-black" style={{ width: '100%', display: 'block' }}>
+              <table className="w-full border-collapse mb-[25px] border border-black relative z-[1] text-black" style={{ width: '100%' }}>
                 <thead>
                   <tr className="bg-white h-[45px] text-black">
                     <th className="border border-black p-2 text-center font-bold w-[55%] text-[17px] text-black bg-white uppercase">DESCRIPTION OF VEHICLE</th>
@@ -497,18 +498,48 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 </thead>
                 <tbody>
                   <tr className="text-black">
-                    <td className="border-x border-black px-6 pt-8 pb-8 align-top text-black min-h-[400px]">
-                      <div className="specs-block space-y-2 text-[20px] text-black">
-                        <div className="flex text-black">
-                           <span className="font-bold text-black w-[140px] shrink-0">Vehicle</span>
-                           <span className="text-black w-[25px] shrink-0">:</span>
-                           <span className="font-bold text-black flex-1">{formattedPrice}/-</span>
+                    <td className="border-x border-black px-6 pt-8 pb-8 align-top text-black" style={{ minHeight: '400px' }}>
+                      <div className="specs-block text-[20px] text-black" style={{ width: '100%', display: 'block' }}>
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
+                           <span className="font-bold text-black" style={{ float: 'left', width: '140px' }}>Vehicle</span>
+                           <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                           <span className="font-bold text-black" style={{ float: 'left' }}>{formattedPrice}/-</span>
                         </div>
-                        {!isHidden('yearModel') && <div className="flex text-black"><span className="text-black w-[140px] shrink-0">Year</span><span className="text-black w-[25px] shrink-0">:</span><span className="text-black flex-1">{yearModel}</span></div>}
-                        {!isHidden('cc') && <div className="flex text-black"><span className="text-black w-[140px] shrink-0">CC.</span><span className="text-black w-[25px] shrink-0">:</span><span className="text-black flex-1">{cc}</span></div>}
-                        {!isHidden('engineNumber') && <div className="flex text-black"><span className="text-black w-[140px] shrink-0">Engine No.</span><span className="text-black w-[25px] shrink-0">:</span><span className="text-black flex-1">{engineNumber}</span></div>}
-                        {!isHidden('chassisNumber') && <div className="flex text-black"><span className="text-black w-[140px] shrink-0">Chassis No</span><span className="text-black w-[25px] shrink-0">:</span><span className="text-black flex-1">{chassisNumber}</span></div>}
-                        {!isHidden('color') && <div className="flex text-black"><span className="text-black w-[140px] shrink-0">Color</span><span className="text-black w-[25px] shrink-0">:</span><span className="text-black flex-1">{color}</span></div>}
+                        {!isHidden('yearModel') && (
+                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
+                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Year</span>
+                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                            <span className="text-black" style={{ float: 'left' }}>{yearModel}</span>
+                          </div>
+                        )}
+                        {!isHidden('cc') && (
+                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
+                            <span className="text-black" style={{ float: 'left', width: '140px' }}>CC.</span>
+                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                            <span className="text-black" style={{ float: 'left' }}>{cc}</span>
+                          </div>
+                        )}
+                        {!isHidden('engineNumber') && (
+                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
+                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Engine No.</span>
+                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                            <span className="text-black" style={{ float: 'left' }}>{engineNumber}</span>
+                          </div>
+                        )}
+                        {!isHidden('chassisNumber') && (
+                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
+                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Chassis No</span>
+                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                            <span className="text-black" style={{ float: 'left' }}>{chassisNumber}</span>
+                          </div>
+                        )}
+                        {!isHidden('color') && (
+                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Color</span>
+                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
+                            <span className="text-black" style={{ float: 'left' }}>{color}</span>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="border-x border-black px-3 pt-8 text-center align-middle font-bold text-[22px] text-black">
@@ -539,10 +570,10 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 </tbody>
               </table>
             </div>
-            <div className="text-[19px] mt-[25px] text-black">
+            <div className="text-[19px] mt-[25px] text-black" style={{ display: 'block' }}>
               <span className="font-bold text-black">Price in words : {priceInWords}</span>
             </div>
-            <div className="text-[19px] font-bold text-black mt-[25px]">
+            <div className="text-[19px] font-bold text-black mt-[25px]" style={{ display: 'block' }}>
               Yours Faithfully,
             </div>
           </div>
@@ -677,48 +708,53 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
           <HeaderBar />
-          <div className="px-[15mm] pt-[5mm] text-black" style={{ width: '100%' }}>
-            <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px' }}>
-              <h1 className="absolute left-0 bottom-0 m-0 text-[32px] font-bold text-black whitespace-nowrap">INVOICE</h1>
-              <div className="absolute right-0 bottom-1 text-[11px] font-bold text-black uppercase whitespace-nowrap">CUSTOMER COPY</div>
+          <div className="px-[15mm] pt-[5mm] text-black" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
+            <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px', display: 'block' }}>
+              <div style={{ float: 'left' }}>
+                <h1 className="m-0 text-[32px] font-bold text-black whitespace-nowrap" style={{ lineHeight: '1.4' }}>INVOICE</h1>
+              </div>
+              <div style={{ float: 'right', marginTop: '15px' }}>
+                <div className="text-[11px] font-bold text-black uppercase whitespace-nowrap">CUSTOMER COPY</div>
+              </div>
+              <div style={{ clear: 'both' }}></div>
             </div>
             <div className="mb-8 text-[14px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
               <div className="text-black" style={{ width: '65%', float: 'left' }}>
                 {!isHidden('clientName') && (
-                  <div className="flex text-black items-start" style={{ width: '100%', marginBottom: '4px' }}>
-                    <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Buyer's Name</span>
-                    <span className="mr-2 text-black">:</span> 
-                    <span className="uppercase flex-1 text-black font-bold">{clientName}</span>
+                  <div className="text-black" style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
+                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Buyer's Name</div>
+                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                    <div className="uppercase text-black font-bold" style={{ float: 'left', width: '300px' }}>{clientName}</div>
                   </div>
                 )}
                 {!isHidden('clientPhone') && (
-                  <div className="flex text-black items-start" style={{ width: '100%', marginBottom: '4px' }}>
-                    <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Phone</span>
-                    <span className="mr-2 text-black">:</span> 
-                    <span className="flex-1 text-black">{clientPhone}</span>
+                  <div className="text-black" style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
+                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Phone</div>
+                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                    <div className="text-black" style={{ float: 'left', width: '300px' }}>{clientPhone}</div>
                   </div>
                 )}
                 {!isHidden('clientAddress') && (
-                  <div className="flex text-black items-start" style={{ width: '100%' }}>
-                    <span className="font-bold text-black shrink-0" style={{ width: '110px' }}>Address</span>
-                    <span className="mr-2 text-black">:</span> 
-                    <span className="capitalize flex-1 text-black leading-tight">{clientAddress}</span>
+                  <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Address</div>
+                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
+                    <div className="capitalize text-black leading-tight" style={{ float: 'left', width: '300px' }}>{clientAddress}</div>
                   </div>
                 )}
               </div>
               <div className="text-black" style={{ width: '35%', float: 'right', textAlign: 'right' }}>
-                <div className="text-black" style={{ marginBottom: '4px' }}>
+                <div className="text-black" style={{ marginBottom: '4px', display: 'block' }}>
                   <span className="font-bold mr-2 text-black">DATE:</span> 
                   <span className="text-black whitespace-nowrap">{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
                 </div>
-                <div className="text-black">
+                <div className="text-black" style={{ display: 'block' }}>
                   <span className="font-bold mr-2 text-black">Invoice no.:</span> 
                   <span className="text-black whitespace-nowrap">{docNumber}</span>
                 </div>
               </div>
               <div style={{ clear: 'both' }}></div>
             </div>
-            <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed' }}>
+            <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr className="text-black">
                   <th className="border-y-[1.5px] border-black py-2.5 pl-[80px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%' }}>DESCRIPTION</th>
@@ -729,37 +765,68 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               <tbody>
                 <tr className="text-black">
                   <td className="w-[45%] align-top pt-4 pr-2 text-black">
-                    {!isHidden('vehicleTitle') && <span className="font-bold uppercase mb-4 block leading-tight text-black" style={{ fontSize: `${vehicleTitleSize}px` }}>{vehicleTitle}</span>}
+                    {!isHidden('vehicleTitle') && <span className="font-bold uppercase mb-4 block leading-tight text-black" style={{ fontSize: `${vehicleTitleSize}px`, display: 'block' }}>{vehicleTitle}</span>}
                     {productImageUrl && (
-                      <div className="mb-4 rounded-xl overflow-hidden border border-gray-100 max-w-[200px] shadow-sm">
+                      <div className="mb-4 rounded-xl overflow-hidden border border-gray-100 max-w-[200px] shadow-sm" style={{ display: 'block' }}>
                         <img src={productImageUrl} alt="Product" className="w-full h-auto block" />
                       </div>
                     )}
-                    <div className="space-y-1 text-[14px] text-black">
-                      {!isHidden('model') && <div className="flex text-black"><span className="text-black w-[80px] shrink-0">Model</span><span className="text-black w-[10px] shrink-0">:</span><span className="text-black flex-1">{model}</span></div>}
-                      {!isHidden('color') && <div className="flex text-black"><span className="text-black w-[80px] shrink-0">Color</span><span className="text-black w-[10px] shrink-0">:</span><span className="text-black flex-1">{color}</span></div>}
-                      {!isHidden('cc') && <div className="flex text-black"><span className="text-black w-[80px] shrink-0">CC</span><span className="text-black w-[10px] shrink-0">:</span><span className="text-black flex-1">{cc}</span></div>}
-                      {!isHidden('chassisNumber') && <div className="flex text-black"><span className="text-black w-[80px] shrink-0">Chassis no</span><span className="text-black w-[10px] shrink-0">:</span><span className="text-black flex-1">{chassisNumber}</span></div>}
-                      {!isHidden('engineNumber') && <div className="flex text-black"><span className="text-black w-[80px] shrink-0">Engine no</span><span className="text-black w-[10px] shrink-0">:</span><span className="text-black flex-1">{engineNumber}</span></div>}
+                    <div className="text-[14px] text-black" style={{ width: '100%', display: 'block' }}>
+                      {!isHidden('model') && (
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
+                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Model</span>
+                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
+                          <span className="text-black" style={{ float: 'left' }}>{model}</span>
+                        </div>
+                      )}
+                      {!isHidden('color') && (
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
+                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Color</span>
+                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
+                          <span className="text-black" style={{ float: 'left' }}>{color}</span>
+                        </div>
+                      )}
+                      {!isHidden('cc') && (
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
+                          <span className="text-black" style={{ float: 'left', width: '80px' }}>CC</span>
+                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
+                          <span className="text-black" style={{ float: 'left' }}>{cc}</span>
+                        </div>
+                      )}
+                      {!isHidden('chassisNumber') && (
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
+                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Chassis no</span>
+                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
+                          <span className="text-black" style={{ float: 'left' }}>{chassisNumber}</span>
+                        </div>
+                      )}
+                      {!isHidden('engineNumber') && (
+                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Engine no</span>
+                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
+                          <span className="text-black" style={{ float: 'left' }}>{engineNumber}</span>
+                        </div>
+                      )}
                     </div>
                     <br />
                     {!isHidden('vehiclePrice') && (
-                      <div className="text-black" style={{ marginTop: '15px' }}>
-                      <strong className="text-[15px] text-black" style={{ display: 'block' }}>Car price : {vehiclePrice.toLocaleString()}/-</strong>
-                      <span className="text-[13px] font-normal text-black" style={{ display: 'block', marginTop: '4px' }}>(Excluding registration fee)</span>
-                    </div>
+                      <div className="text-black" style={{ marginTop: '15px', display: 'block' }}>
+                        <strong className="text-[15px] text-black" style={{ display: 'block' }}>Car price : {vehiclePrice.toLocaleString()}/-</strong>
+                        <span className="text-[13px] font-normal text-black" style={{ display: 'block', marginTop: '4px' }}>(Excluding registration fee)</span>
+                      </div>
                     )}
                   </td>
                   <td colSpan={2} className="p-0 align-top border-l border-gray-200 text-black">
                     {payments?.map((p, index) => (
-                      <div key={p.id} className={`flex ${index === payments.length - 1 ? '' : 'border-b border-gray-200'} text-black`}>
-                        <div className="w-[63.6%] py-3 px-2 text-[13px] text-black align-top">
+                      <div key={p.id} className={`text-black`} style={{ width: '100%', display: 'block', overflow: 'hidden', borderBottom: index === payments.length - 1 ? 'none' : '1px solid #e5e7eb' }}>
+                        <div className="py-3 px-2 text-[13px] text-black" style={{ width: '63.6%', float: 'left' }}>
                           {new Date(p.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}
                         </div>
-                        <div className="w-[36.4%] text-right py-3 px-2 text-black">
-                          <span className="font-bold block text-[13px] text-black">{p.amount.toLocaleString()}/-</span>
-                          <span className="text-[11px] text-[#555] italic block mt-0.5 uppercase">{p.note}</span>
+                        <div className="text-right py-3 px-2 text-black" style={{ width: '36.4%', float: 'left' }}>
+                          <span className="font-bold block text-[13px] text-black" style={{ display: 'block' }}>{p.amount.toLocaleString()}/-</span>
+                          <span className="text-[11px] text-[#555] italic block mt-0.5 uppercase" style={{ display: 'block' }}>{p.note}</span>
                         </div>
+                        <div style={{ clear: 'both' }}></div>
                       </div>
                     ))}
                   </td>

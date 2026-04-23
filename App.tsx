@@ -203,7 +203,6 @@ const App: React.FC = () => {
           clonedElement.style.maxHeight = `${targetH}px`;
           clonedElement.style.backgroundColor = '#ffffff';
           clonedElement.style.color = '#000000';
-          clonedElement.style.fontFamily = '"Segoe UI", Arial, sans-serif';
           
           // 3. Ultra-aggressive cleanup for text and layout
           const allElements = clonedElement.querySelectorAll('*');
@@ -311,7 +310,6 @@ const App: React.FC = () => {
           clonedElement.style.maxHeight = `${targetH}px`;
           clonedElement.style.backgroundColor = '#ffffff';
           clonedElement.style.color = '#000000';
-          clonedElement.style.fontFamily = '"Segoe UI", Arial, sans-serif';
           
           // 3. Ultra-aggressive cleanup for text and layout
           const allElements = clonedElement.querySelectorAll('*');
