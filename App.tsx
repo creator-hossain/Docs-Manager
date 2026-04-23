@@ -23,7 +23,8 @@ import {
   CheckCircle2,
   Loader2,
   Menu,
-  FileText
+  FileText,
+  Image as ImageIcon
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -155,14 +156,97 @@ const App: React.FC = () => {
     const targetDoc = docToDownload || previewingDoc;
     if (!previewRef.current || !targetDoc) return;
 
+    // Scroll to top to ensure clean capture
+    window.scrollTo(0, 0);
+
     const element = previewRef.current;
-    const canvas = await html2canvas(element, { scale: 3, useCORS: true });
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    
+    // Create a high-quality PDF by capturing at a higher scale and ensuring layout is correct
+    const canvas = await html2canvas(element, {
+      scale: 2.5, // High scale for ultra-sharp text
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      windowWidth: 1200, // Force a wide virtual window to prevent responsive wrapping
+      windowHeight: 1600,
+      onclone: (clonedDoc) => {
+        const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
+        if (clonedElement) {
+          // 1. Reset all transforms and positioning that might interfere
+          clonedElement.style.transform = 'none';
+          clonedElement.style.margin = '0';
+          clonedElement.style.padding = '0';
+          clonedElement.style.boxShadow = 'none';
+          clonedElement.style.position = 'relative';
+          clonedElement.style.left = '0';
+          clonedElement.style.top = '0';
+          clonedElement.style.display = 'block'; 
+          
+          // 2. Force the exact dimensions from the document settings
+          const pageSize = targetDoc.pageSettings?.pageSize || 'a4';
+          const orientation = targetDoc.pageSettings?.orientation || 'portrait';
+          
+          const sizes = {
+            a4: { w: 794, h: 1123 },
+            letter: { w: 816, h: 1056 },
+            legal: { w: 816, h: 1344 }
+          };
+          
+          const base = sizes[pageSize as keyof typeof sizes] || sizes.a4;
+          const targetW = orientation === 'portrait' ? base.w : base.h;
+          const targetH = orientation === 'portrait' ? base.h : base.w;
+          
+          clonedElement.style.width = `${targetW}px`;
+          clonedElement.style.height = `${targetH}px`;
+          clonedElement.style.minHeight = `${targetH}px`;
+          clonedElement.style.maxHeight = `${targetH}px`;
+          clonedElement.style.backgroundColor = '#ffffff';
+          clonedElement.style.color = '#000000';
+          clonedElement.style.fontFamily = '"Segoe UI", Arial, sans-serif';
+          
+          // 3. Ultra-aggressive cleanup for text and layout
+          const allElements = clonedElement.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              // FORCE RESET OF SPACING - Extreme measures for html2canvas
+              el.style.setProperty('letter-spacing', '0px', 'important');
+              el.style.setProperty('word-spacing', '0px', 'important');
+              el.style.textShadow = 'none';
+              el.style.fontVariantLigatures = 'none';
+              (el.style as any).webkitFontSmoothing = 'antialiased';
+              el.style.textRendering = 'geometricPrecision'; 
+              
+              // Ensure table cells are robust
+              if (el.tagName === 'TH' || el.tagName === 'TD') {
+                el.style.boxSizing = 'border-box';
+                el.style.overflow = 'hidden';
+              }
+              
+              if (el.classList.contains('flex-1')) {
+                el.style.flex = '1 1 auto';
+              }
+              
+              if (window.getComputedStyle(el).display === 'grid') {
+                el.style.display = 'flex';
+                el.style.flexDirection = 'column';
+              }
+            }
+          });
+
+          clonedDoc.body.style.margin = '0';
+          clonedDoc.body.style.padding = '0';
+          clonedDoc.body.style.overflow = 'visible';
+          clonedDoc.body.style.backgroundColor = '#ffffff';
+        }
+      }
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
     
     const orientation = pdfSettings.orientation === 'portrait' ? 'p' : 'l';
     const pdf = new jsPDF(orientation, 'mm', pdfSettings.pageSize);
     
-    // Get dimensions based on orientation and page size
     const sizes = {
       a4: { width: 210, height: 297 },
       letter: { width: 215.9, height: 279.4 },
@@ -172,8 +256,105 @@ const App: React.FC = () => {
     const width = pdfSettings.orientation === 'portrait' ? base.width : base.height;
     const height = pdfSettings.orientation === 'portrait' ? base.height : base.width;
 
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
+    pdf.addImage(imgData, 'JPEG', 0, 0, width, height, undefined, 'FAST');
     pdf.save(`${targetDoc.docNumber}_${targetDoc.clientName}.pdf`);
+  };
+
+  const handleDownloadJPG = async (docToDownload?: BusinessDocument) => {
+    const targetDoc = docToDownload || previewingDoc;
+    if (!previewRef.current || !targetDoc) return;
+
+    // Scroll to top to ensure clean capture
+    window.scrollTo(0, 0);
+
+    const element = previewRef.current;
+    
+    // Create a high-quality JPG by capturing at a higher scale and ensuring layout is correct
+    const canvas = await html2canvas(element, {
+      scale: 2.5, // High scale for ultra-sharp text
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      windowWidth: 1200, // Force a wide virtual window to prevent responsive wrapping
+      windowHeight: 1600,
+      onclone: (clonedDoc) => {
+        const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
+        if (clonedElement) {
+          // 1. Reset all transforms and positioning that might interfere
+          clonedElement.style.transform = 'none';
+          clonedElement.style.margin = '0';
+          clonedElement.style.padding = '0';
+          clonedElement.style.boxShadow = 'none';
+          clonedElement.style.position = 'relative';
+          clonedElement.style.left = '0';
+          clonedElement.style.top = '0';
+          clonedElement.style.display = 'block'; 
+          
+          // 2. Force the exact dimensions from the document settings
+          const pageSize = targetDoc.pageSettings?.pageSize || 'a4';
+          const orientation = targetDoc.pageSettings?.orientation || 'portrait';
+          
+          const sizes = {
+            a4: { w: 794, h: 1123 },
+            letter: { w: 816, h: 1056 },
+            legal: { w: 816, h: 1344 }
+          };
+          
+          const base = sizes[pageSize as keyof typeof sizes] || sizes.a4;
+          const targetW = orientation === 'portrait' ? base.w : base.h;
+          const targetH = orientation === 'portrait' ? base.h : base.w;
+          
+          clonedElement.style.width = `${targetW}px`;
+          clonedElement.style.height = `${targetH}px`;
+          clonedElement.style.minHeight = `${targetH}px`;
+          clonedElement.style.maxHeight = `${targetH}px`;
+          clonedElement.style.backgroundColor = '#ffffff';
+          clonedElement.style.color = '#000000';
+          clonedElement.style.fontFamily = '"Segoe UI", Arial, sans-serif';
+          
+          // 3. Ultra-aggressive cleanup for text and layout
+          const allElements = clonedElement.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              // FORCE RESET OF SPACING - Using setProperty to ensure 'important' flag works
+              el.style.setProperty('letter-spacing', '0px', 'important');
+              el.style.setProperty('word-spacing', '0px', 'important');
+              el.style.textShadow = 'none';
+              el.style.fontVariantLigatures = 'none';
+              (el.style as any).webkitFontSmoothing = 'antialiased';
+              el.style.textRendering = 'geometricPrecision'; 
+              
+              // Ensure table cells are robust
+              if (el.tagName === 'TH' || el.tagName === 'TD') {
+                el.style.boxSizing = 'border-box';
+                el.style.overflow = 'hidden';
+              }
+              
+              if (el.classList.contains('flex-1')) {
+                el.style.flex = '1 1 auto';
+              }
+              
+              if (window.getComputedStyle(el).display === 'grid') {
+                el.style.display = 'flex';
+                el.style.flexDirection = 'column';
+              }
+            }
+          });
+
+          clonedDoc.body.style.margin = '0';
+          clonedDoc.body.style.padding = '0';
+          clonedDoc.body.style.overflow = 'visible';
+          clonedDoc.body.style.backgroundColor = '#ffffff';
+        }
+      }
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.9);
+    const link = document.createElement('a');
+    link.href = imgData;
+    link.download = `${targetDoc.docNumber}_${targetDoc.clientName}.jpg`;
+    link.click();
   };
 
   const filteredDocs = documents.filter(doc => {
@@ -804,6 +985,13 @@ const App: React.FC = () => {
                 className="w-full sm:w-auto bg-red-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-red-600/50"
               >
                 <Download className="w-5 h-5 md:w-6 md:h-6" /> Export PDF
+              </button>
+
+              <button 
+                onClick={() => handleDownloadJPG(previewingDoc)}
+                className="w-full sm:w-auto bg-blue-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-blue-800 transition-all active:scale-95 shadow-2xl shadow-blue-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-blue-600/50"
+              >
+                <ImageIcon className="w-5 h-5 md:w-6 md:h-6" /> Export JPG
               </button>
             </div>
           </div>
