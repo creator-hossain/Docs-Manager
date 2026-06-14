@@ -243,17 +243,20 @@ const App: React.FC = () => {
 
     const imgData = canvas.toDataURL('image/jpeg', 1.0);
     
-    const orientation = pdfSettings.orientation === 'portrait' ? 'p' : 'l';
-    const pdf = new jsPDF(orientation, 'mm', pdfSettings.pageSize);
+    const docPageSize = targetDoc.pageSettings?.pageSize || pdfSettings.pageSize || 'a4';
+    const docOrientation = targetDoc.pageSettings?.orientation || pdfSettings.orientation || 'portrait';
+    
+    const orientation = docOrientation === 'portrait' ? 'p' : 'l';
+    const pdf = new jsPDF(orientation, 'mm', docPageSize);
     
     const sizes = {
       a4: { width: 210, height: 297 },
       letter: { width: 215.9, height: 279.4 },
       legal: { width: 215.9, height: 355.6 }
     };
-    const base = sizes[pdfSettings.pageSize] || sizes.a4;
-    const width = pdfSettings.orientation === 'portrait' ? base.width : base.height;
-    const height = pdfSettings.orientation === 'portrait' ? base.height : base.width;
+    const base = sizes[docPageSize as keyof typeof sizes] || sizes.a4;
+    const width = docOrientation === 'portrait' ? base.width : base.height;
+    const height = docOrientation === 'portrait' ? base.height : base.width;
 
     pdf.addImage(imgData, 'JPEG', 0, 0, width, height, undefined, 'FAST');
     pdf.save(`${targetDoc.docNumber}_${targetDoc.clientName}.pdf`);

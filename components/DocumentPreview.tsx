@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   MapPin, Map, Navigation, Home, 
@@ -80,7 +79,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     boxSizing: 'border-box'
   };
 
-  // Default fallback footer settings if none provided
   const f = footerSettings || {
     address: 'A.Hamid Road, Pabna',
     email: 'garirdokan2021@gmail.com',
@@ -90,14 +88,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
   };
 
   const renderWebsite = (url: string) => {
-    // Logic to space out the website URL like "w w w . g a r i r d o k a n . c o m"
-    // and highlight specific characters (g, d) in red if found
-    const chars = url.toLowerCase().split('');
-    const spaced = [];
-    
-    // Check if it's already spaced or has dots. Normalize to base domain.
     const domain = url.replace(/\s+/g, '');
-    
     return (
       <div className="web-url text-[15px] mt-[5px] tracking-[4px] font-sans text-black lowercase text-center font-bold">
         {domain.split('').map((char, i) => (
@@ -123,14 +114,6 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
   };
 
   const HeaderBar = () => {
-    const h = headerSettings || {
-      text: 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier',
-      fontSize: 14,
-      fontFamily: 'serif',
-      alignment: 'left',
-      isItalic: true
-    };
-
     return (
       <div className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300 mb-6" style={{ width: '100%', boxSizing: 'border-box' }}>
         <div 
@@ -201,7 +184,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     </div>
   );
 
-  // Render Product Invoice (Multi-row variant) - Precisely matched to OIL FILTER image
+  // Render Product Invoice (Multi-row variant)
   if (isProInvoice) {
     const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
     const totalPaid = (payments || []).reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -211,7 +194,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     const proInvoiceStyle: React.CSSProperties = {
       ...commonA4Style,
       fontFamily: '"Segoe UI", Arial, sans-serif',
-      width: dimensions.width, // Ensure width is explicitly set
+      width: dimensions.width,
     };
 
     return (
@@ -225,7 +208,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
           </div>
           <HeaderBar />
           
-          <div className="main-content px-[15mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
+          <div className="main-content px-[15mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
             <div className="mb-6 border-b-[1.5px] border-black text-black pb-1" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
               <div style={{ float: 'left' }}>
                 <h1 className="m-0 text-[32px] font-bold text-black uppercase whitespace-nowrap" style={{ lineHeight: '1', letterSpacing: '0' }}>INVOICE</h1>
@@ -236,43 +219,60 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               <div style={{ clear: 'both' }}></div>
             </div>
 
-            <div className="mb-8 text-[14px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div className="text-black" style={{ width: '65%', float: 'left' }}>
-                <div style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
-                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Buyer's Name</div>
-                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                  <div className="font-bold uppercase text-black" style={{ float: 'left', width: '300px' }}>{clientName || '---'}</div>
-                </div>
-                <div style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
-                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Phone</div>
-                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                  <div className="text-black" style={{ float: 'left', width: '300px' }}>{clientPhone || '---'}</div>
-                </div>
-                <div style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Address</div>
-                  <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                  <div className="capitalize text-black leading-snug" style={{ float: 'left', width: '300px' }}>{clientAddress || '---'}</div>
-                </div>
-              </div>
-              <div className="text-black" style={{ width: '35%', float: 'right', textAlign: 'right' }}>
-                <div className="text-black" style={{ marginBottom: '4px', display: 'block' }}>
-                  <span className="font-bold mr-2 text-black">DATE:</span> 
-                  <span className="font-bold text-black whitespace-nowrap">{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
-                </div>
-                <div className="text-black" style={{ display: 'block' }}>
-                  <span className="font-bold mr-2 text-black">Invoice no.:</span> 
-                  <span className="font-bold text-black whitespace-nowrap">{docNumber}</span>
-                </div>
-              </div>
-              <div style={{ clear: 'both' }}></div>
+            <div className="mb-8" style={{ width: '100%', display: 'block' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', color: '#000000' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '65%', verticalAlign: 'top', paddingRight: '20px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
+                        <tbody>
+                          <tr>
+                            <td style={{ width: '110px', fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Buyer's Name</td>
+                            <td style={{ width: '15px', padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ fontWeight: 'bold', textTransform: 'uppercase', padding: '3px 0', verticalAlign: 'top' }}>{clientName || '---'}</td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Phone</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{clientPhone || '---'}</td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Address</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress || '---'}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                    <td style={{ width: '35%', verticalAlign: 'top', textAlign: 'right' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
+                        <tbody>
+                          <tr>
+                            <td style={{ textAlign: 'right', padding: '3px 0', fontWeight: 'bold' }}>
+                              <span style={{ marginRight: '8px' }}>DATE:</span>
+                              <span>{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ textAlign: 'right', padding: '3px 0', fontWeight: 'bold' }}>
+                              <span style={{ marginRight: '8px' }}>Invoice no.:</span>
+                              <span>{docNumber}</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr className="bg-white border-y-[1.5px] border-black">
                   <th className="p-2.5 text-center font-bold uppercase text-[12px] text-black" style={{ width: '10%', letterSpacing: '0' }}>SL NO</th>
-                  <th className="p-2.5 text-left font-bold uppercase text-[12px] text-black" style={{ width: showImageColumn ? '32%' : '46%', paddingLeft: '15px', letterSpacing: '0' }}>DESCRIPTION</th>
-                  {showImageColumn && <th className="p-2.5 text-center font-bold uppercase text-[12px] text-black" style={{ width: '14%', letterSpacing: '0' }}>IMAGE</th>}
+                  <th className="p-2.5 text-left font-bold uppercase text-[12px] text-black" style={{ width: showImageColumn ? '32%' : '48%', paddingLeft: '15px', letterSpacing: '0' }}>DESCRIPTION</th>
+                  {showImageColumn && <th className="p-2.5 text-center font-bold uppercase text-[12px] text-black" style={{ width: '16%', letterSpacing: '0' }}>IMAGE</th>}
                   <th className="p-2.5 text-center font-bold uppercase text-[12px] text-black" style={{ width: '10%', letterSpacing: '0' }}>QTY</th>
                   <th className="p-2.5 text-right font-bold uppercase text-[12px] text-black" style={{ width: '17%', paddingRight: '15px', letterSpacing: '0' }}>UNIT PRICE</th>
                   <th className="p-2.5 text-right font-bold uppercase text-[12px] text-black" style={{ width: '17%', paddingRight: '15px', letterSpacing: '0' }}>TOTAL</th>
@@ -310,21 +310,23 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </tbody>
             </table>
 
-            <div className="mt-8 text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div style={{ width: '350px', float: 'right' }}>
-                <div className="mb-1 text-[16px] font-bold" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="text-right pr-4 uppercase" style={{ width: '180px', float: 'left', letterSpacing: '0' }}>Subtotal:</div>
-                  <div className="text-right font-black" style={{ width: '150px', float: 'left', letterSpacing: '0' }}>{subtotal.toLocaleString()}/-</div>
-                </div>
-                <div className="mb-1 text-[16px] font-bold" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="text-right pr-4 uppercase" style={{ width: '180px', float: 'left', letterSpacing: '0' }}>Total Paid:</div>
-                  <div className="text-right border-b border-gray-400 font-black" style={{ width: '150px', float: 'left', letterSpacing: '0' }}>{totalPaid.toLocaleString()}/-</div>
-                </div>
-                <div className="mt-2 text-[18px] font-bold" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="text-right pr-4 uppercase" style={{ width: '180px', float: 'left', letterSpacing: '0' }}>Balance:</div>
-                  <div className="text-right bg-[#fff1f2] text-red-700 font-black px-2 py-1 rounded" style={{ width: '150px', float: 'left', letterSpacing: '0' }}>৳ {balance.toLocaleString()}/-</div>
-                </div>
-              </div>
+            <div style={{ width: '100%', marginTop: '30px', clear: 'both' }}>
+              <table style={{ width: '320px', float: 'right', borderCollapse: 'collapse', color: 'black', fontSize: '15px', fontWeight: 'bold' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ textAlign: 'right', padding: '4px 15px', textTransform: 'uppercase', width: '160px' }}>Subtotal:</td>
+                    <td style={{ textAlign: 'right', padding: '4px 0', width: '160px' }}>{subtotal.toLocaleString()}/-</td>
+                  </tr>
+                  <tr>
+                    <td style={{ textAlign: 'right', padding: '4px 15px', textTransform: 'uppercase' }}>Total Paid:</td>
+                    <td style={{ textAlign: 'right', padding: '4px 0', borderBottom: '1px solid #9ca3af' }}>{totalPaid.toLocaleString()}/-</td>
+                  </tr>
+                  <tr style={{ fontSize: '17px' }}>
+                    <td style={{ textAlign: 'right', padding: '8px 15px 4px 15px', textTransform: 'uppercase' }}>Balance:</td>
+                    <td style={{ textAlign: 'right', padding: '8px 0 4px 0', color: '#b91c1c' }}>৳ {balance.toLocaleString()}/-</td>
+                  </tr>
+                </tbody>
+              </table>
               <div style={{ clear: 'both' }}></div>
             </div>
           </div>
@@ -335,7 +337,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     );
   }
 
-  // Render Delivery Challan - Custom Matched to Image Reference
+  // Render Delivery Challan
   if (isChallan) {
     const challanStyle: React.CSSProperties = {
       ...commonA4Style,
@@ -360,25 +362,38 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
           <HeaderBar />
 
-          <div className="main-content px-[15mm] text-black flex-1 relative z-10 pb-[30mm]">
-            <div className="mb-8 text-[16px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div style={{ float: 'left', width: '50%' }}>
-                <div style={{ color: '#4b5563', marginBottom: '2px' }}>Invoice No:</div>
-                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#000000', marginBottom: '15px' }}>#{docNumber}</div>
-                <div style={{ color: '#4b5563', marginBottom: '2px' }}>Date Issued:</div>
-                <div style={{ fontWeight: 'bold', color: '#000000' }}>{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-              </div>
-              <div style={{ float: 'right', width: '45%', textAlign: 'left' }}>
-                <div style={{ color: '#4b5563', marginBottom: '2px' }}>Issued to:</div>
-                <div style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#000000' }}>{clientName}</div>
-                <div style={{ marginTop: '5px' }}>
-                  <span style={{ color: '#4b5563' }}>Cell:</span> <span style={{ color: '#000000', fontWeight: '500' }}>{clientPhone}</span>
-                </div>
-                <div style={{ marginTop: '2px' }}>
-                  <span style={{ color: '#4b5563' }}>Adress:</span> <span style={{ color: '#000000', textTransform: 'capitalize', fontWeight: '500' }}>{clientAddress}</span>
-                </div>
-              </div>
-              <div style={{ clear: 'both' }}></div>
+          <div className="main-content px-[15mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
+            <div className="mb-8" style={{ width: '100%', display: 'block' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '50%', verticalAlign: 'top' }}>
+                      <div style={{ color: '#4b5563', marginBottom: '2px' }}>Invoice No:</div>
+                      <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#000000', marginBottom: '15px' }}>#{docNumber}</div>
+                      <div style={{ color: '#4b5563', marginBottom: '2px' }}>Date Issued:</div>
+                      <div style={{ fontWeight: 'bold', color: '#000000' }}>{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+                    </td>
+                    <td style={{ width: '50%', verticalAlign: 'top', paddingLeft: '20px' }}>
+                      <div style={{ color: '#4b5563', marginBottom: '4px' }}>Issued to:</div>
+                      <div style={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#000000', fontSize: '16px', marginBottom: '6px' }}>{clientName}</div>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                        <tbody>
+                          <tr>
+                            <td style={{ width: '70px', color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>Cell</td>
+                            <td style={{ width: '15px', color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ color: '#000000', fontWeight: 'bold', padding: '2px 0', verticalAlign: 'top' }}>{clientPhone}</td>
+                          </tr>
+                          <tr>
+                            <td style={{ color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>Address</td>
+                            <td style={{ color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ color: '#000000', textTransform: 'capitalize', fontWeight: 'bold', padding: '2px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             <table className="w-full border-collapse mb-8 border border-[#bcbec0] text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
@@ -406,33 +421,36 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                     >
                       {vehicleTitle}
                     </div>
-                    <div style={{ marginTop: '20px', fontSize: '15px' }}>
-                      <div style={{ display: 'block', marginBottom: '8px', overflow: 'hidden' }}>
-                        <span style={{ float: 'left', width: '160px', fontWeight: 'bold' }}>| COLOR</span>
-                        <span style={{ float: 'left', marginRight: '8px' }}>:</span>
-                        <span style={{ float: 'left' }}>{color}</span>
-                      </div>
-                      <div style={{ display: 'block', marginBottom: '8px', overflow: 'hidden' }}>
-                        <span style={{ float: 'left', width: '160px', fontWeight: 'bold' }}>| MODEL</span>
-                        <span style={{ float: 'left', marginRight: '8px' }}>:</span>
-                        <span style={{ float: 'left' }}>{yearModel}</span>
-                      </div>
-                      <div style={{ display: 'block', marginBottom: '8px', overflow: 'hidden' }}>
-                        <span style={{ float: 'left', width: '160px', fontWeight: 'bold' }}>| Engine No</span>
-                        <span style={{ float: 'left', marginRight: '8px' }}>:</span>
-                        <span style={{ float: 'left' }}>{engineNumber}</span>
-                      </div>
-                      <div style={{ display: 'block', marginBottom: '8px', overflow: 'hidden' }}>
-                        <span style={{ float: 'left', width: '160px', fontWeight: 'bold' }}>| AUCTION POINT</span>
-                        <span style={{ float: 'left', marginRight: '8px' }}>:</span>
-                        <span style={{ float: 'left' }}>{auctionPoint || '---'}</span>
-                      </div>
-                      <div style={{ display: 'block', marginBottom: '8px', overflow: 'hidden' }}>
-                        <span style={{ float: 'left', width: '160px', fontWeight: 'bold' }}>| Chassis No</span>
-                        <span style={{ float: 'left', marginRight: '8px' }}>:</span>
-                        <span style={{ float: 'left' }}>{chassisNumber}</span>
-                      </div>
-                    </div>
+                    
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', marginTop: '15px' }}>
+                      <tbody>
+                        <tr>
+                          <td style={{ width: '160px', fontWeight: 'bold', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>| COLOR</td>
+                          <td style={{ width: '20px', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>:</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>{color}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: 'bold', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>| MODEL</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>:</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>{yearModel}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: 'bold', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>| Engine No</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>:</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>{engineNumber}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: 'bold', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>| AUCTION POINT</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>:</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>{auctionPoint || '---'}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ fontWeight: 'bold', padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>| Chassis No</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>:</td>
+                          <td style={{ padding: '6px 0', borderBottom: '1px dashed #e5e7eb' }}>{chassisNumber}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </td>
                   <td style={{ border: '1px solid #bcbec0', padding: '15px', textAlign: 'center', verticalAlign: 'middle', fontWeight: 'bold', fontSize: '18px' }}>
                     {quantity < 10 ? `0${quantity}` : quantity}
@@ -448,13 +466,23 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </p>
             </div>
 
-            <div className="mt-20 pt-10" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div style={{ float: 'left', width: '250px', textAlign: 'center', borderTop: '1px solid #000000', paddingTop: '8px' }}>
-                <span className="text-[15px] font-bold text-black">Received By</span>
-              </div>
-              <div style={{ float: 'right', width: '250px', textAlign: 'center', borderTop: '1px solid #000000', paddingTop: '8px' }}>
-                <span className="text-[15px] font-bold text-black">Proprietor</span>
-              </div>
+            <div style={{ width: '100%', marginTop: '60px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '50%', textAlign: 'left', verticalAlign: 'top' }}>
+                      <div style={{ width: '220px', textAlign: 'center', borderTop: '1px solid #000000', paddingTop: '8px' }}>
+                        <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'black' }}>Received By</span>
+                      </div>
+                    </td>
+                    <td style={{ width: '50%', textAlign: 'right', verticalAlign: 'top' }}>
+                      <div style={{ width: '220px', display: 'inline-block', textAlign: 'center', borderTop: '1px solid #000000', paddingTop: '8px' }}>
+                        <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'black' }}>Proprietor</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -475,7 +503,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
           <HeaderBar />
-          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
+          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
             <div className="text-center font-bold uppercase mb-[15px] text-[22px] text-black" style={{ marginTop: '-10px' }}>BILL</div>
             <div className="mb-[25px] leading-[1.2] text-[17px] text-black" style={{ width: '100%', display: 'block' }}>
               To,<br />
@@ -487,6 +515,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </div>
             </div>
             <div className="font-bold mb-[30px] text-black" style={{ fontSize: `${vehicleTitleSize}px`, display: 'block' }}>Sub: Bill for {vehicleTitle}</div>
+            
             <div className="relative text-black" style={{ width: '100%', display: 'block' }}>
               <table className="w-full border-collapse mb-[25px] border border-black relative z-[1] text-black" style={{ width: '100%' }}>
                 <thead>
@@ -498,54 +527,58 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 </thead>
                 <tbody>
                   <tr className="text-black">
-                    <td className="border-x border-black px-6 pt-8 pb-8 align-top text-black" style={{ minHeight: '400px' }}>
-                      <div className="specs-block text-[20px] text-black" style={{ width: '100%', display: 'block' }}>
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
-                           <span className="font-bold text-black" style={{ float: 'left', width: '140px' }}>Vehicle</span>
-                           <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                           <span className="font-bold text-black" style={{ float: 'left' }}>{formattedPrice}/-</span>
-                        </div>
-                        {!isHidden('yearModel') && (
-                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
-                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Year</span>
-                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                            <span className="text-black" style={{ float: 'left' }}>{yearModel}</span>
-                          </div>
-                        )}
-                        {!isHidden('cc') && (
-                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
-                            <span className="text-black" style={{ float: 'left', width: '140px' }}>CC.</span>
-                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                            <span className="text-black" style={{ float: 'left' }}>{cc}</span>
-                          </div>
-                        )}
-                        {!isHidden('engineNumber') && (
-                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
-                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Engine No.</span>
-                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                            <span className="text-black" style={{ float: 'left' }}>{engineNumber}</span>
-                          </div>
-                        )}
-                        {!isHidden('chassisNumber') && (
-                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '8px' }}>
-                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Chassis No</span>
-                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                            <span className="text-black" style={{ float: 'left' }}>{chassisNumber}</span>
-                          </div>
-                        )}
-                        {!isHidden('color') && (
-                          <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                            <span className="text-black" style={{ float: 'left', width: '140px' }}>Color</span>
-                            <span className="text-black" style={{ float: 'left', width: '25px' }}>:</span>
-                            <span className="text-black" style={{ float: 'left' }}>{color}</span>
-                          </div>
-                        )}
+                    <td className="border-x border-black px-6 pt-6 pb-6 align-top text-black">
+                      <div className="specs-block text-[18px] text-black" style={{ width: '100%', display: 'block' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
+                          <tbody>
+                            <tr>
+                              <td style={{ width: '140px', fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top' }}>Vehicle</td>
+                              <td style={{ width: '25px', padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                              <td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top' }}>{formattedPrice}/-</td>
+                            </tr>
+                            {!isHidden('yearModel') && (
+                              <tr>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Year</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{yearModel}</td>
+                              </tr>
+                            )}
+                            {!isHidden('cc') && (
+                              <tr>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>CC.</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{cc}</td>
+                              </tr>
+                            )}
+                            {!isHidden('engineNumber') && (
+                              <tr>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Engine No.</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{engineNumber}</td>
+                              </tr>
+                            )}
+                            {!isHidden('chassisNumber') && (
+                              <tr>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Chassis No</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{chassisNumber}</td>
+                              </tr>
+                            )}
+                            {!isHidden('color') && (
+                              <tr>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Color</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{color}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
                       </div>
                     </td>
-                    <td className="border-x border-black px-3 pt-8 text-center align-middle font-bold text-[22px] text-black">
+                    <td className="border-x border-black px-3 pt-6 text-center align-middle font-bold text-[22px] text-black">
                       {quantity < 10 ? `0${quantity}` : quantity}
                     </td>
-                    <td className="border-x border-black px-6 pt-8 text-right align-middle text-[20px] text-black font-bold"></td>
+                    <td className="border-x border-black px-6 pt-6 text-right align-middle text-[20px] text-black font-bold"></td>
                   </tr>
                   <tr className="text-black h-[40px] border-t border-black">
                     <td colSpan={2} className="border-r border-black px-6 text-left text-[16px] text-black align-middle">
@@ -571,7 +604,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </table>
             </div>
             <div className="text-[19px] mt-[25px] text-black" style={{ display: 'block' }}>
-              <span className="font-bold text-black">Price in words : {priceInWords}</span>
+              <span className="font-bold text-black font-mono">Price in words : {priceInWords}</span>
             </div>
             <div className="text-[19px] font-bold text-black mt-[25px]" style={{ display: 'block' }}>
               Yours Faithfully,
@@ -603,7 +636,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
           <HeaderBar />
 
-          <div className="main-content px-[20mm] text-black" style={{ width: '100%', boxSizing: 'border-box' }}>
+          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', boxSizing: 'border-box' }}>
             <div 
               style={{ 
                 fontWeight: 'bold', 
@@ -617,19 +650,26 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             >
               QUOTATION FOR <span className="uppercase text-black">{vehicleTitle}</span>
             </div>
-            <div className="mb-[15px] leading-[1.4] text-[15px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div style={{ width: '65%', float: 'left' }}>
-                To,<br />
-                {clientDesignation && <span className="text-black">{clientDesignation}<br /></span>}
-                {clientOffice && <span className="text-black">{clientOffice}<br /></span>}
-                {clientAddress && <div className="whitespace-pre-wrap text-black capitalize">{clientAddress}</div>}
-                {acName && <div className="mt-1 text-black font-bold">A/C: {acName}</div>}
-              </div>
-              <div style={{ width: '35%', float: 'right', textAlign: 'right' }}>
-                {!isHidden('date') && <div>Date: {new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</div>}
-              </div>
-              <div style={{ clear: 'both' }}></div>
+            
+            <div className="mb-[15px]" style={{ width: '100%', display: 'block' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '65%', verticalAlign: 'top' }}>
+                      To,<br />
+                      {clientDesignation && <span className="text-black">{clientDesignation}<br /></span>}
+                      {clientOffice && <span className="text-black">{clientOffice}<br /></span>}
+                      {clientAddress && <div className="whitespace-pre-wrap text-black capitalize">{clientAddress}</div>}
+                      {acName && <div className="mt-1 text-black font-bold">A/C: {acName}</div>}
+                    </td>
+                    <td style={{ width: '35%', verticalAlign: 'top', textAlign: 'right' }}>
+                      {!isHidden('date') && <div>Date: {new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</div>}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
             <div className="mb-[15px] text-[15px] text-black">
               Dear Sir,<br />
               <span style={{ display: 'block', marginTop: '5px' }}>We have the pleasure to offer you the under mentioned vehicle with the following terms & conditions.</span>
@@ -646,17 +686,73 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 <tbody>
                   <tr className="text-black">
                     <td className="border border-black p-2 align-top text-black">
-                      <ul className="spec-list list-none m-0 p-0 leading-[1.5] text-[15px] text-black">
-                        {!isHidden('brand') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Brand Name</span><span className="text-black">: </span>{brand}</li>}
-                        {!isHidden('model') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Model</span><span className="text-black">: </span>{model}</li>}
-                        {!isHidden('yearModel') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Year Model</span><span className="text-black">: </span>{yearModel}</li>}
-                        {!isHidden('color') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Color</span><span className="text-black">: </span>{color}</li>}
-                        {!isHidden('chassisNumber') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Chassis No</span><span className="text-black">: </span>{chassisNumber}</li>}
-                        {!isHidden('engineNumber') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Engine No</span><span className="text-black">: </span>{engineNumber}</li>}
-                        {!isHidden('cc') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">C.C</span><span className="text-black">: </span>{cc}</li>}
-                        {!isHidden('fuel') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Fuel</span><span className="text-black">: </span>{fuel}</li>}
-                        {!isHidden('transmission') && <li className="text-black"><span className="inline-block w-[110px] font-bold text-black">Transmission</span><span className="text-black">: </span>{transmission}</li>}
-                      </ul>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+                        <tbody>
+                          {!isHidden('brand') && (
+                            <tr>
+                              <td style={{ width: '120px', fontWeight: 'bold', padding: '3px 0' }}>Brand Name</td>
+                              <td style={{ width: '20px', padding: '3px 0' }}>:</td>
+                              <td style={{ padding: '3px 0' }}>{brand}</td>
+                            </tr>
+                          )}
+                          {!isHidden('model') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Model</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{model}</td>
+                            </tr>
+                          )}
+                          {!isHidden('yearModel') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Year Model</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{yearModel}</td>
+                            </tr>
+                          )}
+                          {!isHidden('color') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Color</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{color}</td>
+                            </tr>
+                          )}
+                          {!isHidden('chassisNumber') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Chassis No</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{chassisNumber}</td>
+                            </tr>
+                          )}
+                          {!isHidden('engineNumber') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Engine No</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{engineNumber}</td>
+                            </tr>
+                          )}
+                          {!isHidden('cc') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>C.C</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{cc}</td>
+                            </tr>
+                          )}
+                          {!isHidden('fuel') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Fuel</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{fuel}</td>
+                            </tr>
+                          )}
+                          {!isHidden('transmission') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Transmission</td>
+                              <td>:</td>
+                              <td style={{ padding: '3px 0' }}>{transmission}</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </td>
                     <td className="border border-black p-2 text-center align-middle text-black">{!isHidden('quantity') && (quantity < 10 ? `0${quantity}` : quantity)}</td>
                     <td className="border border-black p-2 text-right text-[18px] font-bold align-middle text-black">{formattedPrice}/-</td>
@@ -708,7 +804,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
           </div>
           <HeaderBar />
-          <div className="px-[15mm] pt-[5mm] text-black" style={{ width: '100%', display: 'block', minHeight: '220mm' }}>
+          <div className="px-[15mm] pt-[5mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
             <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px', display: 'block' }}>
               <div style={{ float: 'left' }}>
                 <h1 className="m-0 text-[32px] font-bold text-black whitespace-nowrap" style={{ lineHeight: '1.4' }}>INVOICE</h1>
@@ -718,132 +814,160 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </div>
               <div style={{ clear: 'both' }}></div>
             </div>
-            <div className="mb-8 text-[14px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div className="text-black" style={{ width: '65%', float: 'left' }}>
-                {!isHidden('clientName') && (
-                  <div className="text-black" style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
-                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Buyer's Name</div>
-                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                    <div className="uppercase text-black font-bold" style={{ float: 'left', width: '300px' }}>{clientName}</div>
-                  </div>
-                )}
-                {!isHidden('clientPhone') && (
-                  <div className="text-black" style={{ width: '100%', marginBottom: '4px', display: 'block', overflow: 'hidden' }}>
-                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Phone</div>
-                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                    <div className="text-black" style={{ float: 'left', width: '300px' }}>{clientPhone}</div>
-                  </div>
-                )}
-                {!isHidden('clientAddress') && (
-                  <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                    <div className="font-bold text-black" style={{ float: 'left', width: '110px' }}>Address</div>
-                    <div className="text-black" style={{ float: 'left', width: '20px' }}>:</div> 
-                    <div className="capitalize text-black leading-tight" style={{ float: 'left', width: '300px' }}>{clientAddress}</div>
-                  </div>
-                )}
-              </div>
-              <div className="text-black" style={{ width: '35%', float: 'right', textAlign: 'right' }}>
-                <div className="text-black" style={{ marginBottom: '4px', display: 'block' }}>
-                  <span className="font-bold mr-2 text-black">DATE:</span> 
-                  <span className="text-black whitespace-nowrap">{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
-                </div>
-                <div className="text-black" style={{ display: 'block' }}>
-                  <span className="font-bold mr-2 text-black">Invoice no.:</span> 
-                  <span className="text-black whitespace-nowrap">{docNumber}</span>
-                </div>
-              </div>
-              <div style={{ clear: 'both' }}></div>
+
+            <div className="mb-8" style={{ width: '100%', display: 'block' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', color: '#000000' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: '62%', verticalAlign: 'top', paddingRight: '20px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
+                        <tbody>
+                          {!isHidden('clientName') && (
+                            <tr>
+                              <td style={{ width: '110px', fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Buyer's Name</td>
+                              <td style={{ width: '15px', padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                              <td style={{ fontWeight: 'bold', textTransform: 'uppercase', padding: '3px 0', verticalAlign: 'top' }}>{clientName}</td>
+                            </tr>
+                          )}
+                          {!isHidden('clientPhone') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Phone</td>
+                              <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                              <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{clientPhone}</td>
+                            </tr>
+                          )}
+                          {!isHidden('clientAddress') && (
+                            <tr>
+                              <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Address</td>
+                              <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                              <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress}</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                    <td style={{ width: '38%', verticalAlign: 'top', textAlign: 'right' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
+                        <tbody>
+                          <tr>
+                            <td style={{ textAlign: 'right', padding: '3px 0', fontWeight: 'bold' }}>
+                              <span style={{ marginRight: '8px' }}>DATE:</span>
+                              <span>{new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style={{ textAlign: 'right', padding: '3px 0', fontWeight: 'bold' }}>
+                              <span style={{ marginRight: '8px' }}>Invoice no.:</span>
+                              <span>{docNumber}</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
             <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr className="text-black">
-                  <th className="border-y-[1.5px] border-black py-2.5 pl-[80px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%' }}>DESCRIPTION</th>
+                  <th className="border-y-[1.5px] border-black py-2.5 pl-[20px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%' }}>DESCRIPTION</th>
                   <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '35%' }}>PAYMENT DATE</th>
                   <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-right text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '20%' }}>AMOUNT</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="text-black">
-                  <td className="w-[45%] align-top pt-4 pr-2 text-black">
+                  <td className="w-[45%] align-top pt-4 pr-3 text-black" style={{ verticalAlign: 'top' }}>
                     {!isHidden('vehicleTitle') && <span className="font-bold uppercase mb-4 block leading-tight text-black" style={{ fontSize: `${vehicleTitleSize}px`, display: 'block' }}>{vehicleTitle}</span>}
                     {productImageUrl && (
                       <div className="mb-4 rounded-xl overflow-hidden border border-gray-100 max-w-[200px] shadow-sm" style={{ display: 'block' }}>
                         <img src={productImageUrl} alt="Product" className="w-full h-auto block" />
                       </div>
                     )}
-                    <div className="text-[14px] text-black" style={{ width: '100%', display: 'block' }}>
-                      {!isHidden('model') && (
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
-                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Model</span>
-                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
-                          <span className="text-black" style={{ float: 'left' }}>{model}</span>
-                        </div>
-                      )}
-                      {!isHidden('color') && (
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
-                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Color</span>
-                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
-                          <span className="text-black" style={{ float: 'left' }}>{color}</span>
-                        </div>
-                      )}
-                      {!isHidden('cc') && (
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
-                          <span className="text-black" style={{ float: 'left', width: '80px' }}>CC</span>
-                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
-                          <span className="text-black" style={{ float: 'left' }}>{cc}</span>
-                        </div>
-                      )}
-                      {!isHidden('chassisNumber') && (
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden', marginBottom: '4px' }}>
-                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Chassis no</span>
-                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
-                          <span className="text-black" style={{ float: 'left' }}>{chassisNumber}</span>
-                        </div>
-                      )}
-                      {!isHidden('engineNumber') && (
-                        <div className="text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                          <span className="text-black" style={{ float: 'left', width: '80px' }}>Engine no</span>
-                          <span className="text-black" style={{ float: 'left', width: '10px' }}>:</span>
-                          <span className="text-black" style={{ float: 'left' }}>{engineNumber}</span>
-                        </div>
-                      )}
-                    </div>
-                    <br />
+                    
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', color: 'black', marginTop: '10px' }}>
+                      <tbody>
+                        {!isHidden('model') && (
+                          <tr>
+                            <td style={{ width: '90px', padding: '3px 0', verticalAlign: 'top' }}>Model</td>
+                            <td style={{ width: '15px', padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{model}</td>
+                          </tr>
+                        )}
+                        {!isHidden('color') && (
+                          <tr>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>Color</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{color}</td>
+                          </tr>
+                        )}
+                        {!isHidden('cc') && (
+                          <tr>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>CC</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{cc}</td>
+                          </tr>
+                        )}
+                        {!isHidden('chassisNumber') && (
+                          <tr>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>Chassis no</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{chassisNumber}</td>
+                          </tr>
+                        )}
+                        {!isHidden('engineNumber') && (
+                          <tr>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>Engine no</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
+                            <td style={{ padding: '3px 0', verticalAlign: 'top' }}>{engineNumber}</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+
                     {!isHidden('vehiclePrice') && (
-                      <div className="text-black" style={{ marginTop: '15px', display: 'block' }}>
+                      <div className="text-black" style={{ marginTop: '20px', display: 'block' }}>
                         <strong className="text-[15px] text-black" style={{ display: 'block' }}>Car price : {vehiclePrice.toLocaleString()}/-</strong>
                         <span className="text-[13px] font-normal text-black" style={{ display: 'block', marginTop: '4px' }}>(Excluding registration fee)</span>
                       </div>
                     )}
                   </td>
-                  <td colSpan={2} className="p-0 align-top border-l border-gray-200 text-black">
-                    {payments?.map((p, index) => (
-                      <div key={p.id} className={`text-black`} style={{ width: '100%', display: 'block', overflow: 'hidden', borderBottom: index === payments.length - 1 ? 'none' : '1px solid #e5e7eb' }}>
-                        <div className="py-3 px-2 text-[13px] text-black" style={{ width: '63.6%', float: 'left' }}>
-                          {new Date(p.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}
-                        </div>
-                        <div className="text-right py-3 px-2 text-black" style={{ width: '36.4%', float: 'left' }}>
-                          <span className="font-bold block text-[13px] text-black" style={{ display: 'block' }}>{p.amount.toLocaleString()}/-</span>
-                          <span className="text-[11px] text-[#555] italic block mt-0.5 uppercase" style={{ display: 'block' }}>{p.note}</span>
-                        </div>
-                        <div style={{ clear: 'both' }}></div>
-                      </div>
-                    ))}
+                  <td colSpan={2} className="p-0 align-top border-l border-gray-200 text-black" style={{ verticalAlign: 'top', width: '55%' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <tbody>
+                        {payments?.map((p, index) => (
+                          <tr key={p.id} style={{ borderBottom: index === payments.length - 1 ? 'none' : '1px solid #e5e7eb' }}>
+                            <td className="py-3 px-3 text-[13px] text-black" style={{ width: '63.6%', textAlign: 'left', verticalAlign: 'top' }}>
+                              {new Date(p.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}
+                            </td>
+                            <td className="py-3 px-3 text-right text-black font-bold text-[13px]" style={{ width: '36.4%', textAlign: 'right', verticalAlign: 'top' }}>
+                              <div className="text-black font-bold">{p.amount.toLocaleString()}/-</div>
+                              <div className="text-[11px] text-[#555] italic font-normal uppercase mt-0.5">{p.note}</div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div className="mt-0 border-t-[1.5px] border-black pt-2.5 text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-              <div className="text-black" style={{ width: '300px', float: 'right' }}>
-                <div className="mb-1 text-[15px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="font-bold text-black" style={{ width: '120px', float: 'left', textAlign: 'right', paddingRight: '20px' }}>Total Paid:</div>
-                  <div className="font-bold text-black border-b border-[#ddd]" style={{ width: '140px', float: 'left', textAlign: 'right' }}>{totalPaidAmount.toLocaleString()}/-</div>
-                </div>
-                <div className="font-bold text-[15px] text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
-                  <div className="text-black" style={{ width: '120px', float: 'left', textAlign: 'right', paddingRight: '20px' }}>Balance:</div>
-                  <div className="text-black border-b border-[#ddd]" style={{ width: '140px', float: 'left', textAlign: 'right' }}>{balanceAmount.toLocaleString()}/-</div>
-                </div>
-              </div>
+            
+            <div style={{ width: '100%', marginTop: '30px', borderTop: '1.5px solid #000000', paddingTop: '15px' }}>
+              <table style={{ width: '320px', float: 'right', borderCollapse: 'collapse', color: 'black', fontSize: '15px', fontWeight: 'bold' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ textAlign: 'right', padding: '4px 15px', width: '160px' }}>Total Paid:</td>
+                    <td style={{ textAlign: 'right', padding: '4px 0', borderBottom: '1px solid #ddd', width: '160px' }}>{totalPaidAmount.toLocaleString()}/-</td>
+                  </tr>
+                  <tr>
+                    <td style={{ textAlign: 'right', padding: '4px 15px' }}>Balance:</td>
+                    <td style={{ textAlign: 'right', padding: '4px 0', borderBottom: '1px solid #ddd' }}>{balanceAmount.toLocaleString()}/-</td>
+                  </tr>
+                </tbody>
+              </table>
               <div style={{ clear: 'both' }}></div>
             </div>
           </div>
