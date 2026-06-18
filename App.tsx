@@ -24,7 +24,8 @@ import {
   Loader2,
   Menu,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  LogOut
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -36,6 +37,7 @@ import DocumentPreview from './components/DocumentPreview.tsx';
 import ProInvoiceGenerator from './components/ProInvoiceGenerator.tsx';
 import AssetLibrary from './components/AssetLibrary.tsx';
 import GlobalSettings from './components/GlobalSettings.tsx';
+import { LoginPage } from './components/LoginPage.tsx';
 
 const RUNNING_TEXTS = [
   "Welcome to Garir Dokan Pro - Your Ultimate Automotive Solution",
@@ -47,6 +49,15 @@ const RUNNING_TEXTS = [
 const STATS_BG = "https://images.unsplash.com/photo-1486006920555-c77dcf18193c?auto=format&fit=crop&q=80&w=2500";
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('gd_auth') === 'true';
+  });
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('gd_auth');
+    setIsAuthenticated(false);
+  };
+
   const [currentBanner, setCurrentBanner] = useState(0);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [documents, setDocuments] = useState<BusinessDocument[]>([]);
@@ -370,6 +381,10 @@ const App: React.FC = () => {
   
   const getCountByType = (type: DocumentType) => documents.filter(doc => doc.type === type).length;
 
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-white font-sans selection:bg-red-700 selection:text-white">
       {/* Loading Overlay */}
@@ -405,8 +420,16 @@ const App: React.FC = () => {
           <button 
             onClick={() => setShowGlobalSettings(true)}
             className="p-2 text-gray-400 hover:text-white transition-colors"
+            title="Global Settings"
           >
             <Settings className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+            title="Log Out"
+          >
+            <LogOut className="w-5 h-5" />
           </button>
           <button onClick={() => setViewMode('landing')} className="bg-red-700 px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-red-700/20 hover:bg-red-800 transition-all active:scale-95">Dashboard</button>
         </div>
@@ -450,6 +473,12 @@ const App: React.FC = () => {
             className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
           >
             <Settings className="w-5 h-5" /> Global Settings
+          </button>
+          <button 
+            onClick={() => {handleLogout(); setIsSidebarOpen(false);}} 
+            className="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors"
+          >
+            <LogOut className="w-5 h-5" /> Log Out
           </button>
           <button 
             onClick={() => {setViewMode('landing'); setIsSidebarOpen(false);}} 
