@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { FooterSettings, HeaderSettings, HeroSettings, DocumentType, AssetType, Asset } from '../types';
+import { FooterSettings, HeaderSettings, HeroSettings, DocumentType, AssetType, Asset, WatermarkConfig, BusinessDocument } from '../types';
 import { 
   loadFooterSettings, 
   saveFooterSettings,
@@ -45,9 +45,60 @@ import {
   AlignRight,
   Upload,
   Database,
-  Trash2
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  RefreshCw
 } from 'lucide-react';
 import AssetLibrary from './AssetLibrary';
+import DocumentPreview from './DocumentPreview';
+
+const getMockDocument = (type: DocumentType): BusinessDocument => {
+  const baseDoc: BusinessDocument = {
+    id: 'mock-doc-id',
+    type,
+    docNumber: type === DocumentType.INVOICE ? 'INV-XXXX-XXXX' :
+               type === DocumentType.QUOTATION ? 'QT-XXXX-XXXX' :
+               type === DocumentType.BILL ? 'BILL-XXXX-XXXX' :
+               type === DocumentType.CHALLAN ? 'DC-XXXX-XXXX' : 'PI-XXXX-XXXX',
+    date: new Date().toISOString().split('T')[0],
+    clientName: '',
+    clientDesignation: '',
+    clientOffice: '',
+    clientAddress: '',
+    clientPhone: '',
+    acName: '',
+    vehicleTitle: '',
+    vehicleTitleSize: 18,
+    vehicleTitleAlign: 'left',
+    brand: '',
+    model: '',
+    yearModel: '',
+    color: '',
+    chassisNumber: '',
+    engineNumber: '',
+    auctionPoint: '',
+    cc: '',
+    fuel: '',
+    transmission: '',
+    vehiclePrice: 0,
+    priceInWords: '',
+    payments: [],
+    advancedPaidAmount: 0,
+    bankPaymentAmount: 0,
+    bankName: '',
+    quantity: 1,
+    taxRate: 0,
+    notes: '',
+    createdAt: Date.now(),
+    hiddenFields: [],
+    items: []
+  };
+
+  return baseDoc;
+};
 
 const HERO_IMAGE_POOL = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
@@ -80,7 +131,7 @@ const ICON_OPTIONS = {
 };
 
 const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate, onHeaderUpdate, onHeroUpdate }) => {
-  const [activeTab, setActiveTab] = useState<'HEADER' | 'FOOTER' | 'HERO'>('HEADER');
+  const [activeTab, setActiveTab] = useState<'HEADER' | 'FOOTER' | 'HERO' | 'WATERMARK'>('HEADER');
   const [footerSettings, setFooterSettings] = useState<FooterSettings>({
     address: '',
     addressIcon: 'MapPin',
@@ -97,6 +148,51 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
     horizontalPadding: 15,
     lineSpacing: 3
   });
+  const [selectedWatermarkType, setSelectedWatermarkType] = useState<DocumentType>(DocumentType.INVOICE);
+
+  const handleWatermarkUpload = (docType: DocumentType, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Please upload an image smaller than 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateWatermarkSetting(docType, { imageUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const updateWatermarkSetting = (docType: DocumentType, updates: Partial<WatermarkConfig>) => {
+    setFooterSettings(prev => {
+      const watermarks = prev.watermarks || {};
+      const config = watermarks[docType] || { size: 50, opacity: 15 };
+      return {
+        ...prev,
+        watermarks: {
+          ...watermarks,
+          [docType]: {
+            ...config,
+            ...updates
+          }
+        }
+      };
+    });
+  };
+
+  const removeWatermark = (docType: DocumentType) => {
+    setFooterSettings(prev => {
+      const watermarks = { ...(prev.watermarks || {}) };
+      delete watermarks[docType];
+      return {
+        ...prev,
+        watermarks
+      };
+    });
+  };
+
   const [isSavingFooter, setIsSavingFooter] = useState(false);
   const [allHeaderSettings, setAllHeaderSettings] = useState<Record<DocumentType, HeaderSettings>>({
     [DocumentType.INVOICE]: { text: '', fontSize: 14, fontFamily: 'serif', alignment: 'left', isItalic: true, logoUrl: '', logoSize: 220, logoPosition: 0 },
@@ -301,6 +397,12 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
               className={`whitespace-nowrap lg:w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'FOOTER' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
             >
               GLOBAL FOOTER
+            </button>
+            <button
+              onClick={() => setActiveTab('WATERMARK')}
+              className={`whitespace-nowrap lg:w-full text-left px-5 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${activeTab === 'WATERMARK' ? 'bg-red-700 text-white shadow-xl shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+            >
+              GLOBAL WATERMARK
             </button>
             <button
               onClick={() => setActiveTab('HERO')}
@@ -552,6 +654,281 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                        <div className="p-6 bg-red-700/5 rounded-[2rem] border border-red-700/10">
                           <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest leading-relaxed text-center">
                             This is a real-time preview of your footer section. Changes are applied instantly.
+                          </p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              ) : activeTab === 'WATERMARK' ? (
+              <div key="WATERMARK" className="max-w-6xl mx-auto space-y-8 md:space-y-10 animate-in slide-in-from-right-10 duration-500">
+                 {/* Document Type Selector */}
+                 <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white/5 p-2 md:p-3 rounded-2xl md:rounded-[2.5rem] border border-white/5 backdrop-blur-xl overflow-x-auto scrollbar-hide">
+                    {Object.entries(DOC_TYPES_CONFIG).map(([type, config]) => {
+                      const isActive = selectedWatermarkType === type;
+                      return (
+                        <button 
+                          key={type}
+                          onClick={() => setSelectedWatermarkType(type as DocumentType)}
+                          className={`whitespace-nowrap px-4 md:px-6 py-2.5 md:py-3.5 rounded-full font-black text-[9px] md:text-[11px] uppercase tracking-widest transition-all flex items-center gap-2 md:gap-3 ${isActive ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}
+                        >
+                          {React.cloneElement(config.icon as React.ReactElement<any>, { className: 'w-3.5 h-3.5 md:w-4 md:h-4' })}
+                          {config.label}
+                        </button>
+                      );
+                    })}
+                 </div>
+
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
+                    <div className="space-y-8 md:space-y-10">
+                       {/* Watermark Settings Card */}
+                       <div className="bg-white/[0.03] p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 space-y-6 md:space-y-8">
+                          <div className="flex items-center gap-4 mb-2">
+                             <div className="w-10 h-10 bg-red-700/10 rounded-xl flex items-center justify-center text-red-700">
+                               <ImageIcon className="w-5 h-5" />
+                             </div>
+                             <div>
+                               <h3 className="text-base md:text-lg font-black uppercase tracking-widest">Watermark Settings</h3>
+                               <p className="text-[9px] md:text-[10px] font-bold text-gray-600 uppercase">Document-specific background customizer</p>
+                             </div>
+                          </div>
+
+                          {/* Selected Document Configuration */}
+                          <div className="space-y-6 bg-black/20 p-5 rounded-3xl border border-white/5">
+                            <h4 className="text-xs font-black text-red-600 uppercase tracking-widest leading-none">
+                              Configuring: {DOC_TYPES_CONFIG[selectedWatermarkType].label}
+                            </h4>
+
+                            {/* Image Upload Area */}
+                            <div className="space-y-2">
+                              <label className={labelClass}>Watermark Image (PNG/JPEG)</label>
+                              {footerSettings.watermarks?.[selectedWatermarkType]?.imageUrl ? (
+                                <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                                  <div className="w-16 h-16 bg-white flex items-center justify-center rounded-xl p-1 overflow-hidden border border-white/10">
+                                    <img 
+                                      src={footerSettings.watermarks[selectedWatermarkType].imageUrl} 
+                                      alt="Watermark thumbnail" 
+                                      className="max-w-full max-h-full object-contain"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[11px] font-bold text-gray-300 truncate">Watermark Active</p>
+                                    <p className="text-[9px] text-gray-500 uppercase font-mono">Custom upload</p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeWatermark(selectedWatermarkType)}
+                                    className="p-3 bg-red-700/10 text-red-500 hover:bg-red-700 hover:text-white transition-all rounded-xl hover:scale-105 active:scale-95"
+                                    title="Delete Watermark"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="relative border-2 border-dashed border-white/10 rounded-2xl hover:border-red-700/50 transition-colors p-8 text-center flex flex-col items-center justify-center gap-2">
+                                  <input 
+                                    type="file" 
+                                    accept="image/png, image/jpeg"
+                                    onChange={(e) => handleWatermarkUpload(selectedWatermarkType, e)}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                  />
+                                  <div className="w-10 h-10 bg-red-700/10 rounded-full flex items-center justify-center text-red-700">
+                                    <Upload className="w-4 h-4" />
+                                  </div>
+                                  <div>
+                                    <p className="text-[11px] font-bold text-gray-200">Click to upload image</p>
+                                    <p className="text-[9px] text-gray-500 uppercase font-mono mt-0.5">PNG, JPEG up to 2MB</p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Watermark configuration controls */}
+                            {footerSettings.watermarks?.[selectedWatermarkType]?.imageUrl && (
+                              <div className="space-y-6 pt-4 border-t border-white/5 animate-in slide-in-from-top-4 duration-300">
+                                {/* Size Slider */}
+                                <div className="space-y-3">
+                                  <div className="flex justify-between items-center">
+                                    <span className={labelClass}>Watermark Width Size</span>
+                                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">
+                                      {footerSettings.watermarks[selectedWatermarkType].size ?? 50}%
+                                    </span>
+                                  </div>
+                                  <input 
+                                    type="range" 
+                                    min="10" 
+                                    max="100" 
+                                    value={footerSettings.watermarks[selectedWatermarkType].size ?? 50} 
+                                    onChange={(e) => updateWatermarkSetting(selectedWatermarkType, { size: parseInt(e.target.value) })} 
+                                    className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                  />
+                                </div>
+
+                                 {/* Opacity Slider */}
+                                <div className="space-y-3">
+                                  <div className="flex justify-between items-center">
+                                    <span className={labelClass}>Watermark Opacity</span>
+                                    <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">
+                                      {footerSettings.watermarks[selectedWatermarkType].opacity ?? 15}%
+                                    </span>
+                                  </div>
+                                  <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    value={footerSettings.watermarks[selectedWatermarkType].opacity ?? 15} 
+                                    onChange={(e) => updateWatermarkSetting(selectedWatermarkType, { opacity: parseInt(e.target.value) })} 
+                                    className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                  />
+                                </div>
+
+                                {/* Position Coordinates & Sliders */}
+                                <div className="space-y-4 pt-4 border-t border-white/5">
+                                  <span className={labelClass}>Position Controls (Up, Down, Left, Right)</span>
+                                  
+                                  {/* Beautiful Interactive Controller Pad */}
+                                  <div className="flex flex-col sm:flex-row items-center gap-6 bg-black/20 p-4 rounded-2xl border border-white/5">
+                                    {/* D-Pad Controller */}
+                                    <div className="relative w-28 h-28 bg-white/5 rounded-full border border-white/10 flex items-center justify-center shrink-0">
+                                      {/* Up Arrow */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const currentY = footerSettings.watermarks[selectedWatermarkType].offsetY ?? 0;
+                                          updateWatermarkSetting(selectedWatermarkType, { offsetY: Math.max(-100, currentY - 5) });
+                                        }}
+                                        className="absolute top-1 p-1.5 rounded-full bg-white/5 hover:bg-red-700 hover:text-white text-gray-400 transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                                        title="Move Up"
+                                      >
+                                        <ArrowUp className="w-4 h-4" />
+                                      </button>
+                                      
+                                      {/* Left Arrow */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const currentX = footerSettings.watermarks[selectedWatermarkType].offsetX ?? 0;
+                                          updateWatermarkSetting(selectedWatermarkType, { offsetX: Math.max(-100, currentX - 5) });
+                                        }}
+                                        className="absolute left-1 p-1.5 rounded-full bg-white/5 hover:bg-red-700 hover:text-white text-gray-400 transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                                        title="Move Left"
+                                      >
+                                        <ArrowLeft className="w-4 h-4" />
+                                      </button>
+                                      
+                                      {/* Center Reset */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          updateWatermarkSetting(selectedWatermarkType, { offsetX: 0, offsetY: 0 });
+                                        }}
+                                        className="p-2.5 rounded-full bg-red-700/10 hover:bg-red-700 text-red-500 hover:text-white transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                                        title="Recenter Watermark"
+                                      >
+                                        <RefreshCw className="w-3.5 h-3.5" />
+                                      </button>
+                                      
+                                      {/* Right Arrow */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const currentX = footerSettings.watermarks[selectedWatermarkType].offsetX ?? 0;
+                                          updateWatermarkSetting(selectedWatermarkType, { offsetX: Math.min(100, currentX + 5) });
+                                        }}
+                                        className="absolute right-1 p-1.5 rounded-full bg-white/5 hover:bg-red-700 hover:text-white text-gray-400 transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                                        title="Move Right"
+                                      >
+                                        <ArrowRight className="w-4 h-4" />
+                                      </button>
+                                      
+                                      {/* Down Arrow */}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const currentY = footerSettings.watermarks[selectedWatermarkType].offsetY ?? 0;
+                                          updateWatermarkSetting(selectedWatermarkType, { offsetY: Math.min(100, currentY + 5) });
+                                        }}
+                                        className="absolute bottom-1 p-1.5 rounded-full bg-white/5 hover:bg-red-700 hover:text-white text-gray-400 transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                                        title="Move Down"
+                                      >
+                                        <ArrowDown className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                    
+                                    {/* Sliders for precise tuning */}
+                                    <div className="flex-grow w-full space-y-4">
+                                      {/* Horizontal (X) offset */}
+                                      <div className="space-y-1.5">
+                                        <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                          <span>Horizontal Offset (L ↔ R)</span>
+                                          <span className="font-mono text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">
+                                            {(footerSettings.watermarks[selectedWatermarkType]?.offsetX ?? 0) > 0 ? '+' : ''}{footerSettings.watermarks[selectedWatermarkType]?.offsetX ?? 0}%
+                                          </span>
+                                        </div>
+                                        <input 
+                                          type="range" 
+                                          min="-100" 
+                                          max="100" 
+                                          value={footerSettings.watermarks[selectedWatermarkType]?.offsetX ?? 0} 
+                                          onChange={(e) => updateWatermarkSetting(selectedWatermarkType, { offsetX: parseInt(e.target.value) })} 
+                                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                        />
+                                      </div>
+                                      
+                                      {/* Vertical (Y) offset */}
+                                      <div className="space-y-1.5">
+                                        <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                          <span>Vertical Offset (U ↔ D)</span>
+                                          <span className="font-mono text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">
+                                            {(footerSettings.watermarks[selectedWatermarkType]?.offsetY ?? 0) > 0 ? '+' : ''}{footerSettings.watermarks[selectedWatermarkType]?.offsetY ?? 0}%
+                                          </span>
+                                        </div>
+                                        <input 
+                                          type="range" 
+                                          min="-100" 
+                                          max="100" 
+                                          value={footerSettings.watermarks[selectedWatermarkType]?.offsetY ?? 0} 
+                                          onChange={(e) => updateWatermarkSetting(selectedWatermarkType, { offsetY: parseInt(e.target.value) })} 
+                                          className="w-full accent-red-700 h-1.5 bg-white/5 rounded-lg cursor-pointer appearance-none" 
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <button 
+                            onClick={handleSaveFooter}
+                            disabled={isSavingFooter}
+                            className="w-full py-5 bg-red-700 text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-xs hover:bg-red-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-red-700/20 active:scale-95 disabled:opacity-50"
+                          >
+                            {isSavingFooter ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
+                            Save All Settings Globally
+                          </button>
+                       </div>
+                    </div>
+
+                    {/* Watermark Specific Preview */}
+                    <div className="space-y-6 lg:sticky lg:top-0 self-start z-20">
+                       <div className="flex items-center gap-4">
+                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Real-time Watermark Preview</span>
+                         <div className="h-px flex-1 bg-white/5"></div>
+                       </div>
+                       <div className="bg-black/20 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden h-[450px] flex items-center justify-center p-6">
+                          <div className="overflow-visible h-[400px] w-[280px] flex justify-center items-start">
+                            <div className="origin-top scale-[0.35] select-none pointer-events-none shadow-2xl border border-gray-200 rounded-sm overflow-hidden shrink-0" style={{ width: '210mm', height: '297mm' }}>
+                              <DocumentPreview 
+                                document={getMockDocument(selectedWatermarkType)} 
+                                footerSettings={footerSettings} 
+                                headerSettings={allHeaderSettings[selectedWatermarkType]} 
+                              />
+                            </div>
+                          </div>
+                       </div>
+                       <div className="p-6 bg-red-700/5 rounded-[2rem] border border-red-700/10">
+                          <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest leading-relaxed text-center">
+                            Watermark image is absolutely centered behind document text/tables at the specified size and transparency, rendering perfectly under PDF and Print views.
                           </p>
                        </div>
                     </div>

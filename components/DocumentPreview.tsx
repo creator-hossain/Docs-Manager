@@ -76,7 +76,8 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: 'white',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    isolation: 'isolate'
   };
 
   const f = footerSettings || {
@@ -85,6 +86,36 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     phone1: '+880 1713 110 570',
     phone2: '+880 1785 2555 86',
     website: 'garirdokan.com'
+  };
+
+  const WatermarkOverlay = () => {
+    const config = f.watermarks?.[type];
+    if (!config || !config.imageUrl) return null;
+
+    return (
+      <div 
+        style={{
+          position: 'absolute',
+          top: `calc(50% + ${config.offsetY ?? 0}%)`,
+          left: `calc(50% + ${config.offsetX ?? 0}%)`,
+          transform: 'translate(-50%, -50%)',
+          width: `${config.size ?? 50}%`,
+          opacity: (config.opacity ?? 15) / 100,
+          zIndex: -1,
+          pointerEvents: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          userSelect: 'none',
+        }}
+      >
+        <img 
+          src={config.imageUrl} 
+          alt="Watermark" 
+          style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+        />
+      </div>
+    );
   };
 
   const renderWebsite = (url: string) => {
@@ -200,6 +231,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative bg-white !text-black" style={proInvoiceStyle}>
+          <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
             <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, float: 'left' }}>
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
@@ -349,6 +381,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
+          <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '100px', display: 'block', overflow: 'hidden' }}>
             <div style={{ float: 'left', width: `${logoSize}px`, marginLeft: `${logoPosition}px` }}>
               {logoUrl && <img src={logoUrl} alt="Logo" style={{ width: '100%', display: 'block' }} />}
@@ -497,6 +530,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative bg-white !text-black" style={{...commonA4Style, width: dimensions.width}}>
+          <WatermarkOverlay />
           <div className="flex pt-[5mm] mb-[5px] w-full text-black" style={{ width: '100%' }}>
             <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, flexShrink: 0 }}>
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
@@ -627,6 +661,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return (
       <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
+          <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '80px', display: 'block', overflow: 'hidden' }}>
             <div style={{ float: 'left', width: `${logoSize}px`, marginLeft: `${logoPosition}px` }}>
               {logoUrl && <img src={logoUrl} alt="Logo" style={{ width: '100%', display: 'block' }} />}
@@ -794,9 +829,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
           color: '#000000',
           position: 'relative',
           backgroundColor: 'white',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          isolation: 'isolate'
         }}
       >
+        <WatermarkOverlay />
         <div className="text-black" style={{ width: '100%' }}>
           <div className="flex pt-[5mm] mb-[5px] w-full text-black" style={{ width: '100%' }}>
             <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, flexShrink: 0 }}>

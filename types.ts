@@ -39,6 +39,14 @@ export interface InvoiceItem {
   unitPrice: number;
 }
 
+export interface WatermarkConfig {
+  imageUrl?: string;
+  size?: number; // width in percentage (e.g. 10 to 100)
+  opacity?: number; // opacity in percentage (e.g. 0 to 100)
+  offsetX?: number; // horizontal offset in percentage (e.g. -100 to 100)
+  offsetY?: number; // vertical offset in percentage (e.g. -100 to 100)
+}
+
 export interface FooterSettings {
   address: string;
   addressIcon?: string;
@@ -54,6 +62,7 @@ export interface FooterSettings {
   topPadding?: number;
   horizontalPadding?: number;
   lineSpacing?: number;
+  watermarks?: Record<string, WatermarkConfig>;
 }
 
 export interface HeaderSettings {
