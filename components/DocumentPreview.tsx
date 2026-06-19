@@ -146,7 +146,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
   const HeaderBar = () => {
     return (
-      <div className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300 mb-6" style={{ width: '100%', boxSizing: 'border-box' }}>
+      <div className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300 mb-6" style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center' }}>
         <div 
           style={{ 
             textAlign: h.alignment || 'left',
@@ -187,26 +187,26 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
         <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center' }}>
             <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.addressIcon, MapPin)}</span>
-            <span style={{ lineHeight: '12px' }}>{f.address}</span>
+            <span>{f.address}</span>
           </span>
         </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center' }}>
             <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.emailIcon, Mail)}</span>
-            <span style={{ lineHeight: '12px' }}>{f.email}</span>
+            <span>{f.email}</span>
           </span>
         </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center' }}>
             <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.phone1Icon, Phone)}</span>
-            <span style={{ lineHeight: '12px' }}>{f.phone1}</span>
+            <span>{f.phone1}</span>
           </span>
         </div>
         {f.phone2 && (
           <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>
               <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.phone2Icon, Phone)}</span>
-              <span style={{ lineHeight: '12px' }}>{f.phone2}</span>
+              <span>{f.phone2}</span>
             </span>
           </div>
         )}
@@ -835,21 +835,17 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
       >
         <WatermarkOverlay />
         <div className="text-black" style={{ width: '100%' }}>
-          <div className="flex pt-[5mm] mb-[5px] w-full text-black" style={{ width: '100%' }}>
-            <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, flexShrink: 0 }}>
+          <div className="pt-[5mm] mb-[5px] w-full text-black" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
+            <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, float: 'left' }}>
               {logoUrl && <img src={logoUrl} alt="Logo" className="w-full block" />}
             </div>
+            <div style={{ clear: 'both' }}></div>
           </div>
           <HeaderBar />
           <div className="px-[15mm] pt-[5mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
-            <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px', display: 'block' }}>
-              <div style={{ float: 'left' }}>
-                <h1 className="m-0 text-[32px] font-bold text-black whitespace-nowrap" style={{ lineHeight: '1.4' }}>INVOICE</h1>
-              </div>
-              <div style={{ float: 'right', marginTop: '15px' }}>
-                <div className="text-[11px] font-bold text-black uppercase whitespace-nowrap">CUSTOMER COPY</div>
-              </div>
-              <div style={{ clear: 'both' }}></div>
+            <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h1 className="m-0 text-[32px] font-bold text-black whitespace-nowrap" style={{ lineHeight: '1' }}>INVOICE</h1>
+              <div className="text-[11px] font-bold text-black uppercase whitespace-nowrap">CUSTOMER COPY</div>
             </div>
 
             <div className="mb-8" style={{ width: '100%', display: 'block' }}>
@@ -909,9 +905,9 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr className="text-black">
-                  <th className="border-y-[1.5px] border-black py-2.5 pl-[20px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%', lineHeight: '1' }}>DESCRIPTION</th>
-                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '35%', lineHeight: '1' }}>PAYMENT DATE</th>
-                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-right text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '20%', lineHeight: '1' }}>AMOUNT</th>
+                  <th className="border-y-[1.5px] border-black py-2.5 pl-[20px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%' }}><div style={{ display: 'flex', alignItems: 'center' }}>DESCRIPTION</div></th>
+                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '35%' }}><div style={{ display: 'flex', alignItems: 'center' }}>PAYMENT DATE</div></th>
+                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-right text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '20%' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>AMOUNT</div></th>
                 </tr>
               </thead>
               <tbody>
