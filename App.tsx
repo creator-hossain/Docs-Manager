@@ -220,8 +220,8 @@ const App: React.FC = () => {
           allElements.forEach(el => {
             if (el instanceof HTMLElement) {
               // FORCE RESET OF SPACING - Extreme measures for html2canvas
-              el.style.setProperty('letter-spacing', '0px', 'important');
-              el.style.setProperty('word-spacing', '0px', 'important');
+              el.style.setProperty('letter-spacing', 'normal', 'important');
+              el.style.setProperty('word-spacing', 'normal', 'important');
               el.style.textShadow = 'none';
               el.style.fontVariantLigatures = 'none';
               (el.style as any).webkitFontSmoothing = 'antialiased';
@@ -330,8 +330,8 @@ const App: React.FC = () => {
           allElements.forEach(el => {
             if (el instanceof HTMLElement) {
               // FORCE RESET OF SPACING - Using setProperty to ensure 'important' flag works
-              el.style.setProperty('letter-spacing', '0px', 'important');
-              el.style.setProperty('word-spacing', '0px', 'important');
+              el.style.setProperty('letter-spacing', 'normal', 'important');
+              el.style.setProperty('word-spacing', 'normal', 'important');
               el.style.textShadow = 'none';
               el.style.fontVariantLigatures = 'none';
               (el.style as any).webkitFontSmoothing = 'antialiased';
