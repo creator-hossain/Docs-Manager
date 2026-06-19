@@ -184,29 +184,29 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     >
       <div className="h-px bg-red-600/30 w-full" style={{ marginBottom: `${f.lineSpacing ?? 3}mm`, width: '100%' }}></div>
       <div className="text-[11px] text-black font-bold" style={{ width: '100%', textAlign: 'center' }}>
-        <div style={{ display: 'inline-block', margin: '0 10px', verticalAlign: 'middle' }}>
-          <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-            <span style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}>{renderFooterIcon(f.addressIcon, MapPin)}</span> 
-            <span style={{ verticalAlign: 'middle' }}>{f.address}</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.addressIcon, MapPin)}</span>
+            <span style={{ lineHeight: '12px' }}>{f.address}</span>
           </span>
         </div>
-        <div style={{ display: 'inline-block', margin: '0 10px', verticalAlign: 'middle' }}>
-          <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-            <span style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}>{renderFooterIcon(f.emailIcon, Mail)}</span> 
-            <span style={{ verticalAlign: 'middle' }}>{f.email}</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.emailIcon, Mail)}</span>
+            <span style={{ lineHeight: '12px' }}>{f.email}</span>
           </span>
         </div>
-        <div style={{ display: 'inline-block', margin: '0 10px', verticalAlign: 'middle' }}>
-          <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-            <span style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}>{renderFooterIcon(f.phone1Icon, Phone)}</span> 
-            <span style={{ verticalAlign: 'middle' }}>{f.phone1}</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.phone1Icon, Phone)}</span>
+            <span style={{ lineHeight: '12px' }}>{f.phone1}</span>
           </span>
         </div>
         {f.phone2 && (
-          <div style={{ display: 'inline-block', margin: '0 10px', verticalAlign: 'middle' }}>
-            <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-              <span style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }}>{renderFooterIcon(f.phone2Icon, Phone)}</span> 
-              <span style={{ verticalAlign: 'middle' }}>{f.phone2}</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', margin: '0 10px' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{renderFooterIcon(f.phone2Icon, Phone)}</span>
+              <span style={{ lineHeight: '12px' }}>{f.phone2}</span>
             </span>
           </div>
         )}
@@ -909,9 +909,9 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <table className="w-full border-collapse text-black" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr className="text-black">
-                  <th className="border-y-[1.5px] border-black py-2.5 pl-[20px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%' }}>DESCRIPTION</th>
-                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '35%' }}>PAYMENT DATE</th>
-                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-right text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '20%' }}>AMOUNT</th>
+                  <th className="border-y-[1.5px] border-black py-2.5 pl-[20px] pr-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '45%', lineHeight: '1' }}>DESCRIPTION</th>
+                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-left text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '35%', lineHeight: '1' }}>PAYMENT DATE</th>
+                  <th className="border-y-[1.5px] border-black py-2.5 px-1.5 text-right text-[14px] font-bold text-black bg-white border-x-0 uppercase" style={{ width: '20%', lineHeight: '1' }}>AMOUNT</th>
                 </tr>
               </thead>
               <tbody>

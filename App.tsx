@@ -184,9 +184,21 @@ const App: React.FC = () => {
       onclone: (clonedDoc) => {
         const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
         if (clonedElement) {
+          const originalLogo = element.querySelector('.logo-container img') as HTMLImageElement;
+const clonedLogo = clonedElement.querySelector('.logo-container img') as HTMLImageElement;
+if (originalLogo && clonedLogo) {
+  const rect = originalLogo.getBoundingClientRect();
+  clonedLogo.style.height = `${rect.height}px`;
+  clonedLogo.style.width = `${rect.width}px`;
+}
           // 1. Reset all transforms and positioning that might interfere
           clonedElement.style.transform = 'none';
           clonedElement.style.margin = '0';
+          let scaleAncestor = clonedElement.parentElement;
+   while (scaleAncestor && scaleAncestor !== clonedDoc.body) {
+     scaleAncestor.style.setProperty('transform', 'none', 'important');
+     scaleAncestor = scaleAncestor.parentElement;
+   }
           clonedElement.style.padding = '0';
           clonedElement.style.boxShadow = 'none';
           clonedElement.style.position = 'relative';
@@ -294,9 +306,21 @@ const App: React.FC = () => {
       onclone: (clonedDoc) => {
         const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
         if (clonedElement) {
+          const originalLogo = element.querySelector('.logo-container img') as HTMLImageElement;
+const clonedLogo = clonedElement.querySelector('.logo-container img') as HTMLImageElement;
+if (originalLogo && clonedLogo) {
+  const rect = originalLogo.getBoundingClientRect();
+  clonedLogo.style.height = `${rect.height}px`;
+  clonedLogo.style.width = `${rect.width}px`;
+}
           // 1. Reset all transforms and positioning that might interfere
           clonedElement.style.transform = 'none';
           clonedElement.style.margin = '0';
+          let scaleAncestor = clonedElement.parentElement;
+   while (scaleAncestor && scaleAncestor !== clonedDoc.body) {
+     scaleAncestor.style.setProperty('transform', 'none', 'important');
+     scaleAncestor = scaleAncestor.parentElement;
+   }
           clonedElement.style.padding = '0';
           clonedElement.style.boxShadow = 'none';
           clonedElement.style.position = 'relative';
