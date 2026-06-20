@@ -711,10 +711,10 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <div className="relative text-black">
                <table className="main-table w-full border-collapse mb-[15px] border border-black relative z-[1] text-black">
                 <thead>
-                  <tr className="bg-white text-black">
-                    <th className="border border-black p-2 text-center font-bold w-[65%] text-[15px] text-black bg-white uppercase">DESCRIPTION OF VEHICLE</th>
-                    <th className="border border-black p-2 text-center font-bold w-[10%] text-[15px] text-black bg-white uppercase">QTY</th>
-                    <th className="border border-black p-2 text-center font-bold w-[25%] text-[15px] text-black bg-white whitespace-nowrap uppercase">TOTAL AMOUNT (TK)</th>
+                  <tr className="text-black bg-transparent">
+                    <th className="border border-black p-2 text-center font-bold w-[65%] text-[15px] text-black uppercase">DESCRIPTION OF VEHICLE</th>
+                    <th className="border border-black p-2 text-center font-bold w-[10%] text-[15px] text-black uppercase">QTY</th>
+                    <th className="border border-black p-2 text-center font-bold w-[25%] text-[15px] text-black whitespace-nowrap uppercase">TOTAL AMOUNT (TK)</th>
                   </tr>
                 </thead>
                 <tbody>
