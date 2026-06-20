@@ -27,8 +27,6 @@ import {
   Image as ImageIcon,
   LogOut
 } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { BusinessDocument, DocumentType, FooterSettings, HeaderSettings, HeroSettings } from './types.ts';
 import { DOC_TYPES_CONFIG } from './constants.tsx';
 import { addOrUpdateDocument, loadDocuments, deleteDocument, loadFooterSettings, loadAllHeaderSettings, loadHeroSettings } from './utils/storage.ts';
@@ -85,11 +83,6 @@ const App: React.FC = () => {
     backgroundPosition: '50% 50%',
     imagePositions: {}
   });
-  const [pdfSettings, setPdfSettings] = useState<{ orientation: 'portrait' | 'landscape', pageSize: 'a4' | 'letter' | 'legal' }>({
-    orientation: 'portrait',
-    pageSize: 'a4'
-  });
-
   const previewRef = useRef<HTMLDivElement>(null);
 
   const fetchFooter = async () => {
@@ -163,235 +156,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDownloadPDF = async (docToDownload?: BusinessDocument) => {
-    const targetDoc = docToDownload || previewingDoc;
-    if (!previewRef.current || !targetDoc) return;
 
-    // Scroll to top to ensure clean capture
-    window.scrollTo(0, 0);
-
-    const element = previewRef.current;
-    
-    // Create a high-quality PDF by capturing at a higher scale and ensuring layout is correct
-    const canvas = await html2canvas(element, {
-      scale: 2.5, // High scale for ultra-sharp text
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      windowWidth: 1200, // Force a wide virtual window to prevent responsive wrapping
-      windowHeight: 1600,
-      onclone: (clonedDoc) => {
-        const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
-        if (clonedElement) {
-          const originalLogo = element.querySelector('.logo-container img') as HTMLImageElement;
-const clonedLogo = clonedElement.querySelector('.logo-container img') as HTMLImageElement;
-if (originalLogo && clonedLogo) {
-  const rect = originalLogo.getBoundingClientRect();
-  clonedLogo.style.height = `${rect.height}px`;
-  clonedLogo.style.width = `${rect.width}px`;
-}
-          // 1. Reset all transforms and positioning that might interfere
-          clonedElement.style.transform = 'none';
-          clonedElement.style.margin = '0';
-          let scaleAncestor = clonedElement.parentElement;
-   while (scaleAncestor && scaleAncestor !== clonedDoc.body) {
-     scaleAncestor.style.setProperty('transform', 'none', 'important');
-     scaleAncestor = scaleAncestor.parentElement;
-   }
-          clonedElement.style.padding = '0';
-          clonedElement.style.boxShadow = 'none';
-          clonedElement.style.position = 'relative';
-          clonedElement.style.left = '0';
-          clonedElement.style.top = '0';
-          clonedElement.style.display = 'block'; 
-          
-          // 2. Force the exact dimensions from the document settings
-          const pageSize = targetDoc.pageSettings?.pageSize || 'a4';
-          const orientation = targetDoc.pageSettings?.orientation || 'portrait';
-          
-          const sizes = {
-            a4: { w: 794, h: 1123 },
-            letter: { w: 816, h: 1056 },
-            legal: { w: 816, h: 1344 }
-          };
-          
-          const base = sizes[pageSize as keyof typeof sizes] || sizes.a4;
-          const targetW = orientation === 'portrait' ? base.w : base.h;
-          const targetH = orientation === 'portrait' ? base.h : base.w;
-          
-          clonedElement.style.width = `${targetW}px`;
-          clonedElement.style.height = `${targetH}px`;
-          clonedElement.style.minHeight = `${targetH}px`;
-          clonedElement.style.maxHeight = `${targetH}px`;
-          clonedElement.style.backgroundColor = '#ffffff';
-          clonedElement.style.color = '#000000';
-          
-          // 3. Ultra-aggressive cleanup for text and layout
-          const allElements = clonedElement.querySelectorAll('*');
-          allElements.forEach(el => {
-            if (el instanceof HTMLElement) {
-              // FORCE RESET OF SPACING - Extreme measures for html2canvas
-              el.style.setProperty('letter-spacing', 'normal', 'important');
-              el.style.setProperty('word-spacing', 'normal', 'important');
-              el.style.textShadow = 'none';
-              el.style.fontVariantLigatures = 'none';
-              (el.style as any).webkitFontSmoothing = 'antialiased';
-              el.style.textRendering = 'geometricPrecision'; 
-              
-              // Ensure table cells are robust
-              if (el.tagName === 'TH' || el.tagName === 'TD') {
-                el.style.boxSizing = 'border-box';
-                el.style.overflow = 'hidden';
-              }
-              
-              if (el.classList.contains('flex-1')) {
-                el.style.flex = '1 1 auto';
-              }
-              
-              if (window.getComputedStyle(el).display === 'grid') {
-                el.style.display = 'flex';
-                el.style.flexDirection = 'column';
-              }
-            }
-          });
-
-          clonedDoc.body.style.margin = '0';
-          clonedDoc.body.style.padding = '0';
-          clonedDoc.body.style.overflow = 'visible';
-          clonedDoc.body.style.backgroundColor = '#ffffff';
-        }
-      }
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-    
-    const docPageSize = targetDoc.pageSettings?.pageSize || pdfSettings.pageSize || 'a4';
-    const docOrientation = targetDoc.pageSettings?.orientation || pdfSettings.orientation || 'portrait';
-    
-    const orientation = docOrientation === 'portrait' ? 'p' : 'l';
-    const pdf = new jsPDF(orientation, 'mm', docPageSize);
-    
-    const sizes = {
-      a4: { width: 210, height: 297 },
-      letter: { width: 215.9, height: 279.4 },
-      legal: { width: 215.9, height: 355.6 }
-    };
-    const base = sizes[docPageSize as keyof typeof sizes] || sizes.a4;
-    const width = docOrientation === 'portrait' ? base.width : base.height;
-    const height = docOrientation === 'portrait' ? base.height : base.width;
-
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height, undefined, 'FAST');
-    pdf.save(`${targetDoc.docNumber}_${targetDoc.clientName}.pdf`);
-  };
-
-  const handleDownloadJPG = async (docToDownload?: BusinessDocument) => {
-    const targetDoc = docToDownload || previewingDoc;
-    if (!previewRef.current || !targetDoc) return;
-
-    // Scroll to top to ensure clean capture
-    window.scrollTo(0, 0);
-
-    const element = previewRef.current;
-    
-    // Create a high-quality JPG by capturing at a higher scale and ensuring layout is correct
-    const canvas = await html2canvas(element, {
-      scale: 2.5, // High scale for ultra-sharp text
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      windowWidth: 1200, // Force a wide virtual window to prevent responsive wrapping
-      windowHeight: 1600,
-      onclone: (clonedDoc) => {
-        const clonedElement = clonedDoc.querySelector('.a4-page') as HTMLElement;
-        if (clonedElement) {
-          const originalLogo = element.querySelector('.logo-container img') as HTMLImageElement;
-const clonedLogo = clonedElement.querySelector('.logo-container img') as HTMLImageElement;
-if (originalLogo && clonedLogo) {
-  const rect = originalLogo.getBoundingClientRect();
-  clonedLogo.style.height = `${rect.height}px`;
-  clonedLogo.style.width = `${rect.width}px`;
-}
-          // 1. Reset all transforms and positioning that might interfere
-          clonedElement.style.transform = 'none';
-          clonedElement.style.margin = '0';
-          let scaleAncestor = clonedElement.parentElement;
-   while (scaleAncestor && scaleAncestor !== clonedDoc.body) {
-     scaleAncestor.style.setProperty('transform', 'none', 'important');
-     scaleAncestor = scaleAncestor.parentElement;
-   }
-          clonedElement.style.padding = '0';
-          clonedElement.style.boxShadow = 'none';
-          clonedElement.style.position = 'relative';
-          clonedElement.style.left = '0';
-          clonedElement.style.top = '0';
-          clonedElement.style.display = 'block'; 
-          
-          // 2. Force the exact dimensions from the document settings
-          const pageSize = targetDoc.pageSettings?.pageSize || 'a4';
-          const orientation = targetDoc.pageSettings?.orientation || 'portrait';
-          
-          const sizes = {
-            a4: { w: 794, h: 1123 },
-            letter: { w: 816, h: 1056 },
-            legal: { w: 816, h: 1344 }
-          };
-          
-          const base = sizes[pageSize as keyof typeof sizes] || sizes.a4;
-          const targetW = orientation === 'portrait' ? base.w : base.h;
-          const targetH = orientation === 'portrait' ? base.h : base.w;
-          
-          clonedElement.style.width = `${targetW}px`;
-          clonedElement.style.height = `${targetH}px`;
-          clonedElement.style.minHeight = `${targetH}px`;
-          clonedElement.style.maxHeight = `${targetH}px`;
-          clonedElement.style.backgroundColor = '#ffffff';
-          clonedElement.style.color = '#000000';
-          
-          // 3. Ultra-aggressive cleanup for text and layout
-          const allElements = clonedElement.querySelectorAll('*');
-          allElements.forEach(el => {
-            if (el instanceof HTMLElement) {
-              // FORCE RESET OF SPACING - Using setProperty to ensure 'important' flag works
-              el.style.setProperty('letter-spacing', 'normal', 'important');
-              el.style.setProperty('word-spacing', 'normal', 'important');
-              el.style.textShadow = 'none';
-              el.style.fontVariantLigatures = 'none';
-              (el.style as any).webkitFontSmoothing = 'antialiased';
-              el.style.textRendering = 'geometricPrecision'; 
-              
-              // Ensure table cells are robust
-              if (el.tagName === 'TH' || el.tagName === 'TD') {
-                el.style.boxSizing = 'border-box';
-                el.style.overflow = 'hidden';
-              }
-              
-              if (el.classList.contains('flex-1')) {
-                el.style.flex = '1 1 auto';
-              }
-              
-              if (window.getComputedStyle(el).display === 'grid') {
-                el.style.display = 'flex';
-                el.style.flexDirection = 'column';
-              }
-            }
-          });
-
-          clonedDoc.body.style.margin = '0';
-          clonedDoc.body.style.padding = '0';
-          clonedDoc.body.style.overflow = 'visible';
-          clonedDoc.body.style.backgroundColor = '#ffffff';
-        }
-      }
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-    const link = document.createElement('a');
-    link.href = imgData;
-    link.download = `${targetDoc.docNumber}_${targetDoc.clientName}.jpg`;
-    link.click();
-  };
 
   const filteredDocs = documents.filter(doc => {
     const matchesSearch = doc.clientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -429,7 +194,7 @@ if (originalLogo && clonedLogo) {
         </div>
       )}
 
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-3 md:py-6 flex justify-between items-center backdrop-blur-md bg-black/20 border-b border-white/5">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-3 md:py-6 flex justify-between items-center backdrop-blur-md bg-black/20 border-b border-white/5 print:hidden no-print">
         <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => {setViewMode('landing'); setActiveType(null); setIsSidebarOpen(false);}}>
           <div className="w-8 h-8 md:w-10 md:h-10 bg-red-700 rounded-lg md:rounded-xl flex items-center justify-center font-black text-base md:text-xl shadow-lg shadow-red-700/30">GD</div>
           <span className="text-base md:text-xl font-black tracking-tighter">Garir Dokan <span className="text-red-700 uppercase">Pro</span></span>
@@ -469,7 +234,7 @@ if (originalLogo && clonedLogo) {
 
       {/* Mobile Sidebar Navigation */}
       <div className={`
-        fixed inset-y-0 right-0 z-[60] w-72 bg-[#0a0a0b] border-l border-white/5 transform transition-transform duration-300 ease-in-out lg:hidden
+        fixed inset-y-0 right-0 z-[60] w-72 bg-[#0a0a0b] border-l border-white/5 transform transition-transform duration-300 ease-in-out lg:hidden print:hidden no-print
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div className="h-full flex flex-col p-8 pt-24 space-y-6">
@@ -997,7 +762,7 @@ if (originalLogo && clonedLogo) {
 
       {previewingDoc && (
         <div className="fixed inset-0 z-[60] bg-black/98 backdrop-blur-3xl flex flex-col items-center animate-in fade-in duration-500 overflow-hidden">
-          <div className="w-full bg-black/60 p-4 md:p-8 flex flex-col lg:flex-row justify-between items-center gap-6 shadow-2xl px-6 md:px-16 border-b border-white/5 backdrop-blur-md shrink-0">
+          <div className="w-full bg-black/60 p-4 md:p-8 flex flex-col lg:flex-row justify-between items-center gap-6 shadow-2xl px-6 md:px-16 border-b border-white/5 backdrop-blur-md shrink-0 print:hidden no-print">
             <div className="flex items-center gap-4 md:gap-6 w-full lg:w-auto">
                <button onClick={() => setPreviewingDoc(null)} className="p-3 md:p-4 hover:bg-white/10 rounded-full md:rounded-[2rem] transition-all group shrink-0"><X className="w-6 h-6 md:w-8 md:h-8 text-gray-500 group-hover:text-white" /></button>
                <div className="truncate flex-1">
@@ -1007,45 +772,11 @@ if (originalLogo && clonedLogo) {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full lg:w-auto">
-              {/* PDF Settings Panel */}
-              <div className="flex items-center gap-3 md:gap-4 bg-white/5 p-1.5 md:p-2 rounded-xl md:rounded-2xl border border-white/10 w-full sm:w-auto justify-center">
-                <div className="flex bg-black/40 rounded-lg p-1 gap-0.5 md:gap-1">
-                  {(['portrait', 'landscape'] as const).map((o) => (
-                    <button
-                      key={o}
-                      onClick={() => setPdfSettings(prev => ({ ...prev, orientation: o }))}
-                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.orientation === o ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
-                    >
-                      {o}
-                    </button>
-                  ))}
-                </div>
-                <div className="h-5 md:h-6 w-px bg-white/10"></div>
-                <div className="flex bg-black/40 rounded-lg p-1 gap-0.5 md:gap-1">
-                  {(['a4', 'letter', 'legal'] as const).map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setPdfSettings(prev => ({ ...prev, pageSize: s }))}
-                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${pdfSettings.pageSize === s ? 'bg-red-700 text-white shadow-lg shadow-red-700/20' : 'text-gray-500 hover:text-white'}`}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <button 
-                onClick={() => handleDownloadPDF(previewingDoc)}
-                className="w-full sm:w-auto bg-red-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-red-600/50"
+                onClick={() => window.print()}
+                className="w-full sm:w-auto bg-red-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-red-800 transition-all active:scale-95 shadow-2xl shadow-red-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-red-600/50 print:hidden no-print"
               >
-                <Download className="w-5 h-5 md:w-6 md:h-6" /> Export PDF
-              </button>
-
-              <button 
-                onClick={() => handleDownloadJPG(previewingDoc)}
-                className="w-full sm:w-auto bg-blue-700 text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black flex items-center justify-center gap-3 md:gap-4 hover:bg-blue-800 transition-all active:scale-95 shadow-2xl shadow-blue-700/40 uppercase tracking-widest text-[10px] md:text-xs border border-blue-600/50"
-              >
-                <ImageIcon className="w-5 h-5 md:w-6 md:h-6" /> Export JPG
+                <Download className="w-5 h-5 md:w-6 md:h-6" /> Print / Save PDF
               </button>
             </div>
           </div>

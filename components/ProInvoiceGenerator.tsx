@@ -2,8 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Save, X, Upload, Download, Image as ImageIcon, Layers, User, Calendar, CreditCard, ShoppingBag, Plus, Trash2, Database, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 import { BusinessDocument, DocumentType, Asset, AssetType, InvoiceItem, FooterSettings, HeaderSettings } from '../types';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import DocumentPreview from './DocumentPreview';
 import AssetLibrary from './AssetLibrary';
 import { getTypePreferences, saveTypePreferences } from '../utils/storage';
