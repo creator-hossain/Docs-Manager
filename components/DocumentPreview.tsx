@@ -382,15 +382,14 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
       <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
           <WatermarkOverlay />
-          <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '100px', display: 'block', overflow: 'hidden' }}>
-            <div style={{ float: 'left', width: `${logoSize}px`, marginLeft: `${logoPosition}px` }}>
+          <div className="pt-[5mm] mb-[5px] w-full relative text-black" style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', overflow: 'visible' }}>
+            <div className="logo-container" style={{ width: `${logoSize}px`, marginLeft: `${logoPosition}px`, flexShrink: 0 }}>
               {logoUrl && <img src={logoUrl} alt="Logo" style={{ width: '100%', display: 'block' }} />}
             </div>
-            <div style={{ float: 'right', textAlign: 'right', paddingRight: '15mm' }}>
+            <div style={{ textAlign: 'right', paddingRight: '15mm', flexShrink: 0 }}>
               <div style={{ color: '#d1d3d4', fontSize: '42px', fontFamily: 'sans-serif', fontWeight: '300', lineHeight: '1', letterSpacing: '2px', marginBottom: '2px' }}>DELIVERY</div>
               <div style={{ color: '#d1d3d4', fontSize: '42px', fontFamily: 'sans-serif', fontWeight: '300', lineHeight: '1', letterSpacing: '2px' }}>CHALLAN</div>
             </div>
-            <div style={{ clear: 'both' }}></div>
           </div>
 
           <HeaderBar />
@@ -662,7 +661,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
       <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
           <WatermarkOverlay />
-          <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '80px', display: 'block', overflow: 'hidden' }}>
+          <div className="pt-[5mm] mb-[5px] w-full relative text-black" style={{ width: '100%', display: 'block', overflow: 'visible' }}>
             <div style={{ float: 'left', width: `${logoSize}px`, marginLeft: `${logoPosition}px` }}>
               {logoUrl && <img src={logoUrl} alt="Logo" style={{ width: '100%', display: 'block' }} />}
             </div>
