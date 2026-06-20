@@ -912,7 +912,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </thead>
               <tbody>
                 <tr className="text-black">
-                  <td className="w-[45%] align-top pt-4 pr-3 text-black" style={{ verticalAlign: 'top' }}>
+                  <td className="w-[45%] align-top pt-4 pr-3 pb-8 text-black" style={{ verticalAlign: 'top', borderBottom: '1.5px solid #000000', paddingBottom: '30px' }}>
                     {!isHidden('vehicleTitle') && <span className="font-bold uppercase mb-4 block leading-tight text-black" style={{ fontSize: `${vehicleTitleSize}px`, display: 'block' }}>{vehicleTitle}</span>}
                     {productImageUrl && (
                       <div className="mb-4 rounded-xl overflow-hidden border border-gray-100 max-w-[200px] shadow-sm" style={{ display: 'block' }}>
@@ -967,7 +967,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                       </div>
                     )}
                   </td>
-                  <td colSpan={2} className="p-0 align-top border-l border-gray-200 text-black" style={{ verticalAlign: 'top', width: '55%' }}>
+                  <td colSpan={2} className="p-0 align-top border-l border-gray-200 text-black pb-8" style={{ verticalAlign: 'top', width: '55%', borderBottom: '1.5px solid #000000', paddingBottom: '30px' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <tbody>
                         {payments?.map((p, index) => (
@@ -988,7 +988,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </tbody>
             </table>
             
-            <div style={{ width: '100%', marginTop: '30px', borderTop: '1.5px solid #000000', paddingTop: '15px' }}>
+            <div style={{ width: '100%', marginTop: '0px', paddingTop: '15px' }}>
               <table style={{ width: '320px', float: 'right', borderCollapse: 'collapse', color: 'black', fontSize: '15px', fontWeight: 'bold' }}>
                 <tbody>
                   <tr>
