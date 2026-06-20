@@ -84,6 +84,50 @@ const App: React.FC = () => {
     imagePositions: {}
   });
   const previewRef = useRef<HTMLDivElement>(null);
+  const [editorWidth, setEditorWidth] = useState(() => {
+    const saved = localStorage.getItem('gd_editor_width');
+    return saved ? parseFloat(saved) : 55; // 55% left, 45% right
+  });
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const isDragging = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const checkSize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    checkSize();
+    window.addEventListener('resize', checkSize);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const percentage = (e.clientX / window.innerWidth) * 100;
+      if (percentage >= 30 && percentage <= 75) {
+        setEditorWidth(percentage);
+        localStorage.setItem('gd_editor_width', percentage.toString());
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('resize', checkSize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   const fetchFooter = async () => {
     const settings = await loadFooterSettings();
@@ -709,7 +753,10 @@ const App: React.FC = () => {
       {editingDoc && (
         <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-3xl flex items-center justify-center p-0">
           <div className="bg-[#0a0a0b] w-full h-full border-white/10 shadow-2xl overflow-hidden flex flex-col lg:flex-row animate-in zoom-in duration-500">
-            <div className="flex-1 overflow-hidden">
+            <div 
+              style={isLargeScreen && editingDoc.type !== DocumentType.PRO_INVOICE ? { width: `${editorWidth}%`, flex: 'none' } : { flex: 1 }} 
+              className="overflow-hidden"
+            >
               {editingDoc.type === DocumentType.PRO_INVOICE ? (
                 <ProInvoiceGenerator 
                   initialData={editingDoc}
@@ -728,8 +775,21 @@ const App: React.FC = () => {
                 />
               )}
             </div>
+
+            {isLargeScreen && editingDoc.type !== DocumentType.PRO_INVOICE && (
+              <div 
+                className="w-1.5 hover:w-2 bg-white/5 hover:bg-red-700/50 cursor-col-resize transition-all duration-150 shrink-0 select-none relative self-stretch"
+                onMouseDown={handleMouseDown}
+              >
+                <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-1 bg-white/10 hover:bg-white/30 rounded-full my-auto h-24 top-1/2 -translate-y-1/2"></div>
+              </div>
+            )}
+
             {editingDoc.type !== DocumentType.PRO_INVOICE && (
-              <div className="hidden lg:flex w-[45%] bg-black/50 p-12 overflow-y-auto flex-col items-center scrollbar-hide border-l border-white/10">
+              <div 
+                style={isLargeScreen ? { width: `${100 - editorWidth}%`, flex: 'none' } : {}}
+                className="hidden lg:flex bg-black/50 p-12 overflow-y-auto flex-col items-center scrollbar-hide border-l border-white/10"
+              >
                 <div className="mb-8 w-full flex justify-between items-center text-white/40">
                   <span className="text-[11px] font-black uppercase tracking-[0.3em]">Live Rendering Engine</span>
                   <span className="text-[11px] font-bold">Standard A4 Format</span>

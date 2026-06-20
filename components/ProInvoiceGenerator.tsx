@@ -48,6 +48,50 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
   }, [initialData?.id]);
 
   const previewRef = useRef<HTMLDivElement>(null);
+  const [editorWidth, setEditorWidth] = useState(() => {
+    const saved = localStorage.getItem('gd_editor_width');
+    return saved ? parseFloat(saved) : 55; // 55% left, 45% right
+  });
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const isDragging = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const checkSize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    checkSize();
+    window.addEventListener('resize', checkSize);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const percentage = (e.clientX / window.innerWidth) * 100;
+      if (percentage >= 30 && percentage <= 75) {
+        setEditorWidth(percentage);
+        localStorage.setItem('gd_editor_width', percentage.toString());
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('resize', checkSize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   const calculateSubtotal = () => {
     return (formData.items || []).reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
@@ -152,7 +196,10 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
       <div className="w-full h-full bg-[#0a0a0b] flex flex-col lg:flex-row overflow-hidden animate-in zoom-in duration-500">
         
         {/* LEFT: Premium Editor Panel */}
-        <div className="flex-1 bg-[#0a0a0b] border-r border-white/5 flex flex-col shrink-0 lg:min-w-[600px] overflow-hidden">
+        <div 
+          style={isLargeScreen ? { width: `${editorWidth}%`, flex: 'none' } : { flex: 1 }}
+          className="bg-[#0a0a0b] border-r border-white/5 flex flex-col shrink-0 lg:min-w-[300px] overflow-hidden"
+        >
           <div className="bg-gradient-to-r from-red-950/20 to-black px-6 md:px-10 py-6 md:py-8 flex justify-between items-center text-white shrink-0 border-b border-white/5">
             <div className="flex items-center gap-4 md:gap-6">
               <div className="w-10 h-10 md:w-14 md:h-14 bg-red-700 rounded-xl md:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(185,28,28,0.4)] ring-4 ring-red-700/10 transition-all group-hover:rotate-12">
@@ -325,8 +372,20 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
           </div>
         </div>
 
+        {isLargeScreen && (
+          <div 
+            className="w-1.5 hover:w-2 bg-white/5 hover:bg-red-700/50 cursor-col-resize transition-all duration-150 shrink-0 select-none relative self-stretch"
+            onMouseDown={handleMouseDown}
+          >
+            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-1 bg-white/10 hover:bg-white/30 rounded-full my-auto h-24 top-1/2 -translate-y-1/2"></div>
+          </div>
+        )}
+
         {/* RIGHT: Live Rendering Panel */}
-        <div className="hidden lg:flex w-[45%] bg-black/50 p-12 overflow-y-auto flex flex-col items-center scrollbar-hide border-l border-white/10">
+        <div 
+          style={isLargeScreen ? { width: `${100 - editorWidth}%`, flex: 'none' } : {}}
+          className="hidden lg:flex bg-black/50 p-12 overflow-y-auto flex flex-col items-center scrollbar-hide border-l border-white/10"
+        >
           <div className="mb-8 w-full flex justify-between items-center text-white/30">
             <div className="flex items-center gap-4">
                <div className="w-2.5 h-2.5 rounded-full bg-red-700 animate-pulse"></div>
