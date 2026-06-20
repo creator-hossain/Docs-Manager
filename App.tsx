@@ -761,7 +761,7 @@ const App: React.FC = () => {
       )}
 
       {previewingDoc && (
-        <div className="fixed inset-0 z-[60] bg-black/98 backdrop-blur-3xl flex flex-col items-center animate-in fade-in duration-500 overflow-hidden">
+        <div className="fixed inset-0 z-[60] bg-black/98 backdrop-blur-3xl flex flex-col items-center animate-in fade-in duration-500 overflow-hidden print-modal-container">
           <div className="w-full bg-black/60 p-4 md:p-8 flex flex-col lg:flex-row justify-between items-center gap-6 shadow-2xl px-6 md:px-16 border-b border-white/5 backdrop-blur-md shrink-0 print:hidden no-print">
             <div className="flex items-center gap-4 md:gap-6 w-full lg:w-auto">
                <button onClick={() => setPreviewingDoc(null)} className="p-3 md:p-4 hover:bg-white/10 rounded-full md:rounded-[2rem] transition-all group shrink-0"><X className="w-6 h-6 md:w-8 md:h-8 text-gray-500 group-hover:text-white" /></button>
@@ -781,8 +781,8 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex-1 w-full overflow-auto p-4 md:p-12 flex justify-center bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.05),transparent_70%)] scrollbar-hide">
-            <div className="origin-top transition-transform duration-500 ease-out scale-[0.4] sm:scale-[0.6] md:scale-[0.75] lg:scale-[0.85] xl:scale-100">
+          <div className="flex-1 w-full overflow-auto p-4 md:p-12 flex justify-center bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.05),transparent_70%)] scrollbar-hide print-scroll-container">
+            <div className="origin-top transition-transform duration-500 ease-out scale-[0.4] sm:scale-[0.6] md:scale-[0.75] lg:scale-[0.85] xl:scale-100 print-scale-reset">
               <DocumentPreview 
                 document={previewingDoc} 
                 containerRef={previewRef} 
