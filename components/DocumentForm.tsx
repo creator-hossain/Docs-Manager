@@ -371,7 +371,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
               <SectionHeader icon={Car} title="Asset Valuation" subtitle="Vehicle Portfolio Details" />
               
               {formData.type === DocumentType.QUOTATION && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 gap-4 md:gap-6">
                   <div className="flex items-center gap-4 bg-black/40 p-4 rounded-3xl border border-white/5">
                     <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest whitespace-nowrap">Header Typography</span>
                     <input 
@@ -384,42 +384,19 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                     />
                     <span className="text-[10px] font-black text-red-700 bg-red-700/10 px-2 py-0.5 rounded-md">{formData.vehicleTitleSize ?? 18}px</span>
                   </div>
-
-                  <div className="flex items-center gap-2 bg-black/40 p-4 rounded-3xl border border-white/5">
-                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest mr-2">Alignment</span>
-                    <div className="flex bg-white/5 rounded-xl p-1 gap-1">
-                      {(['left', 'center', 'right', 'justify'] as const).map((align) => (
-                        <button
-                          key={align}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, vehicleTitleAlign: align })}
-                          className={`p-2 rounded-lg transition-all ${formData.vehicleTitleAlign === align ? 'bg-red-700 text-white' : 'text-gray-500 hover:text-white hover:bg-white/10'}`}
-                        >
-                          {align === 'left' && <AlignLeft size={16} />}
-                          {align === 'center' && <AlignCenter size={16} />}
-                          {align === 'right' && <AlignRight size={16} />}
-                          {align === 'justify' && <AlignJustify size={16} />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
 
               <div className="space-y-4 md:space-y-6">
                 <div>
-                  <label className={labelClass}>Vehicle Description {formData.type === DocumentType.QUOTATION ? '(Paragraph)' : ''}</label>
-                  {formData.type === DocumentType.QUOTATION ? (
-                    <textarea 
-                      placeholder="Full vehicle title or description paragraph..." 
-                      value={formData.vehicleTitle || ''} 
-                      onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} 
-                      className={`${inputClass} min-h-[120px] resize-y`}
-                      style={{ textAlign: formData.vehicleTitleAlign }}
-                    />
-                  ) : (
-                    <input type="text" placeholder="Full vehicle title" value={formData.vehicleTitle || ''} onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} className={inputClass} />
-                  )}
+                  <label className={labelClass}>{formData.type === DocumentType.QUOTATION ? 'Vehicle Name' : 'Vehicle Description'}</label>
+                  <input 
+                    type="text" 
+                    placeholder={formData.type === DocumentType.QUOTATION ? "Enter vehicle name..." : "Full vehicle title"} 
+                    value={formData.vehicleTitle || ''} 
+                    onChange={(e) => setFormData({...formData, vehicleTitle: e.target.value})} 
+                    className={inputClass} 
+                  />
                 </div>
 
                 {formData.type !== DocumentType.QUOTATION && (

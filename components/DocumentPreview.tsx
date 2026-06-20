@@ -678,7 +678,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 marginTop: '10px', 
                 marginBottom: '20px', 
                 fontSize: `${vehicleTitleSize}px`, 
-                textAlign: vehicleTitleAlign || 'left' as any,
+                textAlign: 'center',
                 lineHeight: '1.2'
               }}
             >
