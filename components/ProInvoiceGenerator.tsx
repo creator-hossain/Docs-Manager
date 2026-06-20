@@ -54,6 +54,36 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
   });
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const isDragging = useRef(false);
+  
+  const [previewZoom, setPreviewZoom] = useState(() => {
+    const saved = localStorage.getItem('gd_preview_zoom');
+    return saved ? parseFloat(saved) : 0.65;
+  });
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = previewContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        const delta = e.deltaY;
+        const zoomStep = 0.03;
+        setPreviewZoom(prev => {
+          const next = delta < 0 ? prev + zoomStep : prev - zoomStep;
+          const adjusted = Math.min(Math.max(next, 0.25), 2.5);
+          localStorage.setItem('gd_preview_zoom', adjusted.toFixed(3));
+          return adjusted;
+        });
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, [previewContainerRef.current, initialData?.id]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -383,6 +413,7 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
 
         {/* RIGHT: Live Rendering Panel */}
         <div 
+          ref={previewContainerRef}
           style={isLargeScreen ? { width: `${100 - editorWidth}%`, flex: 'none' } : {}}
           className="hidden lg:flex bg-black/50 p-12 overflow-y-auto flex flex-col items-center scrollbar-hide border-l border-white/10"
         >
@@ -390,11 +421,23 @@ const ProInvoiceGenerator: React.FC<ProInvoiceGeneratorProps> = ({ initialData, 
             <div className="flex items-center gap-4">
                <div className="w-2.5 h-2.5 rounded-full bg-red-700 animate-pulse"></div>
                <span className="text-[11px] font-black uppercase tracking-[0.4em]">Live Rendering Engine</span>
+               <span className="px-2 py-0.5 text-[9px] font-bold bg-white/10 rounded text-white font-mono">
+                 Zoom: {Math.round(previewZoom * 100)}%
+               </span>
             </div>
-            <span className="text-[11px] font-black uppercase tracking-[0.4em]">Standard A4 Format</span>
+            <div className="flex items-center gap-2 text-[11px]">
+              <span className="text-gray-500 text-[10px]">Ctrl + Scroll to Zoom</span>
+              <button 
+                onClick={() => setPreviewZoom(0.65)} 
+                className="px-2 py-0.5 bg-red-700/20 hover:bg-red-700 text-red-500 hover:text-white rounded border border-red-700/30 transition-all font-mono text-[10px]"
+                title="Reset Zoom"
+              >
+                Reset
+              </button>
+            </div>
           </div>
-          <div className="hover:scale-[1.01] transition-transform duration-700 ease-out origin-top">
-            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={0.65} footerSettings={footerSettings} headerSettings={headerSettings} />
+          <div className="transition-transform duration-300 ease-out origin-top">
+            <DocumentPreview document={formData as BusinessDocument} containerRef={previewRef} scale={previewZoom} footerSettings={footerSettings} headerSettings={headerSettings} />
           </div>
         </div>
       </div>

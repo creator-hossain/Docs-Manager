@@ -229,7 +229,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     };
 
     return (
-      <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
+      <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative bg-white !text-black" style={proInvoiceStyle}>
           <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
@@ -379,7 +379,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     };
 
     return (
-      <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
+      <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
           <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '100px', display: 'block', overflow: 'hidden' }}>
@@ -528,7 +528,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
   // Render Bill
   if (isBill) {
     return (
-      <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
+      <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative bg-white !text-black" style={{...commonA4Style, width: dimensions.width}}>
           <WatermarkOverlay />
           <div className="flex pt-[5mm] mb-[5px] w-full text-black" style={{ width: '100%' }}>
@@ -659,7 +659,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     };
 
     return (
-      <div className="bg-[#525659] p-4 overflow-auto flex justify-center w-full">
+      <div className="bg-gray-100 p-4 overflow-auto flex justify-center w-full print-doc-preview-wrapper">
         <div ref={containerRef} className="a4-page shadow-2xl relative overflow-hidden bg-white !text-black" style={challanStyle}>
           <WatermarkOverlay />
           <div className="pt-[5mm] mb-[5px] w-full relative" style={{ width: '100%', height: '80px', display: 'block', overflow: 'hidden' }}>
