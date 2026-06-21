@@ -429,8 +429,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       ))}
 
                       {formData.type === DocumentType.BILL && (
-                        <div className="flex items-center gap-4 bg-red-700/5 p-2 rounded-2xl border border-red-700/20">
-                          <div className="flex-1">
+                        <div className="bg-red-700/5 p-2 rounded-2xl border border-red-700/20">
+                          <div>
                             <label className={labelClass}>Net Valuation (TK)</label>
                             <input 
                               type="number" 
@@ -446,7 +446,6 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                               className={`${inputClass} font-black text-red-700 !bg-red-700/10 border-red-700/30`} 
                             />
                           </div>
-                          <div className="pt-6 px-2"><ToggleSwitch checked={isFieldVisible('vehiclePrice')} onChange={() => toggleField('vehiclePrice')} /></div>
                         </div>
                       )}
                     </>
