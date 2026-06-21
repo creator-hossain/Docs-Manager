@@ -334,15 +334,9 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       <label className={labelClass}>A/C Name or Recipient</label>
                       <input type="text" placeholder="e.g. RAWSHAN JAHAN" value={formData.acName || ''} onChange={(e) => setFormData({...formData, acName: e.target.value})} className={inputClass} />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                      <div>
-                        <label className={labelClass}>Officer Designation</label>
-                        <input type="text" placeholder="e.g. Head Office" value={formData.clientDesignation || ''} onChange={(e) => setFormData({...formData, clientDesignation: e.target.value})} className={inputClass} />
-                      </div>
-                      <div>
-                        <label className={labelClass}>Associated Organization</label>
-                        <input type="text" placeholder="e.g. City Bank PLC" value={formData.clientOffice || ''} onChange={(e) => setFormData({...formData, clientOffice: e.target.value})} className={inputClass} />
-                      </div>
+                    <div>
+                      <label className={labelClass}>Officer Designation</label>
+                      <input type="text" placeholder="e.g. Head Office" value={formData.clientDesignation || ''} onChange={(e) => setFormData({...formData, clientDesignation: e.target.value})} className={inputClass} />
                     </div>
                   </div>
                 ) : (
@@ -433,7 +427,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                           <div className="pt-6 px-2"><ToggleSwitch checked={isFieldVisible(field)} onChange={() => toggleField(field)} /></div>
                         </div>
                       ))}
-                      
+
                       {formData.type === DocumentType.BILL && (
                         <div className="flex items-center gap-4 bg-red-700/5 p-2 rounded-2xl border border-red-700/20">
                           <div className="flex-1">
@@ -521,7 +515,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                       ))}
                     </div>
                   </div>
-                ) : formData.type === DocumentType.BILL ? (
+                 ) : formData.type === DocumentType.BILL ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                      <div className="space-y-4 md:space-y-6">
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
@@ -542,18 +536,18 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                          />
                        </div>
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
-                         <label className={labelClass}>Paid by Bank (Amount)</label>
-                         <input type="number" value={formData.bankPaymentAmount ?? 0} onChange={(e) => setFormData({...formData, bankPaymentAmount: parseFloat(e.target.value) || 0})} className={inputClass} />
+                         <label className={labelClass}>Unit</label>
+                         <input type="number" placeholder="01" value={formData.quantity || ''} onChange={(e) => setFormData({...formData, quantity: parseInt(e.target.value) || 0})} className={inputClass} />
                        </div>
                      </div>
                      <div className="space-y-4 md:space-y-6">
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
-                         <label className={labelClass}>Bank Name</label>
-                         <input type="text" placeholder="e.g. City Bank PLC" value={formData.bankName || ''} onChange={(e) => setFormData({...formData, bankName: e.target.value})} className={inputClass} />
+                         <label className={labelClass}>Paid by Bank (Amount)</label>
+                         <input type="number" value={formData.bankPaymentAmount ?? 0} onChange={(e) => setFormData({...formData, bankPaymentAmount: parseFloat(e.target.value) || 0})} className={inputClass} />
                        </div>
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
-                         <label className={labelClass}>Unit</label>
-                         <input type="number" placeholder="01" value={formData.quantity || ''} onChange={(e) => setFormData({...formData, quantity: parseInt(e.target.value) || 0})} className={inputClass} />
+                         <label className={labelClass}>Bank Name</label>
+                         <input type="text" placeholder="e.g. City Bank PLC" value={formData.bankName || ''} onChange={(e) => setFormData({...formData, bankName: e.target.value})} className={inputClass} />
                        </div>
                      </div>
                   </div>

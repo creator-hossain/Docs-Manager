@@ -550,9 +550,9 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <div className="mb-[25px] leading-[1.2] text-[17px] text-black" style={{ width: '100%', display: 'block' }}>
               To,<br />
               <div className="text-black" style={{ width: '100%', display: 'block' }}>
-                <div className="text-black font-bold" style={{ display: 'block' }}>{acName ? `A/C: ${acName}` : clientName}</div>
-                {clientDesignation && <div className="text-black font-bold" style={{ display: 'block' }}>{clientDesignation},</div>}
-                {clientOffice && <div className="text-black font-bold" style={{ display: 'block' }}>{clientOffice}</div>}
+                <div className="text-black" style={{ display: 'block' }}>{acName ? `A/C: ${acName}` : clientName}</div>
+                {clientDesignation && <div className="text-black" style={{ display: 'block' }}>{clientDesignation},</div>}
+                {clientOffice && <div className="text-black" style={{ display: 'block' }}>{clientOffice}</div>}
                 <div className="whitespace-pre-wrap text-black capitalize" style={{ display: 'block' }}>{clientAddress}</div>
               </div>
             </div>
@@ -574,43 +574,43 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                         <table style={{ width: '100%', borderCollapse: 'collapse', color: 'black' }}>
                           <tbody>
                             <tr>
-                              <td style={{ width: '140px', fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top' }}>Vehicle</td>
-                              <td style={{ width: '25px', padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                              <td style={{ fontWeight: 'bold', padding: '6px 0', verticalAlign: 'top' }}>{formattedPrice}/-</td>
+                              <td style={{ width: '140px', fontWeight: 'bold', padding: '2.5px 0', verticalAlign: 'top' }}>Vehicle</td>
+                              <td style={{ width: '25px', padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                              <td style={{ fontWeight: 'bold', padding: '2.5px 0', verticalAlign: 'top' }}>{formattedPrice}/-</td>
                             </tr>
                             {!isHidden('yearModel') && (
                               <tr>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Year</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{yearModel}</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>Year</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>{yearModel}</td>
                               </tr>
                             )}
                             {!isHidden('cc') && (
                               <tr>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>CC.</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{cc}</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>CC.</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>{cc}</td>
                               </tr>
                             )}
                             {!isHidden('engineNumber') && (
                               <tr>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Engine No.</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{engineNumber}</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>Engine No.</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>{engineNumber}</td>
                               </tr>
                             )}
                             {!isHidden('chassisNumber') && (
                               <tr>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Chassis No</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{chassisNumber}</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>Chassis No</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>{chassisNumber}</td>
                               </tr>
                             )}
                             {!isHidden('color') && (
                               <tr>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>Color</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>:</td>
-                                <td style={{ padding: '6px 0', verticalAlign: 'top' }}>{color}</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>Color</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>:</td>
+                                <td style={{ padding: '2.5px 0', verticalAlign: 'top' }}>{color}</td>
                               </tr>
                             )}
                           </tbody>
@@ -646,7 +646,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </table>
             </div>
             <div className="text-[19px] mt-[25px] text-black" style={{ display: 'block' }}>
-              <span className="font-bold text-black font-mono">Price in words : {priceInWords}</span>
+              <span className="font-bold text-black">Price in words : {priceInWords}</span>
             </div>
             <div className="text-[19px] font-bold text-black mt-[25px]" style={{ display: 'block' }}>
               Yours Faithfully,
