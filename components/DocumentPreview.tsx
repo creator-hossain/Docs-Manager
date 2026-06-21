@@ -686,7 +686,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 textTransform: 'uppercase', 
                 marginTop: '20px', 
                 marginBottom: '20px', 
-                fontSize: `${vehicleTitleSize}px`, 
+                fontSize: `${vehicleTitleSize + 1}px`, 
                 textAlign: 'center',
                 lineHeight: '1.2'
               }}
@@ -695,7 +695,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             </div>
             
             <div className="mb-[15px]" style={{ width: '100%', display: 'block' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '16px', color: 'black' }}>
                 <tbody>
                   <tr>
                     <td style={{ width: '65%', verticalAlign: 'top' }}>
@@ -713,17 +713,17 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </table>
             </div>
 
-            <div className="mb-[15px] text-[15px] text-black">
+            <div className="mb-[15px] text-[16px] text-black">
               Dear Sir,<br />
-              <span style={{ display: 'block', marginTop: '5px', fontSize: '14px', textAlign: 'justify', textAlignLast: 'justify' }}>We have the pleasure to offer you the under mentioned vehicle with the following terms & conditions.</span>
+              <span style={{ display: 'block', marginTop: '5px', fontSize: '15px', textAlign: 'justify', textAlignLast: 'justify' }}>We have the pleasure to offer you the under mentioned vehicle with the following terms & conditions.</span>
             </div>
             <div className="relative text-black">
                <table className="main-table w-full border-collapse mb-[15px] border border-black relative z-[1] text-black">
                 <thead>
                   <tr className="text-black bg-transparent">
-                    <th className="border border-black p-2 text-center font-bold w-[65%] text-[15px] text-black uppercase">DESCRIPTION OF VEHICLE</th>
-                    <th className="border border-black p-2 text-center font-bold w-[10%] text-[15px] text-black uppercase">QTY</th>
-                    <th className="border border-black p-2 text-center font-bold w-[25%] text-[15px] text-black whitespace-nowrap uppercase">TOTAL AMOUNT (TK)</th>
+                    <th className="border border-black p-2 text-center font-bold w-[65%] text-[16px] text-black uppercase">DESCRIPTION OF VEHICLE</th>
+                    <th className="border border-black p-2 text-center font-bold w-[10%] text-[16px] text-black uppercase">QTY</th>
+                    <th className="border border-black p-2 text-center font-bold w-[25%] text-[16px] text-black whitespace-nowrap uppercase">TOTAL AMOUNT (TK)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -798,18 +798,18 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                       </table>
                     </td>
                     <td className="border border-black p-2 text-center align-middle text-black">{!isHidden('quantity') && (quantity < 10 ? `0${quantity}` : quantity)}</td>
-                    <td className="border border-black p-2 text-right text-[18px] font-bold align-middle text-black">{formattedPrice}/-</td>
+                    <td className="border border-black p-2 text-right text-[19px] font-bold align-middle text-black">{formattedPrice}/-</td>
                   </tr>
                   <tr className="net-price-row font-bold text-black">
-                    <td colSpan={2} className="border border-black p-2 text-left uppercase text-[15px] text-black">NET PRICE IN TAKA</td>
-                    <td className="border border-black p-2 text-right text-[16px] text-black">{formattedPrice}/-</td>
+                    <td colSpan={2} className="border border-black p-2 text-left uppercase text-[16px] text-black">NET PRICE IN TAKA</td>
+                    <td className="border border-black p-2 text-right text-[17px] text-black">{formattedPrice}/-</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className="price-words-row mb-[15px] text-[15px] text-black"><span className="font-bold text-black">Price in words :</span> {priceInWords}</div>
-            {notes && (<div className="accessories-box mt-[10px] mb-[15px] leading-[1.4] text-justify text-[14px] text-black"><span className="font-bold text-black">Fitting Accessories:</span> {notes}</div>)}
-            <div className="mt-[10px] text-[15px] leading-[1.4] text-black"><p className="text-black">Price excluding REGISTRATION cost.<br /><span className="font-bold uppercase text-black">Yours Faithfully,</span></p></div>
+            <div className="price-words-row mb-[15px] text-[16px] text-black"><span className="font-bold text-black">Price in words :</span> {priceInWords}</div>
+            {notes && (<div className="accessories-box mt-[10px] mb-[15px] leading-[1.4] text-justify text-[15px] text-black"><span className="font-bold text-black">Fitting Accessories:</span> {notes}</div>)}
+            <div className="mt-[10px] text-[16px] leading-[1.4] text-black"><p className="text-black">Price excluding REGISTRATION cost.<br /><span className="font-bold uppercase text-black">Yours Faithfully,</span></p></div>
           </div>
           <Footer />
         </div>
