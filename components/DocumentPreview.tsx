@@ -144,9 +144,18 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
     return <Icon className="w-3 h-3 text-red-600" />;
   };
 
-  const HeaderBar = () => {
+  const HeaderBar = ({ marginBottom }: { marginBottom?: string }) => {
     return (
-      <div className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300 mb-6" style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center' }}>
+      <div 
+        className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300" 
+        style={{ 
+          width: '100%', 
+          boxSizing: 'border-box', 
+          display: 'flex', 
+          alignItems: 'center',
+          marginBottom: marginBottom !== undefined ? marginBottom : '1.5rem'
+        }}
+      >
         <div 
           style={{ 
             textAlign: h.alignment || 'left',
@@ -668,14 +677,14 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
             <div style={{ clear: 'both' }}></div>
           </div>
 
-          <HeaderBar />
+          <HeaderBar marginBottom="0px" />
 
           <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', boxSizing: 'border-box' }}>
             <div 
               style={{ 
                 fontWeight: 'bold', 
                 textTransform: 'uppercase', 
-                marginTop: '10px', 
+                marginTop: '20px', 
                 marginBottom: '20px', 
                 fontSize: `${vehicleTitleSize}px`, 
                 textAlign: 'center',
