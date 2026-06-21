@@ -679,7 +679,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
 
           <HeaderBar marginBottom="0px" />
 
-          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', boxSizing: 'border-box' }}>
+          <div className="main-content px-[20mm] text-black pb-[30mm]" style={{ width: '100%', boxSizing: 'border-box', fontFamily: '"Times New Roman", Times, Georgia, serif' }}>
             <div 
               style={{ 
                 fontWeight: 'bold', 
