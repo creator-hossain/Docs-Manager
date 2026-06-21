@@ -147,7 +147,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
   const HeaderBar = ({ marginBottom }: { marginBottom?: string }) => {
     return (
       <div 
-        className="w-full bg-[#f3f4f6] py-2.5 px-4 border-y border-gray-300" 
+        className="w-full bg-[#dedede] py-1 px-4 border-y border-gray-300" 
         style={{ 
           width: '100%', 
           boxSizing: 'border-box', 

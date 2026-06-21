@@ -1163,15 +1163,21 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ onClose, onFooterUpdate
                                    {currentHeader.logoUrl && <img src={currentHeader.logoUrl} alt="Logo" className="w-full block" />}
                                 </div>
                              </div>
-                             <div className="w-full bg-[#e5e7eb] py-2 px-4 border-y border-gray-300 mb-6">
+                             <div className="w-full bg-[#dedede] py-1 px-4 border-y border-gray-300 mb-6" style={{ width: '100%', boxSizing: 'border-box', display: 'flex', alignItems: 'center' }}>
                                 <div 
                                   style={{ 
                                     textAlign: currentHeader.alignment || 'left',
                                     fontSize: `${currentHeader.fontSize || 14}px`,
                                     fontFamily: currentHeader.fontFamily === 'serif' ? 'serif' : currentHeader.fontFamily === 'mono' ? 'monospace' : 'sans-serif',
                                     fontStyle: currentHeader.isItalic ? 'italic' : 'normal',
-                                    color: '#4b5563',
-                                    fontWeight: '500'
+                                    color: '#374151',
+                                    fontWeight: '600',
+                                    lineHeight: '1.2',
+                                    width: '100%',
+                                    letterSpacing: '0',
+                                    wordSpacing: '0',
+                                    whiteSpace: 'normal',
+                                    wordBreak: 'break-word'
                                   }}
                                 >
                                   {currentHeader.text || 'Importer & All kinds of Brand new & Reconditioned Vehicles Supplier'}
