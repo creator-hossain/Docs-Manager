@@ -729,7 +729,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 <tbody>
                   <tr className="text-black">
                     <td className="border border-black p-2 align-top text-black">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '16px', color: 'black' }}>
                         <tbody>
                           {!isHidden('brand') && (
                             <tr>
