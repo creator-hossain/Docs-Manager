@@ -729,69 +729,69 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                 <tbody>
                   <tr className="text-black">
                     <td className="border border-black p-2 align-top text-black">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', color: 'black' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '16px', color: 'black' }}>
                         <tbody>
                           {!isHidden('brand') && (
                             <tr>
-                              <td style={{ width: '120px', fontWeight: 'bold', padding: '3px 0' }}>Brand Name</td>
-                              <td style={{ width: '20px', padding: '3px 0' }}>:</td>
-                              <td style={{ padding: '3px 0' }}>{brand}</td>
+                              <td style={{ width: '120px', fontWeight: 'bold', padding: '2px 0' }}>Brand Name</td>
+                              <td style={{ width: '20px', padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{brand}</td>
                             </tr>
                           )}
                           {!isHidden('model') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Model</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{model}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Model</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{model}</td>
                             </tr>
                           )}
                           {!isHidden('yearModel') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Year Model</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{yearModel}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Year Model</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{yearModel}</td>
                             </tr>
                           )}
                           {!isHidden('color') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Color</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{color}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Color</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{color}</td>
                             </tr>
                           )}
                           {!isHidden('chassisNumber') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Chassis No</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{chassisNumber}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Chassis No</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{chassisNumber}</td>
                             </tr>
                           )}
                           {!isHidden('engineNumber') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Engine No</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{engineNumber}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Engine No</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{engineNumber}</td>
                             </tr>
                           )}
                           {!isHidden('cc') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>C.C</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{cc}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>C.C</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{cc}</td>
                             </tr>
                           )}
                           {!isHidden('fuel') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Fuel</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{fuel}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Fuel</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{fuel}</td>
                             </tr>
                           )}
                           {!isHidden('transmission') && (
                             <tr>
-                              <td style={{ fontWeight: 'bold', padding: '3px 0' }}>Transmission</td>
-                              <td>:</td>
-                              <td style={{ padding: '3px 0' }}>{transmission}</td>
+                              <td style={{ fontWeight: 'bold', padding: '2px 0' }}>Transmission</td>
+                              <td style={{ padding: '2px 0' }}>:</td>
+                              <td style={{ padding: '2px 0' }}>{transmission}</td>
                             </tr>
                           )}
                         </tbody>
