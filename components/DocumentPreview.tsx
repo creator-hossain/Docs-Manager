@@ -280,7 +280,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                           <tr>
                             <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Address</td>
                             <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
-                            <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress || '---'}</td>
+                            <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3', whiteSpace: 'pre-wrap' }}>{clientAddress || '---'}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -427,7 +427,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                           <tr>
                             <td style={{ color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>Address</td>
                             <td style={{ color: '#4b5563', padding: '2px 0', verticalAlign: 'top' }}>:</td>
-                            <td style={{ color: '#000000', textTransform: 'capitalize', fontWeight: 'bold', padding: '2px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress}</td>
+                            <td style={{ color: '#000000', textTransform: 'capitalize', fontWeight: 'bold', padding: '2px 0', verticalAlign: 'top', lineHeight: '1.3', whiteSpace: 'pre-wrap' }}>{clientAddress}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -881,7 +881,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
                             <tr>
                               <td style={{ fontWeight: 'bold', padding: '3px 0', verticalAlign: 'top' }}>Address</td>
                               <td style={{ padding: '3px 0', verticalAlign: 'top' }}>:</td>
-                              <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3' }}>{clientAddress}</td>
+                              <td style={{ textTransform: 'capitalize', padding: '3px 0', verticalAlign: 'top', lineHeight: '1.3', whiteSpace: 'pre-wrap' }}>{clientAddress}</td>
                             </tr>
                           )}
                         </tbody>
