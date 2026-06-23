@@ -14,6 +14,66 @@ interface DocumentFormProps {
   headerSettings?: HeaderSettings;
 }
 
+const ONES_WORDS = [
+  "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+  "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+];
+const TENS_WORDS = [
+  "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+];
+
+const convertChunkWords = (n: number): string => {
+  if (n < 20) {
+    return ONES_WORDS[n];
+  }
+  const tenDigit = Math.floor(n / 10);
+  const oneDigit = n % 10;
+  return (TENS_WORDS[tenDigit] + (oneDigit > 0 ? " " + ONES_WORDS[oneDigit] : "")).trim();
+};
+
+const convertNumberToWords = (num: number): string => {
+  if (num === 0) return "";
+  
+  num = Math.floor(num);
+  if (num <= 0) return "";
+  
+  let words = "";
+  
+  const crore = Math.floor(num / 10000000);
+  num %= 10000000;
+  
+  const lakh = Math.floor(num / 100000);
+  num %= 100000;
+  
+  const thousand = Math.floor(num / 1000);
+  num %= 1000;
+  
+  const hundred = Math.floor(num / 100);
+  num %= 100;
+  
+  if (crore > 0) {
+    words += convertChunkWords(crore) + " Crore ";
+  }
+  
+  if (lakh > 0) {
+    words += convertChunkWords(lakh) + " Lakh ";
+  }
+  
+  if (thousand > 0) {
+    words += convertChunkWords(thousand) + " Thousand ";
+  }
+  
+  if (hundred > 0) {
+    words += convertChunkWords(hundred) + " Hundred ";
+  }
+  
+  if (num > 0) {
+    words += convertChunkWords(num) + " ";
+  }
+  
+  return (words.trim() + " Taka Only").replace(/\s+/g, ' ');
+};
+
 const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCancel, onChange, headerSettings }) => {
   const [showAssetPicker, setShowAssetPicker] = useState<{ open: boolean; target: 'logoUrl' | 'productImageUrl'; type: AssetType } | null>(null);
   const [formData, setFormData] = useState<Partial<BusinessDocument>>(() => ({
@@ -440,7 +500,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                                 const net = parseFloat(e.target.value) || 0;
                                 setFormData({
                                   ...formData, 
-                                  vehiclePrice: net
+                                  vehiclePrice: net,
+                                  priceInWords: convertNumberToWords(net)
                                 });
                               }} 
                               className={`${inputClass} font-black text-red-700 !bg-red-700/10 border-red-700/30`} 
@@ -468,7 +529,14 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                               type="number" 
                               placeholder="Enter Car Price" 
                               value={formData.vehiclePrice || ''} 
-                              onChange={(e) => setFormData({...formData, vehiclePrice: parseFloat(e.target.value) || 0})} 
+                              onChange={(e) => {
+                                const price = parseFloat(e.target.value) || 0;
+                                setFormData({
+                                  ...formData,
+                                  vehiclePrice: price,
+                                  priceInWords: convertNumberToWords(price)
+                                });
+                              }} 
                               className={`${inputClass} font-black text-red-700 !bg-red-700/10 border-red-700/30`} 
                             />
                           </div>
@@ -553,7 +621,20 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                 ) : (
                   <div className="bg-red-700/5 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-red-700/20">
                     <label className={labelClass}>Net Proposed Valuation (TK)</label>
-                    <input type="number" placeholder="Offer Price" value={formData.vehiclePrice || ''} onChange={(e) => setFormData({...formData, vehiclePrice: parseFloat(e.target.value) || 0})} className={`${inputClass} font-black text-red-700 !bg-red-700/10 border-red-700/30`} />
+                    <input 
+                      type="number" 
+                      placeholder="Offer Price" 
+                      value={formData.vehiclePrice || ''} 
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value) || 0;
+                        setFormData({
+                          ...formData,
+                          vehiclePrice: val,
+                          priceInWords: convertNumberToWords(val)
+                        });
+                      }} 
+                      className={`${inputClass} font-black text-red-700 !bg-red-700/10 border-red-700/30`} 
+                    />
                   </div>
                 )}
                 
