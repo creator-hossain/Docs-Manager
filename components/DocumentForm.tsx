@@ -610,7 +610,20 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ initialData, onSave, onCanc
                      <div className="space-y-4 md:space-y-6">
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
                          <label className={labelClass}>Paid by Bank (Amount)</label>
-                         <input type="number" value={formData.bankPaymentAmount ?? 0} onChange={(e) => setFormData({...formData, bankPaymentAmount: parseFloat(e.target.value) || 0})} className={inputClass} />
+                         <input 
+                           type="number" 
+                           value={formData.bankPaymentAmount ?? 0} 
+                           onChange={(e) => {
+                             const bankVal = parseFloat(e.target.value) || 0;
+                             const net = formData.vehiclePrice || 0;
+                             setFormData({
+                               ...formData, 
+                               bankPaymentAmount: bankVal,
+                               advancedPaidAmount: Math.max(0, net - bankVal)
+                             });
+                           }} 
+                           className={inputClass} 
+                         />
                        </div>
                        <div className="bg-black/20 p-4 md:p-5 rounded-2xl border border-white/5">
                          <label className={labelClass}>Bank Name</label>
