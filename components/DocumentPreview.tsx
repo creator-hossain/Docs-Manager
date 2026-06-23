@@ -713,9 +713,9 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
               </table>
             </div>
 
-            <div className="mb-[15px] text-[15px] text-black">
+            <div style={{ marginBottom: '7.5px' }} className="text-[15px] text-black">
               Dear Sir,<br />
-              <span style={{ display: 'block', marginTop: '5px', fontSize: '14px', textAlign: 'justify', textAlignLast: 'justify' }}>We have the pleasure to offer you the under mentioned vehicle with the following terms & conditions.</span>
+              <span style={{ display: 'block', marginTop: '2.5px', fontSize: '14px', textAlign: 'justify', textAlignLast: 'justify' }}>We have the pleasure to offer you the under mentioned vehicle with the following terms & conditions.</span>
             </div>
             <div className="relative text-black">
                <table className="main-table w-full border-collapse mb-[15px] border border-black relative z-[1] text-black">
