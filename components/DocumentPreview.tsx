@@ -252,10 +252,10 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
           <div className="main-content px-[15mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
             <div className="mb-6 border-b-[1.5px] border-black text-black pb-1" style={{ width: '100%', display: 'block', overflow: 'hidden' }}>
               <div style={{ float: 'left' }}>
-                <h1 className="m-0 text-[32px] font-bold text-black uppercase whitespace-nowrap" style={{ lineHeight: '1', letterSpacing: '0' }}>INVOICE</h1>
+                <h1 className="m-0 text-[32px] font-normal text-black uppercase whitespace-nowrap" style={{ lineHeight: '1', letterSpacing: '0', fontFamily: 'Poppins, sans-serif' }}>INVOICE</h1>
               </div>
               <div style={{ float: 'right', marginTop: '15px' }}>
-                <div className="text-[11px] font-bold text-black uppercase whitespace-nowrap" style={{ letterSpacing: '1px' }}>CUSTOMER COPY</div>
+                <div className="text-[11px] font-normal text-black uppercase whitespace-nowrap" style={{ letterSpacing: '1px', fontFamily: 'Poppins, sans-serif' }}>CUSTOMER COPY</div>
               </div>
               <div style={{ clear: 'both' }}></div>
             </div>
@@ -852,8 +852,8 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, containerRe
           <HeaderBar />
           <div className="px-[15mm] pt-[5mm] text-black pb-[30mm]" style={{ width: '100%', display: 'block', minHeight: '220mm', boxSizing: 'border-box' }}>
             <div className="mb-4 relative text-black border-b border-black" style={{ width: '100%', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h1 className="m-0 text-[32px] font-bold text-black whitespace-nowrap" style={{ lineHeight: '1' }}>INVOICE</h1>
-              <div className="text-[11px] font-bold text-black uppercase whitespace-nowrap">CUSTOMER COPY</div>
+              <h1 className="m-0 text-[32px] font-normal text-black whitespace-nowrap" style={{ lineHeight: '1', fontFamily: 'Poppins, sans-serif' }}>INVOICE</h1>
+              <div className="text-[11px] font-normal text-black uppercase whitespace-nowrap" style={{ fontFamily: 'Poppins, sans-serif' }}>CUSTOMER COPY</div>
             </div>
 
             <div className="mb-8" style={{ width: '100%', display: 'block' }}>
